@@ -333,7 +333,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 560428821}
   m_CullTransparentMesh: 0
---- !u!1 &1035803102
+--- !u!1 &872702229
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -341,9 +341,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1035803103}
-  - component: {fileID: 1035803105}
-  - component: {fileID: 1035803104}
+  - component: {fileID: 872702230}
+  - component: {fileID: 872702232}
+  - component: {fileID: 872702231}
   m_Layer: 5
   m_Name: CheckImage
   m_TagString: CircleOut
@@ -351,13 +351,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &1035803103
+--- !u!224 &872702230
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1035803102}
+  m_GameObject: {fileID: 872702229}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
@@ -370,13 +370,13 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1035803104
+--- !u!114 &872702231
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1035803102}
+  m_GameObject: {fileID: 872702229}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -399,13 +399,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!222 &1035803105
+--- !u!222 &872702232
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1035803102}
+  m_GameObject: {fileID: 872702229}
   m_CullTransparentMesh: 0
 --- !u!1 &1148261061
 GameObject:
@@ -513,7 +513,7 @@ RectTransform:
   m_Children:
   - {fileID: 1799300386}
   - {fileID: 560428822}
-  - {fileID: 1035803103}
+  - {fileID: 872702230}
   m_Father: {fileID: 1608646741}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
