@@ -8,8 +8,6 @@ TagManager:
   - Rooms
   - Title
   - PrologVideo
-  - CircleOut
-  - GameStart
   layers:
   - Default
   - TransparentFX
