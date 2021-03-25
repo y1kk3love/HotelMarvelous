@@ -19,9 +19,32 @@ public class TitleUI : MonoBehaviour
 
     void Awake()
     {
-        videoplayer = this.gameObject.GetComponent<VideoPlayer>();
-        videoplayer.Stop();
+        ResetVideo();
 
+        ResetGameObject();
+        
+        StartCoroutine(IntroProcess(imtitle, improlog));
+    }
+    void Update()
+    {
+        SkipInput();
+
+        RoundOut();
+    }
+
+    #region ------------------------------[OnClick]------------------------------
+
+    public void CheckIn()
+    {
+        ischeckin = true;
+    }
+
+    #endregion
+
+    #region ----------------------------[ResetProcess]----------------------------
+
+    private void ResetGameObject()
+    {
         startgameui = GameObject.FindGameObjectWithTag("GameStart");
         imtitle = GameObject.FindGameObjectWithTag("Title").GetComponent<Image>();
         improlog = GameObject.FindGameObjectWithTag("PrologVideo").GetComponent<RawImage>();
@@ -29,39 +52,46 @@ public class TitleUI : MonoBehaviour
 
         startgameui.SetActive(false);
         improlog.enabled = false;
-
-        StartCoroutine(IntroProcess(imtitle, improlog));
     }
-    void Update()
+
+    private void ResetVideo()
+    {
+        videoplayer = this.gameObject.GetComponent<VideoPlayer>();
+        videoplayer.Stop();
+    }
+
+    #endregion
+
+    #region ------------------------------[UIEffect]------------------------------
+
+    private void SkipInput()
     {
         if (Input.anyKey && isvideoplaying && !isskip)
         {
             isskip = true;
             SkipVideo();
         }
+    }
 
+    private void RoundOut()
+    {
         if (ischeckin)
         {
             circleout.transform.localScale += new Vector3(0.1f, 0.1f, 0.1f);
 
-            if(circleout.transform.localScale.x > 35f)
+            if (circleout.transform.localScale.x > 35f)
             {
                 SceneManager.LoadScene("Menu");
             }
         }
     }
 
-    void SkipVideo()
+    private void SkipVideo()
     {
         startgameui.SetActive(true);
         isvideoplaying = false;
         videoplayer.Pause();
         StartCoroutine(FadeInOut(null, improlog, 0));
-    }
-
-    public void CheckIn()
-    {
-        ischeckin = true;
     }
 
     IEnumerator IntroProcess(Image _image, RawImage _rawimage)
@@ -138,4 +168,6 @@ public class TitleUI : MonoBehaviour
             yield return new WaitForSeconds(4f);
         }
     }
+
+    #endregion
 }

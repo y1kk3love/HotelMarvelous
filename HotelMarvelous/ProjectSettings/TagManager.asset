@@ -10,6 +10,7 @@ TagManager:
   - PrologVideo
   - CircleOut
   - GameStart
+  - Lobby
   layers:
   - Default
   - TransparentFX

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
+    private bool isattack = false;
+
     private float velocity = 5f;
     private float turnspeed = 10f;
 
@@ -25,10 +27,15 @@ public class Player : MonoBehaviour
     void Update()
     {
         GetInput();
+        Attack();
 
-        if(Mathf.Abs(input.x)< 1 && Mathf.Abs(input.y) < 1)
+        if (Mathf.Abs(input.x)< 1 && Mathf.Abs(input.y) < 1)
         {
             anim.SetBool("Run", false);
+            return;
+        }
+        if (isattack)
+        {
             return;
         }
 
@@ -41,6 +48,14 @@ public class Player : MonoBehaviour
     {
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
+    }
+
+    void Attack()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            StartCoroutine(Attack_01());
+        }
     }
 
     void CalculateDirection()
@@ -60,5 +75,16 @@ public class Player : MonoBehaviour
     {
         anim.SetBool("Run", true);
         transform.position += transform.forward * velocity * Time.deltaTime;
+    }
+
+    IEnumerator Attack_01()
+    {
+        anim.SetBool("Attack_01", true);
+        isattack = true;
+
+        yield return new WaitForSeconds(1.02f);
+
+        anim.SetBool("Attack_01", false);
+        isattack = false;
     }
 }
