@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private bool isattack = false;
+    private bool ontextzone = false;
 
     private float velocity = 5f;
     private float turnspeed = 10f;
@@ -18,6 +19,8 @@ public class Player : MonoBehaviour
 
     private Animator anim;
 
+    private GameObject obzone;
+
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
@@ -26,6 +29,12 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (ontextzone)
+        {
+            anim.SetBool("Run", false);
+            return;
+        }
+
         GetInput();
         Attack();
 
@@ -43,6 +52,33 @@ public class Player : MonoBehaviour
         Rotate();
         Move();
     }
+
+    public bool OnTextZone()
+    {
+        return ontextzone;
+    }
+
+    public void ExitTextZone()
+    {
+        ontextzone = false;
+    }
+
+    public GameObject ObZone()
+    {
+        return obzone;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponent<Dialoguezone>())
+        {
+            ontextzone = true;
+            obzone = other.gameObject;
+            Debug.Log("들어왔어요~");
+        }
+    }
+
+    #region ----------------------------[PlayerControl]----------------------------
 
     void GetInput()
     {
@@ -87,4 +123,6 @@ public class Player : MonoBehaviour
         anim.SetBool("Attack_01", false);
         isattack = false;
     }
+
+    #endregion
 }

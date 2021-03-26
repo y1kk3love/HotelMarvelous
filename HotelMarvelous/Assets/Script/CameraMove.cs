@@ -20,7 +20,6 @@ public class CameraMove : MonoBehaviour
     private Vector3 targetPos;
     private Vector3 dir;
 
-
     void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player").transform;
