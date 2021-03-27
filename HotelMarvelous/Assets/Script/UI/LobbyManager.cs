@@ -48,6 +48,7 @@ public class LobbyManager : MonoBehaviour
         Talk(dialoguezone.id);
 
         uilist[1].SetActive(istalking);
+        uilist[0].SetActive(istalking);
     }
 
     void Talk(int id)
@@ -59,6 +60,7 @@ public class LobbyManager : MonoBehaviour
             istalking = false;
             player.ExitTextZone();
             talkIndex = 0;
+            uilist[0].SetActive(false);
             return;
         }
 
@@ -74,8 +76,8 @@ public class LobbyManager : MonoBehaviour
         talkText = GameObject.FindGameObjectWithTag("TalkText").GetComponent<Text>();
         textmanager = gameObject.GetComponent<TextManager>();
 
-        uilist.Add(transform.FindChild("PressE").gameObject);
-        uilist.Add(transform.FindChild("TextBar").gameObject);
+        uilist.Add(transform.Find("PressE").gameObject);
+        uilist.Add(transform.Find("TextBar").gameObject);
 
         for (int i = 0; i < uilist.Count; i++)
         {

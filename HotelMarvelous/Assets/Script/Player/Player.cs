@@ -53,6 +53,18 @@ public class Player : MonoBehaviour
         Move();
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponent<Dialoguezone>())
+        {
+            ontextzone = true;
+            obzone = other.gameObject;
+            Debug.Log("들어왔어요~");
+        }
+    }
+
+    #region ----------------------------[Public]----------------------------
+
     public bool OnTextZone()
     {
         return ontextzone;
@@ -68,25 +80,31 @@ public class Player : MonoBehaviour
         return obzone;
     }
 
-    void OnTriggerEnter(Collider other)
+    #endregion
+
+    #region ----------------------------[Animation]----------------------------
+
+    private void AttackEnter()
     {
-        if (other.GetComponent<Dialoguezone>())
-        {
-            ontextzone = true;
-            obzone = other.gameObject;
-            Debug.Log("들어왔어요~");
-        }
+        Debug.Log("공격시작");
     }
+
+    private void AttackExit()
+    {
+        Debug.Log("공격끝");
+    }
+
+    #endregion
 
     #region ----------------------------[PlayerControl]----------------------------
 
-    void GetInput()
+    private void GetInput()
     {
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
     }
 
-    void Attack()
+    private void Attack()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
@@ -94,20 +112,20 @@ public class Player : MonoBehaviour
         }
     }
 
-    void CalculateDirection()
+    private void CalculateDirection()
     {
         angle = Mathf.Atan2(input.x, input.y);
         angle = Mathf.Rad2Deg * angle;
         angle += cam.eulerAngles.y;
     }
 
-    void Rotate()
+    private void Rotate()
     {
         targetrotation = Quaternion.Euler(0, angle, 0);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetrotation, turnspeed * Time.deltaTime);
     }
 
-    void Move()
+    private void Move()
     {
         anim.SetBool("Run", true);
         transform.position += transform.forward * velocity * Time.deltaTime;
