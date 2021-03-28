@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     private float velocity = 5f;
     private float turnspeed = 10f;
 
+    private int hp = 200;
+
     private Vector2 input;
     private float angle;
 
@@ -36,21 +38,25 @@ public class Player : MonoBehaviour
         }
 
         GetInput();
-        Attack();
 
-        if (Mathf.Abs(input.x)< 1 && Mathf.Abs(input.y) < 1)
+        if (!isattack)
         {
-            anim.SetBool("Run", false);
+            Attack();
+
+            if (Mathf.Abs(input.x) < 1 && Mathf.Abs(input.y) < 1)
+            {
+                anim.SetBool("Run", false);
+                return;
+            }
+
+            CalculateDirection();
+            Rotate();
+            Move();
+        }
+        else
+        {
             return;
         }
-        if (isattack)
-        {
-            return;
-        }
-
-        CalculateDirection();
-        Rotate();
-        Move();
     }
 
     void OnTriggerEnter(Collider other)
@@ -78,6 +84,16 @@ public class Player : MonoBehaviour
     public GameObject ObZone()
     {
         return obzone;
+    }
+
+    public void GetDamage(int _damage)
+    {
+        hp -= _damage;
+    }
+
+    public int CheckHp()
+    {
+        return hp;
     }
 
     #endregion

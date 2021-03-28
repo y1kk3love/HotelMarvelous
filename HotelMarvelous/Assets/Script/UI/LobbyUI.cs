@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LobbyManager : MonoBehaviour
+public class LobbyUI : MonoBehaviour
 {
     private Player player;
     private TextManager textmanager;

@@ -12,6 +12,8 @@ TagManager:
   - GameStart
   - Lobby
   - TalkText
+  - Monster
+  - HP
   layers:
   - Default
   - TransparentFX
