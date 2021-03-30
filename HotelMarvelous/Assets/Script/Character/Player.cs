@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum WEAPONID
+{
+    SWORD,
+    SPEAR
+}
+
 //[RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
@@ -22,6 +28,8 @@ public class Player : MonoBehaviour
     private Animator anim;
 
     private GameObject obzone;
+
+    public WEAPONID WeaponID = WEAPONID.SWORD;
 
     void Start()
     {
@@ -66,6 +74,10 @@ public class Player : MonoBehaviour
             ontextzone = true;
             obzone = other.gameObject;
             Debug.Log("들어왔어요~");
+        }
+        if (other.gameObject.CompareTag("Monster"))
+        {
+            
         }
     }
 

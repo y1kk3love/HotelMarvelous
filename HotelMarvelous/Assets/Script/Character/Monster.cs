@@ -5,7 +5,9 @@ using UnityEngine;
 public class Monster : MonoBehaviour
 {
     public int monsterid;
+
     private int touchdamage;
+    private int monsterhp;
 
     void Start()
     {
@@ -13,10 +15,15 @@ public class Monster : MonoBehaviour
         {
             case 1:
                 touchdamage = 10;
+                monsterhp = 10;
                 break;
         }
     }
 
+    public void MonGetDamage(int _damage)
+    {
+        monsterhp -= _damage;
+    }
     // Start is called before the first frame update
     private void OnTriggerEnter(Collider other)
     {

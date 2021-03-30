@@ -20,6 +20,6 @@ public class DungeonUI : MonoBehaviour
     void Update()
     {
         hpbar.value = player.CheckHp();
-        hptext.text = "HP" + hpbar.maxValue + " / " + player.CheckHp();
+        hptext.text = "HP " + hpbar.maxValue + " / " + player.CheckHp();
     }
 }
