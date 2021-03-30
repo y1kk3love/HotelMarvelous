@@ -2,19 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackID : Player
+public class AttackID : MonoBehaviour
 {
-    
+    Player player;
 
     void Start()
     {
-        if(WeaponID == WEAPONID.SWORD)
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+
+        if(player.WeaponID == WEAPONID.SWORD)
         {
             
         }
-        else if (WeaponID == WEAPONID.SPEAR)
+        else if (player.WeaponID == WEAPONID.SPEAR)
         {
-            WeaponID = WEAPONID.SPEAR;
+            player.WeaponID = WEAPONID.SPEAR;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Monster"))
+        {
+            Monster monster = other.gameObject.GetComponent<Monster>();
+            monster.MonGetDamage(10);
         }
     }
 

@@ -75,10 +75,6 @@ public class Player : MonoBehaviour
             obzone = other.gameObject;
             Debug.Log("들어왔어요~");
         }
-        if (other.gameObject.CompareTag("Monster"))
-        {
-            
-        }
     }
 
     #region ----------------------------[Public]----------------------------

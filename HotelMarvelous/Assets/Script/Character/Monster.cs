@@ -19,12 +19,19 @@ public class Monster : MonoBehaviour
                 break;
         }
     }
+    void Update()
+    {
+        if(monsterhp <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void MonGetDamage(int _damage)
     {
         monsterhp -= _damage;
     }
-    // Start is called before the first frame update
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
