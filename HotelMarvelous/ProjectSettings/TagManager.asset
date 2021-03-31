@@ -13,7 +13,6 @@ TagManager:
   - Lobby
   - TalkText
   - Monster
-  - HP
   - Attack
   layers:
   - Default

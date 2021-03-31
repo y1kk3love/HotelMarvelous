@@ -12,11 +12,29 @@ public class AttackID : MonoBehaviour
 
         if(player.WeaponID == WEAPONID.SWORD)
         {
-            
+            for(int i = 0; i < transform.childCount; i++)
+            {
+                GameObject _range = transform.Find("Sword").GetChild(i).gameObject;
+
+                if (_range != null)
+                {
+                    player.GetAtkRangList(_range);
+                    _range.SetActive(false);
+                }
+            }
         }
         else if (player.WeaponID == WEAPONID.SPEAR)
         {
-            player.WeaponID = WEAPONID.SPEAR;
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                GameObject _range = gameObject.transform.Find("Sword").GetChild(i).gameObject;
+
+                if (_range != null)
+                {
+                    player.GetAtkRangList(_range);
+                    _range.SetActive(false);
+                }
+            }
         }
     }
 
