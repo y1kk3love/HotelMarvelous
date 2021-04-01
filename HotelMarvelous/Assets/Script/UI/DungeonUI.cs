@@ -20,7 +20,6 @@ public class DungeonUI : MonoBehaviour
         hptext = hpbar.transform.Find("HPText").GetComponent<Text>();
         staminabar = gameObject.transform.Find("StaminaBar").GetComponent<Slider>();
         staminatext = staminabar.transform.Find("StaminaText").GetComponent<Text>();
-
     }
 
     void Update()

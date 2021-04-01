@@ -402,14 +402,14 @@ ModelImporter:
       curves: []
       events:
       - time: 0.4751381
-        functionName: AttackEnter
+        functionName: Attack_00_Enter
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.621547
-        functionName: AttackExit
+        functionName: Attack_00_Exit
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

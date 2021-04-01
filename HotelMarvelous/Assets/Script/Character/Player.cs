@@ -16,9 +16,12 @@ public class Player : MonoBehaviour
     private bool isattack = false;
     private bool ontextzone = false;
 
+    private int damage = 3;
     private int hp = 200;
     private float stamina = 20;
+    [SerializeField]
     private float runspeed = 1.5f;
+    private float speed = 1f;
 
     private Animator anim;
 
@@ -121,14 +124,16 @@ public class Player : MonoBehaviour
 
     #region ----------------------------[Animation]----------------------------
 
-    private void AttackEnter()
+    private void Attack_00_Enter()
     {
-        Debug.Log("공격시작");
+        atkrangeList[0].SetActive(true);
+
+        atkrangeList[0].GetComponent<AttackTrigger>().SetDamage(damage);
     }
 
-    private void AttackExit()
+    private void Attack_00_Exit()
     {
-        Debug.Log("공격끝");
+        atkrangeList[0].SetActive(false);
     }
 
     #endregion
@@ -145,24 +150,24 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            StartCoroutine(Attack_01());
+            StartCoroutine(Attack_00());
         }
         if (Input.GetKey(KeyCode.LeftShift))
         {
             if(stamina > 0)
             {
                 stamina -= Time.deltaTime;
-                runspeed = 10f;
+                speed = runspeed;
             }
             else
             {
                 stamina = 0;
-                runspeed = 1;
+                speed = 1;
             }
         }
         else
         {
-            runspeed = 1;
+            speed = 1;
 
             if(stamina <= 20)
             {
@@ -191,19 +196,17 @@ public class Player : MonoBehaviour
     private void Move()
     {
         anim.SetBool("Run", true);
-        transform.position += transform.forward * velocity * Time.deltaTime *  runspeed;
+        transform.position += transform.forward * velocity * Time.deltaTime *  speed;
     }
 
-    IEnumerator Attack_01()
+    IEnumerator Attack_00()
     {
-        anim.SetBool("Attack_01", true);
-        atkrangeList[0].SetActive(true);
+        anim.SetBool("Attack_00", true);
         isattack = true;
 
         yield return new WaitForSeconds(1.02f);
 
-        anim.SetBool("Attack_01", false);
-        atkrangeList[0].SetActive(false);
+        anim.SetBool("Attack_00", false);
         isattack = false;
     }
 
