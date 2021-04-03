@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraMove : MonoBehaviour
+public class EditCamera : MonoBehaviour
 {
     private Transform target;
     private float targetY = 2.5f;

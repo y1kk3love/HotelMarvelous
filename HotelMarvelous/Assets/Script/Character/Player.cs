@@ -36,12 +36,10 @@ public class Player : MonoBehaviour
     private float angle;
 
     private Quaternion targetrotation;
-    private Transform cam;
 
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
-        cam = Camera.main.transform;
     }
 
     void Update()
@@ -144,6 +142,19 @@ public class Player : MonoBehaviour
     {
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                Vector3 targetPos = hit.point;
+                Vector3 dir = targetPos - transform.position;
+                transform.forward = dir.normalized;
+            }
+        }
     }
 
     private void Attack()
@@ -184,7 +195,7 @@ public class Player : MonoBehaviour
     {
         angle = Mathf.Atan2(input.x, input.y);
         angle = Mathf.Rad2Deg * angle;
-        angle += cam.eulerAngles.y;
+        angle += Camera.main.transform.eulerAngles.y;
     }
 
     private void Rotate()

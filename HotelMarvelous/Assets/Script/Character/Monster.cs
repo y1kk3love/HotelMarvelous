@@ -81,8 +81,6 @@ public class Monster : MonoBehaviour
 
         if (Physics.Raycast(Monpos, dir, out Hit))
         {
-            Debug.Log(Hit.transform);
-
             if (Hit.transform == player.transform)
             {
                 navi.SetDestination(Hit.transform.position);
