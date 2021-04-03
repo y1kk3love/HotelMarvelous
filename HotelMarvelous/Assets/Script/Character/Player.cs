@@ -50,10 +50,9 @@ public class Player : MonoBehaviour
             return;
         }
 
-        GetInput();
-
         if (!isattack)
         {
+            GetInput();
             Attack();
 
             if (Mathf.Abs(input.x) < 1 && Mathf.Abs(input.y) < 1)
@@ -143,7 +142,7 @@ public class Player : MonoBehaviour
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
