@@ -23,6 +23,12 @@ public class Player : MonoBehaviour
     private float runspeed = 1.5f;
     private float speed = 1f;
 
+    private float itemMagnification = 6;
+    private float itemcount = 1;
+
+    private bool isdispoitemon = false;
+    private int dispoitemcode = 0;
+
     private Animator anim;
 
     private GameObject obzone;
@@ -52,8 +58,8 @@ public class Player : MonoBehaviour
 
         if (!isattack)
         {
-            GetInput();
-            Attack();
+            GetMovementInput();
+            GetSkillInput();
 
             if (Mathf.Abs(input.x) < 1 && Mathf.Abs(input.y) < 1)
             {
@@ -82,6 +88,27 @@ public class Player : MonoBehaviour
     }
 
     #region ----------------------------[Public]----------------------------
+
+    public void Test_AddItemCount()
+    {
+        itemcount++;
+    }
+
+    public void Test_AddDisoItem()
+    {
+        isdispoitemon = true;
+        dispoitemcode = 1;
+    }
+
+    public void SetItemMagnification(int _magnification)
+    {
+        itemMagnification = _magnification;
+    }
+
+    public float CheckItemCount()
+    {
+        return itemcount / itemMagnification;
+    }
 
     public void GetAtkRangList(GameObject _atkrang)
     {
@@ -117,6 +144,18 @@ public class Player : MonoBehaviour
         return hp;
     }
 
+    public int CheckItemCode()
+    {
+        if (isdispoitemon)
+        {
+            return dispoitemcode;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     #endregion
 
     #region ----------------------------[Animation]----------------------------
@@ -137,7 +176,7 @@ public class Player : MonoBehaviour
 
     #region ----------------------------[PlayerControl]----------------------------
 
-    private void GetInput()
+    private void GetMovementInput()
     {
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
@@ -156,12 +195,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Attack()
+    private void GetSkillInput()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             StartCoroutine(Attack_00());
         }
+
         if (Input.GetKey(KeyCode.LeftShift))
         {
             if(stamina > 0)
@@ -186,6 +226,27 @@ public class Player : MonoBehaviour
             else
             {
                 stamina = 20;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && itemcount / itemMagnification == 1)
+        {
+            itemcount = 0;
+            hp = 200;
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl) && isdispoitemon)
+        {
+            if (itemcount / itemMagnification != 1)
+            {
+                switch (dispoitemcode)
+                {
+                    case 1:
+                        itemcount = itemMagnification;
+                        isdispoitemon = false;
+                        dispoitemcode = 0;
+                        break;
+                }
             }
         }
     }
