@@ -54,6 +54,7 @@ public class Monster : MonoBehaviour
 
     public void MonGetDamage(int _damage)
     {
+        Debug.Log("Get " + _damage + "Damage");
         monsterhp -= _damage;
     }
 

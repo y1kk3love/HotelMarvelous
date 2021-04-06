@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
 {
     private List<GameObject> atkrangeList = new List<GameObject>();
 
+    private GameObject[] itemArr;
+
     private bool isattack = false;
     private bool ontextzone = false;
 
@@ -24,10 +26,12 @@ public class Player : MonoBehaviour
     private float speed = 1f;
 
     private float itemMagnification = 6;
+    [SerializeField]
     private float itemcount = 1;
 
     private bool isdispoitemon = false;
     private int dispoitemcode = 0;
+    private int itemcode = 0;
 
     private Animator anim;
 
@@ -45,6 +49,8 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        itemArr = Resources.LoadAll<GameObject>("Prefab/Item");
+
         anim = gameObject.GetComponent<Animator>();
     }
 
@@ -98,6 +104,18 @@ public class Player : MonoBehaviour
     {
         isdispoitemon = true;
         dispoitemcode = 1;
+    }
+
+    public void Test_GamePause()
+    {
+        if (Time.timeScale == 1)
+        {
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
     }
 
     public void SetItemMagnification(int _magnification)
@@ -190,7 +208,7 @@ public class Player : MonoBehaviour
             {
                 Vector3 targetPos = hit.point;
                 Vector3 dir = targetPos - transform.position;
-                transform.forward = dir.normalized;
+                transform.forward = new Vector3(dir.x, 0, dir.z).normalized;
             }
         }
     }
@@ -229,10 +247,17 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && itemcount / itemMagnification == 1)
+        if (Input.GetKeyDown(KeyCode.Space) && itemcount / itemMagnification >= 1)
         {
             itemcount = 0;
-            hp = 200;
+
+            switch (itemcode)
+            {
+                case 0:
+                    Instantiate(itemArr[0], transform.position, Quaternion.identity);
+                    //itemArr[0];
+                    break;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.LeftControl) && isdispoitemon)
