@@ -18,7 +18,7 @@ public class WeaponManager : MonoBehaviour
 
                 if (_range != null)
                 {
-                    player.GetAtkRangList(_range);
+                    player.SetAtkRangList(_range);
                     _range.SetActive(false);
                 }
             }

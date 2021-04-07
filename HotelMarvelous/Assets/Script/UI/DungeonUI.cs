@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class DungeonUI : MonoBehaviour
 {
     private Player player;
+    private ResourceManager resource;
 
     private Text hptext;
 
@@ -14,6 +15,7 @@ public class DungeonUI : MonoBehaviour
 
     private Image itemCounter;
     private Image dispoitemimage;
+    private Image itemimage;
 
     public Sprite[] dispoimagearr;
 
@@ -24,12 +26,16 @@ public class DungeonUI : MonoBehaviour
         hptext = hpbar.transform.Find("HPText").GetComponent<Text>();
         staminabar = gameObject.transform.Find("StaminaBar").GetComponent<Slider>();
         itemCounter = GameObject.FindGameObjectWithTag("ItemCounter").GetComponent<Image>();
+        itemimage = GameObject.FindGameObjectWithTag("ItemCounter").transform.GetChild(0).GetComponent<Image>();
         dispoitemimage = transform.Find("DispoItem").GetComponent<Image>();
+        resource = GameObject.Find("ResourceManager").GetComponent<ResourceManager>();
     }
 
     void Update()
     {
-        switch (player.CheckItemCode())
+        itemimage.sprite = resource.GetItemSprite(player.GetItemCode());
+
+        switch (player.GetDispoItemCode())
         {
             case 0:
                 dispoitemimage.sprite = dispoimagearr[0];
@@ -39,10 +45,10 @@ public class DungeonUI : MonoBehaviour
                 break;
         }
 
-        hpbar.value = player.CheckHp();
-        hptext.text = hpbar.maxValue + " / " + player.CheckHp();
+        hpbar.value = player.GetHp();
+        hptext.text = hpbar.maxValue + " / " + player.GetHp();
 
-        staminabar.value = player.CheckStamina();
-        itemCounter.fillAmount = player.CheckItemCount();
+        staminabar.value = player.GetStamina();
+        itemCounter.fillAmount = player.GetItemCount();
     }
 }

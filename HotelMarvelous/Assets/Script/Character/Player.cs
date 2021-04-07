@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 {
     private List<GameObject> atkrangeList = new List<GameObject>();
 
-    private GameObject[] itemArr;
+    private ResourceManager resource;
 
     private bool isattack = false;
     private bool ontextzone = false;
@@ -31,6 +31,7 @@ public class Player : MonoBehaviour
 
     private bool isdispoitemon = false;
     private int dispoitemcode = 0;
+    [SerializeField]
     private int itemcode = 0;
 
     private Animator anim;
@@ -49,9 +50,9 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        itemArr = Resources.LoadAll<GameObject>("Prefab/Item");
-
         anim = gameObject.GetComponent<Animator>();
+
+        resource = GameObject.Find("ResourceManager").GetComponent<ResourceManager>();
     }
 
     void Update()
@@ -91,6 +92,19 @@ public class Player : MonoBehaviour
             obzone = other.gameObject;
             Debug.Log("들어왔어요~");
         }
+        if (other.GetComponent<RewardItem>())
+        {
+
+            int _itemcode;
+
+            RewardItem rewarditem = other.GetComponent<RewardItem>();
+
+            _itemcode = rewarditem.GetRewardItemcode();
+            rewarditem.SetRewardItemcode(itemcode);
+            itemcode = _itemcode;
+
+            itemMagnification = resource.GetItemMagnification(itemcode);
+        }
     }
 
     #region ----------------------------[Public]----------------------------
@@ -118,51 +132,26 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetItemMagnification(int _magnification)
-    {
-        itemMagnification = _magnification;
-    }
-
-    public float CheckItemCount()
-    {
-        return itemcount / itemMagnification;
-    }
-
-    public void GetAtkRangList(GameObject _atkrang)
-    {
-        atkrangeList.Add(_atkrang);
-    }
-
-    public float CheckStamina()
-    {
-        return stamina;
-    }
-    public bool OnTextZone()
-    {
-        return ontextzone;
-    }
-
     public void ExitTextZone()
     {
         ontextzone = false;
     }
 
-    public GameObject ObZone()
+    public int GetItemCode()
     {
-        return obzone;
-    }
+        return itemcode;
+    }   
 
-    public void GetDamage(int _damage)
+    public float GetItemCount()
     {
-        hp -= _damage;
+        return itemcount / itemMagnification;
     }
-
-    public int CheckHp()
+    public int GetHp()
     {
         return hp;
     }
 
-    public int CheckItemCode()
+    public int GetDispoItemCode()
     {
         if (isdispoitemon)
         {
@@ -174,6 +163,35 @@ public class Player : MonoBehaviour
         }
     }
 
+    public float GetStamina()
+    {
+        return stamina;
+    }
+    public bool GetOnTextZone()
+    {
+        return ontextzone;
+    }
+
+    public GameObject GetObZone()
+    {
+        return obzone;
+    }
+
+    public void SetAtkRangList(GameObject _atkrang)
+    {
+        atkrangeList.Add(_atkrang);
+    }
+
+    public void SetItemMagnification(int _magnification)
+    {
+        itemMagnification = _magnification;
+    }
+
+    public void SetDamage(int _damage)
+    {
+        hp -= _damage;
+    }
+
     #endregion
 
     #region ----------------------------[Animation]----------------------------
@@ -182,12 +200,16 @@ public class Player : MonoBehaviour
     {
         atkrangeList[0].SetActive(true);
 
+        Time.timeScale = 0.4f;
+
         atkrangeList[0].GetComponent<AttackTrigger>().SetDamage(damage);
     }
 
     private void Attack_00_Exit()
     {
         atkrangeList[0].SetActive(false);
+
+        Time.timeScale = 1;
     }
 
     #endregion
@@ -254,8 +276,10 @@ public class Player : MonoBehaviour
             switch (itemcode)
             {
                 case 0:
-                    Instantiate(itemArr[0], transform.position, Quaternion.identity);
-                    //itemArr[0];
+                    Instantiate(resource.GetItemPrefeb(0), transform.position, Quaternion.identity);
+                    break;
+                case 1:
+                    Debug.Log("슬롯머신 발동!");
                     break;
             }
         }

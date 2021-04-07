@@ -14,7 +14,6 @@ public class LobbyUI : MonoBehaviour
 
     private Text talkText;
     private List<GameObject> uilist = new List<GameObject>();
-    private Dictionary<int, string[]> talkData;
 
     void Start()
     {
@@ -28,7 +27,7 @@ public class LobbyUI : MonoBehaviour
 
     private void UIProcess()
     {
-        if (player.OnTextZone())
+        if (player.GetOnTextZone())
         {
             uilist[0].SetActive(true);
 
@@ -44,7 +43,7 @@ public class LobbyUI : MonoBehaviour
 
     private void OntalkZoneEnter()
     {
-        Dialoguezone dialoguezone = player.ObZone().GetComponent<Dialoguezone>();
+        Dialoguezone dialoguezone = player.GetObZone().GetComponent<Dialoguezone>();
         Talk(dialoguezone.id);
 
         uilist[1].SetActive(istalking);

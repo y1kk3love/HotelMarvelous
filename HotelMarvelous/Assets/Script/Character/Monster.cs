@@ -18,6 +18,8 @@ public class Monster : MonoBehaviour
     private float monspeed = 1;
     [SerializeField]
     private float Movedelay = 0.5f;
+    [SerializeField]
+    private float raylength = 5;
 
     void Start()
     {
@@ -50,6 +52,10 @@ public class Monster : MonoBehaviour
 
             Movedelay = Random.Range(0.3f, 1);      //초기화할때 랜덤으로
         }
+
+        Vector3 Debugdir = player.transform.position - transform.position;      //디버깅용
+        Debugdir.Normalize();
+        Debug.DrawRay(this.transform.position, Debugdir * raylength, Color.red);
     }
 
     public void MonGetDamage(int _damage)
@@ -63,8 +69,8 @@ public class Monster : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Player player = other.gameObject.GetComponent<Player>();
-            player.GetDamage(touchdamage);
-            Debug.Log(player.CheckHp());
+            player.SetDamage(touchdamage);
+            Debug.Log(player.GetHp());
         }
     }
 
@@ -72,15 +78,11 @@ public class Monster : MonoBehaviour
     {
         Vector3 Monpos = new Vector3(this.transform.position.x, this.transform.position.y + 1.5f, this.transform.position.z);
 
-        Vector3 Debugdir = player.transform.position - transform.position;      //디버깅용
-        Debugdir.Normalize();
-        Debug.DrawRay(this.transform.position, Debugdir * 5.0f, Color.red);
-
         RaycastHit Hit;
         Vector3 dir = player.transform.position - Monpos;           //방향값은 목표vector좌표에서 내 vector좌표를 뺀값
-        Physics.Raycast(Monpos, dir, out Hit);
+        Physics.Raycast(Monpos, dir, out Hit, raylength);
 
-        if (Physics.Raycast(Monpos, dir, out Hit))
+        if (Physics.Raycast(Monpos, dir, out Hit, raylength))
         {
             if (Hit.transform == player.transform)
             {
