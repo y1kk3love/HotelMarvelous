@@ -6,8 +6,6 @@ using System.IO;
 
 public class ResourceManager : MonoBehaviour
 {
-    private ItemInfo iteminfo = new ItemInfo();
-
     private GameObject[] itemprefabArr;
     private Sprite[] itemspriteArr;
     private List<ItemInfo> itemList = new List<ItemInfo>();
@@ -35,6 +33,8 @@ public class ResourceManager : MonoBehaviour
 
         for (int i = 0; i < itemprefabArr.Length + 1; i++)
         {
+            ItemInfo iteminfo = new ItemInfo();
+
             if (x < itemspriteArr.Length - 1)
             {
                 tempobjet = itemprefabArr[x];
@@ -44,7 +44,6 @@ public class ResourceManager : MonoBehaviour
             {
                 iteminfo.SetSprite(itemspriteArr[i]);
                 iteminfo.SetObject(null);
-                x++;
             }
             else
             {
@@ -55,7 +54,6 @@ public class ResourceManager : MonoBehaviour
 
             iteminfo.SetMagnification(int.Parse(_textarr[i]));
             itemList.Add(iteminfo);
-            Debug.Log(iteminfo);
         }
     }
 
