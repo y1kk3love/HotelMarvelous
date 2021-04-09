@@ -9,9 +9,11 @@ public class DungeonUI : MonoBehaviour
     private ResourceManager resource;
 
     private Text hptext;
+    private Text mentaltext;
 
     private Slider hpbar;
     private Slider staminabar;
+    private Slider mentalbar;
 
     private Image itemCounter;
     private Image dispoitemimage;
@@ -25,10 +27,12 @@ public class DungeonUI : MonoBehaviour
         hpbar = gameObject.transform.Find("HPBar").GetComponent<Slider>();
         hptext = hpbar.transform.Find("HPText").GetComponent<Text>();
         staminabar = gameObject.transform.Find("StaminaBar").GetComponent<Slider>();
-        itemCounter = GameObject.FindGameObjectWithTag("ItemCounter").GetComponent<Image>();
-        itemimage = GameObject.FindGameObjectWithTag("ItemCounter").transform.GetChild(0).GetComponent<Image>();
+        itemCounter = GameObject.Find("ItemCounter").GetComponent<Image>();
+        itemimage = GameObject.Find("ItemImage").GetComponent<Image>();
         dispoitemimage = transform.Find("DispoItem").GetComponent<Image>();
         resource = GameObject.Find("ResourceManager").GetComponent<ResourceManager>();
+        mentaltext = GameObject.Find("MentalText").GetComponent<Text>();
+        mentalbar = GameObject.Find("MentalityBar").GetComponent<Slider>();
     }
 
     void Update()
@@ -47,6 +51,9 @@ public class DungeonUI : MonoBehaviour
 
         hpbar.value = player.GetHp();
         hptext.text = hpbar.maxValue + " / " + player.GetHp();
+
+        mentalbar.value = player.GetMentality();
+        mentaltext.text = string.Format("{0:00.0} ", player.GetMentality());
 
         staminabar.value = player.GetStamina();
         itemCounter.fillAmount = player.GetItemCount();

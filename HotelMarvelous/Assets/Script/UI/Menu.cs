@@ -11,7 +11,7 @@ public class Menu : MonoBehaviour
 
     void Start()
     {
-        circleout = GameObject.FindGameObjectWithTag("CircleOut");
+        circleout = GameObject.Find("CircleOut");
     }
 
     public void OnClickNewGame()

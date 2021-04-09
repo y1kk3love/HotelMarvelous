@@ -45,10 +45,10 @@ public class TitleUI : MonoBehaviour
 
     private void ResetGameObject()
     {
-        startgameui = GameObject.FindGameObjectWithTag("GameStart");
-        imtitle = GameObject.FindGameObjectWithTag("Title").GetComponent<Image>();
-        improlog = GameObject.FindGameObjectWithTag("PrologVideo").GetComponent<RawImage>();
-        circleout = GameObject.FindGameObjectWithTag("CircleOut");
+        startgameui = GameObject.Find("StartGame");
+        imtitle = GameObject.Find("Title").GetComponent<Image>();
+        improlog = GameObject.Find("PrologVideo").GetComponent<RawImage>();
+        circleout = GameObject.Find("CircleOut");
 
         startgameui.SetActive(false);
         improlog.enabled = false;
@@ -143,8 +143,8 @@ public class TitleUI : MonoBehaviour
 
             if (isskip)
             {
-                GameObject.FindGameObjectWithTag("Title").SetActive(false);
-                GameObject.FindGameObjectWithTag("PrologVideo").SetActive(false);
+                imtitle.gameObject.SetActive(false);
+                improlog.gameObject.SetActive(false);
             }
         }
         else if(_image != null)

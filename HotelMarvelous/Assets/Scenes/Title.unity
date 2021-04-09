@@ -345,8 +345,8 @@ GameObject:
   - component: {fileID: 872702232}
   - component: {fileID: 872702231}
   m_Layer: 5
-  m_Name: CheckImage
-  m_TagString: CircleOut
+  m_Name: CircleOut
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -420,7 +420,7 @@ GameObject:
   - component: {fileID: 1148261063}
   m_Layer: 5
   m_Name: Title
-  m_TagString: Title
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -495,7 +495,7 @@ GameObject:
   - component: {fileID: 1386811157}
   m_Layer: 5
   m_Name: StartGame
-  m_TagString: GameStart
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -903,7 +903,7 @@ GameObject:
   - component: {fileID: 1692809331}
   m_Layer: 5
   m_Name: PrologVideo
-  m_TagString: PrologVideo
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -347,8 +347,8 @@ GameObject:
   - component: {fileID: 465880258}
   - component: {fileID: 465880257}
   m_Layer: 5
-  m_Name: CheckImage
-  m_TagString: CircleOut
+  m_Name: CircleOut
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

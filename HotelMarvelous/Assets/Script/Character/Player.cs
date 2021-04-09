@@ -11,34 +11,49 @@ public enum WEAPONID
 //[RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    private List<GameObject> atkrangeList = new List<GameObject>();
-
     private ResourceManager resource;
 
-    private bool isattack = false;
-    private bool ontextzone = false;
+    #region [Status]
 
     private int damage = 3;
     private int hp = 200;
     private float stamina = 20;
-    [SerializeField]
     private float runspeed = 1.5f;
     private float speed = 1f;
+    private float mentality = 50.0f;
+
+    #endregion
+
+    #region [Item]
 
     private float itemMagnification = 6;
-    [SerializeField]
     private float itemcount = 1;
-
     private bool isdispoitemon = false;
     private int dispoitemcode = 0;
-    [SerializeField]
     private int itemcode = 0;
 
-    private Animator anim;
+    #endregion
 
-    private GameObject obzone;
+    #region [Weapon]
+
+    private List<GameObject> atkrangeList = new List<GameObject>();
 
     public WEAPONID WeaponID = WEAPONID.SWORD;
+
+    #endregion
+
+    #region [TextZone]
+
+    private bool ontextzone = false;
+    private GameObject obzone;
+
+    #endregion
+
+    #region [Movement]
+
+    private bool isattack = false;
+
+    private Animator anim;
 
     private float velocity = 5f;
     private float turnspeed = 10f;
@@ -47,6 +62,8 @@ public class Player : MonoBehaviour
     private float angle;
 
     private Quaternion targetrotation;
+
+    #endregion
 
     void Start()
     {
@@ -137,6 +154,11 @@ public class Player : MonoBehaviour
         ontextzone = false;
     }
 
+    public float GetMentality()
+    {
+        return mentality;
+    }
+
     public int GetItemCode()
     {
         return itemcode;
@@ -167,6 +189,7 @@ public class Player : MonoBehaviour
     {
         return stamina;
     }
+
     public bool GetOnTextZone()
     {
         return ontextzone;
@@ -175,6 +198,11 @@ public class Player : MonoBehaviour
     public GameObject GetObZone()
     {
         return obzone;
+    }
+
+    public void SetMentality(float _mentality)
+    {
+        mentality -= _mentality;
     }
 
     public void SetAtkRangList(GameObject _atkrang)
@@ -199,17 +227,12 @@ public class Player : MonoBehaviour
     private void Attack_00_Enter()
     {
         atkrangeList[0].SetActive(true);
-
-        Time.timeScale = 0.4f;
-
         atkrangeList[0].GetComponent<AttackTrigger>().SetDamage(damage);
     }
 
     private void Attack_00_Exit()
     {
         atkrangeList[0].SetActive(false);
-
-        Time.timeScale = 1;
     }
 
     #endregion
@@ -276,7 +299,9 @@ public class Player : MonoBehaviour
             switch (itemcode)
             {
                 case 0:
-                    Instantiate(resource.GetItemPrefeb(0), transform.position, Quaternion.identity);
+                    GameObject areaskill = Instantiate(resource.GetItemPrefeb(0), transform.position, Quaternion.identity);
+                    WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
+                    wide.SetSkillPreset("Monster", 3f);
                     break;
                 case 1:
                     Debug.Log("슬롯머신 발동!");

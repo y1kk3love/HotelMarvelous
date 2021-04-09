@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class RewardItem : MonoBehaviour
 {
-    [SerializeField]
-    private float rotatespeed = 0.35f;
-
     private GameObject _child;
 
     [SerializeField]
@@ -19,8 +16,6 @@ public class RewardItem : MonoBehaviour
 
     void Update()
     {
-        _child.transform.Rotate(0, rotatespeed, 0, Space.World);
-
         if(itemcode == 0)
         {
             _child.GetComponent<Renderer>().material.color = Color.red;

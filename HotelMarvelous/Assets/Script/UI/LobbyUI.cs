@@ -81,7 +81,6 @@ public class LobbyUI : MonoBehaviour
         for (int i = 0; i < uilist.Count; i++)
         {
             uilist[i].SetActive(false);
-            Debug.Log(i);
         }
     }
 }

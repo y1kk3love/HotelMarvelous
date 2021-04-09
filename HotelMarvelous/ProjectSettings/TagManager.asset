@@ -6,15 +6,10 @@ TagManager:
   tags:
   - SpawnPoint
   - Rooms
-  - Title
-  - PrologVideo
-  - CircleOut
-  - GameStart
   - Lobby
   - TalkText
   - Monster
   - Attack
-  - ItemCounter
   layers:
   - Default
   - TransparentFX
