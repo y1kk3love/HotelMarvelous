@@ -8,6 +8,12 @@ public enum WEAPONID
     SPEAR
 }
 
+public enum ITEMCODE : int
+{
+    CROWN,
+    SLOTMACHINE
+}
+
 //[RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
@@ -44,6 +50,7 @@ public class Player : MonoBehaviour
 
     #region [TextZone]
 
+    private bool isconv = false;
     private bool ontextzone = false;
     private GameObject obzone;
 
@@ -69,12 +76,15 @@ public class Player : MonoBehaviour
     {
         anim = gameObject.GetComponent<Animator>();
 
-        resource = GameObject.Find("ResourceManager").GetComponent<ResourceManager>();
+        if (GameObject.Find("ResourceManager") != null)
+        {
+            resource = GameObject.Find("ResourceManager").GetComponent<ResourceManager>();
+        }
     }
 
     void Update()
     {
-        if (ontextzone)
+        if (isconv)
         {
             anim.SetBool("Run", false);
             return;
@@ -111,7 +121,6 @@ public class Player : MonoBehaviour
         }
         if (other.GetComponent<RewardItem>())
         {
-
             int _itemcode;
 
             RewardItem rewarditem = other.GetComponent<RewardItem>();
@@ -121,6 +130,15 @@ public class Player : MonoBehaviour
             itemcode = _itemcode;
 
             itemMagnification = resource.GetItemMagnification(itemcode);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.GetComponent<Dialoguezone>())
+        {
+            ontextzone = false;
+            Debug.Log("나가요~");
         }
     }
 
@@ -198,6 +216,11 @@ public class Player : MonoBehaviour
     public GameObject GetObZone()
     {
         return obzone;
+    }
+
+    public void SetIsConversation(bool _bool)
+    {
+        isconv = _bool;
     }
 
     public void SetMentality(float _mentality)
@@ -299,7 +322,7 @@ public class Player : MonoBehaviour
             switch (itemcode)
             {
                 case 0:
-                    GameObject areaskill = Instantiate(resource.GetItemPrefeb(0), transform.position, Quaternion.identity);
+                    GameObject areaskill = Instantiate(resource.GetItemPrefeb((int)ITEMCODE.CROWN), transform.position, Quaternion.identity);
                     WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
                     wide.SetSkillPreset("Monster", 3f);
                     break;

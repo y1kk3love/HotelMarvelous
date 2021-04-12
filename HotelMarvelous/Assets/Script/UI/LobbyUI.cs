@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class LobbyUI : MonoBehaviour
 {
+    private GameObject buttonimage;
+    private GameObject textbar;
+
     private Player player;
     private TextManager textmanager;
 
@@ -13,7 +16,6 @@ public class LobbyUI : MonoBehaviour
     private int talkIndex;
 
     private Text talkText;
-    private List<GameObject> uilist = new List<GameObject>();
 
     void Start()
     {
@@ -22,35 +24,32 @@ public class LobbyUI : MonoBehaviour
 
     void Update()
     {
-        UIProcess();
+        TextZoneCheck();
     }
 
-    private void UIProcess()
+    private void TextZoneCheck()
     {
-        if (player.GetOnTextZone())
+        buttonimage.SetActive(player.GetOnTextZone());
+
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            uilist[0].SetActive(true);
+            textbar.SetActive(true);
+            Debug.Log("작동");
 
-            if (Input.GetKeyDown(KeyCode.E))
-            {                
-                uilist[1].SetActive(true);
-                Debug.Log("작동");
-
-                OntalkZoneEnter();
-            }
+            TalkZoneReset();
         }
     }   
 
-    private void OntalkZoneEnter()
+    private void TalkZoneReset()
     {
         Dialoguezone dialoguezone = player.GetObZone().GetComponent<Dialoguezone>();
-        Talk(dialoguezone.id);
+        TalkProcess(dialoguezone.id);
 
-        uilist[1].SetActive(istalking);
-        uilist[0].SetActive(istalking);
+        textbar.SetActive(istalking);
+        buttonimage.SetActive(istalking);
     }
 
-    void Talk(int id)
+    private void TalkProcess(int id)
     {
         string talkData = textmanager.GetTalk(id, talkIndex);
 
@@ -59,12 +58,14 @@ public class LobbyUI : MonoBehaviour
             istalking = false;
             player.ExitTextZone();
             talkIndex = 0;
-            uilist[0].SetActive(false);
+            buttonimage.SetActive(false);
+            player.SetIsConversation(false);
             return;
         }
 
         talkText.text = talkData;
 
+        player.SetIsConversation(true);
         istalking = true;
         talkIndex++;
     }
@@ -72,16 +73,13 @@ public class LobbyUI : MonoBehaviour
     private void ResetUI()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        talkText = GameObject.FindGameObjectWithTag("TalkText").GetComponent<Text>();
+        talkText = GameObject.Find("TalkText").GetComponent<Text>();
         textmanager = gameObject.GetComponent<TextManager>();
+        buttonimage = GameObject.Find("PressE");
+        textbar = GameObject.Find("TextBar");
 
-        uilist.Add(transform.Find("PressE").gameObject);
-        uilist.Add(transform.Find("TextBar").gameObject);
-
-        for (int i = 0; i < uilist.Count; i++)
-        {
-            uilist[i].SetActive(false);
-        }
+        buttonimage.SetActive(false);
+        textbar.SetActive(false);
     }
 }
 

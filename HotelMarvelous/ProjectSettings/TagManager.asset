@@ -7,7 +7,6 @@ TagManager:
   - SpawnPoint
   - Rooms
   - Lobby
-  - TalkText
   - Monster
   - Attack
   layers:

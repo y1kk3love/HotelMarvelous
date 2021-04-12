@@ -42,10 +42,10 @@ public class DungeonUI : MonoBehaviour
         switch (player.GetDispoItemCode())
         {
             case 0:
-                dispoitemimage.sprite = dispoimagearr[0];
+                dispoitemimage.sprite = dispoimagearr[(int)ITEMCODE.CROWN];
                 break;
             case 1:
-                dispoitemimage.sprite = dispoimagearr[1];
+                dispoitemimage.sprite = dispoimagearr[(int)ITEMCODE.SLOTMACHINE];
                 break;
         }
 
