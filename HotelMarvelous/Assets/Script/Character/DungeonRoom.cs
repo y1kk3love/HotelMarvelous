@@ -24,7 +24,7 @@ public class DungeonRoom : MonoBehaviour
         {
             float x = Random.Range(xPos, -xPos);
             float z = Random.Range(zPos, -zPos);
-            int id = Random.Range(0, 1);
+            int id = Random.Range(0, 2);
 
             GameObject mon = Instantiate(monsteprefab, new Vector3(x, 0.6f, z), Quaternion.identity);
             Monster monster = mon.GetComponent<Monster>();

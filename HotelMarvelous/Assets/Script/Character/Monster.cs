@@ -175,7 +175,8 @@ public class Monster : MonoBehaviour
         GameObject beam = Instantiate(rangeskill, targetpos, transform.rotation);
         WideAreaSkill wide = beam.GetComponent<WideAreaSkill>();
         wide.SetSkillPreset("Player", 5f);
-        wide.SetSkillRange(2f);
+        float range = Vector3.Distance(player.transform.position, transform.position);
+        wide.SetSkillRange(range/5);
 
         yield return new WaitForSeconds(5f);
 
