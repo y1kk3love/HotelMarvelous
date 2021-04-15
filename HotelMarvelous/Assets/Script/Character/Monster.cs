@@ -114,7 +114,14 @@ public class Monster : MonoBehaviour
                 }
                 else
                 {
-                    navi.SetDestination(transform.position);
+                    if(gameObject != null)
+                    {
+                        navi.SetDestination(transform.position);
+                    }
+                    else
+                    {
+                        return;
+                    }
 
                     if (!isinstantiate)
                     {
