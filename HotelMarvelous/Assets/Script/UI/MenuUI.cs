@@ -5,33 +5,27 @@ using UnityEngine.SceneManagement;
 
 public class MenuUI : MonoBehaviour
 {
-    private GameObject circleout;
-
-    private bool isnewgameon = false;
+    private GameObject circleFadeout;
 
     void Start()
     {
-        circleout = GameObject.Find("CircleOut");
+        circleFadeout = GameObject.Find("CircleOut");
     }
 
     public void OnClickNewGame()
     {
-        isnewgameon = true;
+        StartCoroutine(CircleOut(0.2f));
     }
 
-    void Update()
+    IEnumerator CircleOut(float _speed)
     {
-        if (isnewgameon)
+        while (circleFadeout.transform.localScale.x < 35f)
         {
-            circleout.transform.localScale += new Vector3(50f, 50f, 50f) * Time.deltaTime;
+            circleFadeout.transform.localScale += new Vector3(_speed, _speed, 0);
 
-            if (circleout.transform.localScale.x > 35)
-            {
-                isnewgameon = false;
-
-                SceneManager.LoadScene("Lobby");
-            }
+            yield return null;
         }
-        
+
+        SceneManager.LoadScene("Lobby");
     }
 }

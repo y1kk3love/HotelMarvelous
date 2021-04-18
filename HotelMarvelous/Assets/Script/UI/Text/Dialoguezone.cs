@@ -3,25 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum TEXTZONE : byte
+{    
+    COUNTER,
+    TODUNGEON = 200
+}
+
 public class Dialoguezone : MonoBehaviour
 {
-    public int id;
-
-    public int? CheckID()
-    {
-        if(id != 100)
-        {
-            return id;
-        }
-        else
-        {
-            return null;
-        }
-    }
+    public TEXTZONE textzone;
+    public byte Dialogueid;
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && id == 100)
+        if (other.CompareTag("Player") && textzone == TEXTZONE.TODUNGEON)
         {
             SceneManager.LoadScene("Dungeon");
         }

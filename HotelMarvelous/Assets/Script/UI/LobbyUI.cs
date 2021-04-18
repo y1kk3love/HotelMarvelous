@@ -13,7 +13,7 @@ public class LobbyUI : MonoBehaviour
 
     private bool istalking;
 
-    private int talkIndex;
+    private byte talkIndex;
 
     private Text talkText;
 
@@ -29,9 +29,14 @@ public class LobbyUI : MonoBehaviour
 
     private void TextZoneCheck()
     {
-        buttonimage.SetActive(player.GetOnTextZone());
+        GameObject obtextzone = player.GetObZone();
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (obtextzone != null && obtextzone.GetComponent<Dialoguezone>().textzone != TEXTZONE.TODUNGEON)
+        {
+            buttonimage.SetActive(player.GetOnTextZone());
+        }       
+
+        if (Input.GetKeyDown(KeyCode.E) && player.GetOnTextZone())
         {
             textbar.SetActive(true);
             Debug.Log("작동");
@@ -43,15 +48,15 @@ public class LobbyUI : MonoBehaviour
     private void TalkZoneReset()
     {
         Dialoguezone dialoguezone = player.GetObZone().GetComponent<Dialoguezone>();
-        TalkProcess(dialoguezone.id);
+        TalkProcess((byte)dialoguezone.textzone , dialoguezone.Dialogueid);
 
         textbar.SetActive(istalking);
         buttonimage.SetActive(istalking);
     }
 
-    private void TalkProcess(int id)
+    private void TalkProcess(byte _zonename, byte _id)
     {
-        string talkData = textmanager.GetTalk(id, talkIndex);
+        string talkData = textmanager.GetTalk(_id, talkIndex);
 
         if(talkData == null)
         {

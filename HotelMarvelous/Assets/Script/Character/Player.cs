@@ -215,7 +215,14 @@ public class Player : MonoBehaviour
 
     public GameObject GetObZone()
     {
-        return obzone;
+        if(obzone != null)
+        {
+            return obzone;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public void SetIsConversation(bool _bool)
