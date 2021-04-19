@@ -56,7 +56,7 @@ public class LobbyUI : MonoBehaviour
 
     private void TalkProcess(byte _zonename, byte _id)
     {
-        string talkData = textmanager.GetTalk(_id, talkIndex);
+        string talkData = textmanager.GetTalk(_zonename, _id, talkIndex);
 
         if(talkData == null)
         {

@@ -24,15 +24,17 @@ public class TextManager : MonoBehaviour
         {
             Dictionary<string, object> dictext = talkDictionary[i];
             
-            string _talkpoint = dictext["Talk Point"].ToString();
+            string _talklocation = dictext["Talk Point"].ToString();
             string _id = dictext["Id"].ToString();
             string[] _textarr = dictext["Text"].ToString().Split('&');
-            byte _point = byte.Parse(_talkpoint);
+            byte _point = byte.Parse(_talklocation);
 
-            if (memory._zoneName == _point)
+            if (memory.GetLocationNum() == _point)
             {
-                
-                memory.SetMemory(byte.Parse(_talkpoint), talkData);
+                talkData.Add(byte.Parse(_id), _textarr);
+                memory.SetMemory(byte.Parse(_talklocation), talkData);
+
+                talkData = new Dictionary<byte, string[]>();
             }
             else
             {
@@ -42,34 +44,48 @@ public class TextManager : MonoBehaviour
                 talkData = new Dictionary<byte, string[]>();
 
                 talkData.Add(byte.Parse(_id), _textarr);
-                memory.SetMemory(byte.Parse(_talkpoint), talkData);
+                memory.SetMemory(byte.Parse(_talklocation), talkData);
             }        
         }
 
         //talkData.Add(1, new string[] { "호텔 마블러스에 오신것을 환영합니다.", "프로그래머인 김선민입니다.^^" });
     }
 
-    public string GetTalk(byte id, byte talkIndex)
+    public string GetTalk(byte _location, byte _id, byte _talkIndex)
     {
-        if(talkIndex == talkData[id].Length)
+        memory = textmemory[_location];
+
+        if(_talkIndex == memory.GetTextData(_id)[_id].Length)
         {
             return null;
         }
         else
         {
-            return talkData[id][talkIndex];
+            return memory.GetTextData(_id)[_id][_talkIndex];
+            //return talkData[_id][_talkIndex];
         }
     }
 }
 
 class TextMemory
 {
-    public byte _zoneName;
+    public byte locationnum;
     private List<Dictionary<byte, string[]>> _talklist = new List<Dictionary<byte, string[]>>();
 
     public void SetMemory(byte _name, Dictionary<byte, string[]> _talkdata)
     {
-        _zoneName = _name;
+        locationnum = _name;
         _talklist.Add(_talkdata);
+    }
+
+    public Dictionary<byte, string[]> GetTextData(byte _id)
+    {
+        //Dictionary<byte, string[]> dic = _talklist[_id];
+        return _talklist[_id - 1];
+    }
+
+    public byte GetLocationNum()
+    {
+        return locationnum;
     }
 }
