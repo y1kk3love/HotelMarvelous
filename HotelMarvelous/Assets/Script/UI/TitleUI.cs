@@ -26,6 +26,8 @@ public class TitleUI : MonoBehaviour
 
     void Awake()
     {
+        ResourceManager.Instance.GetItemReSources();        //리소스 매니저 생성
+
         ResetProcess();
         
         StartCoroutine(IntroProcess(imTitle));
@@ -75,6 +77,11 @@ public class TitleUI : MonoBehaviour
 
     //버튼관리
     #region ------------------------------[OnClick]------------------------------
+
+    public void TestSkip()
+    {
+        SceneManager.LoadScene("Dungeon");
+    }
 
     public void CheckIn()
     {

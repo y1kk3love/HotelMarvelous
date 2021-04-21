@@ -5,7 +5,8 @@ using UnityEngine;
 public enum STAT
 {
     ENTER,
-    EXIT
+    EXIT,
+    Lift
 }
 
 public class RoomDoor : MonoBehaviour
@@ -27,11 +28,15 @@ public class RoomDoor : MonoBehaviour
                 dungeon.SetBoolisplayerhere(true);
                 dungeon.InstantiateMonster();
             }
-            else
+            else if(stat == STAT.EXIT)
             {
                 dungeon = transform.parent.GetComponent<DungeonRoom>();
                 dungeon.SetBoolisplayerhere(false);
-                other.transform.position = new Vector3(3, 0.6f, 80);
+                other.transform.position = new Vector3(0, 0.05f, 50);
+            }
+            else
+            {
+
             }
         }
     }

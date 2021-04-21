@@ -1595,6 +1595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rangeskill: {fileID: 9139187314295940324, guid: f610601cfb87c5c479d37989b62f3300,
     type: 3}
+  obcoin: {fileID: 7863283644299993789, guid: 5ef722ad20e2d1043a17e72cfc2f53ba, type: 3}
   monsterid: 0
 --- !u!195 &8599807433899333734
 NavMeshAgent:

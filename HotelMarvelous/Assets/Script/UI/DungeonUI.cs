@@ -6,10 +6,10 @@ using UnityEngine.UI;
 public class DungeonUI : MonoBehaviour
 {
     private Player player;
-    private ResourceManager resource;
 
     private Text hptext;
     private Text mentaltext;
+    private Text cointext;
 
     private Slider hpbar;
     private Slider staminabar;
@@ -21,8 +21,17 @@ public class DungeonUI : MonoBehaviour
 
     public Sprite[] dispoimagearr;
 
+
+
+    public bool WEDIDIT = false;
+    public Color THX;
+    public GameObject obob;
+
+
+
     void Start()
     {
+        cointext = GameObject.Find("CoinText").GetComponent<Text>();
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         hpbar = gameObject.transform.Find("HPBar").GetComponent<Slider>();
         hptext = hpbar.transform.Find("HPText").GetComponent<Text>();
@@ -30,14 +39,26 @@ public class DungeonUI : MonoBehaviour
         itemCounter = GameObject.Find("ItemCounter").GetComponent<Image>();
         itemimage = GameObject.Find("ItemImage").GetComponent<Image>();
         dispoitemimage = transform.Find("DispoItem").GetComponent<Image>();
-        resource = GameObject.Find("ResourceManager").GetComponent<ResourceManager>();
         mentaltext = GameObject.Find("MentalText").GetComponent<Text>();
         mentalbar = GameObject.Find("MentalityBar").GetComponent<Slider>();
+
+        obob = GameObject.Find("깊은감사");
+        obob.SetActive(false);
     }
 
     void Update()
     {
-        itemimage.sprite = resource.GetItemSprite(player.GetItemCode());
+        if (WEDIDIT)
+        {
+            obob.SetActive(true);
+            THX.a += (Time.deltaTime * 0.3f);
+
+            GameObject.Find("깊은감사").GetComponent<Image>().color = THX;
+        }
+
+
+
+        itemimage.sprite = ResourceManager.Instance.GetItemSprite(player.GetItemCode());
 
         switch (player.GetDispoItemCode())
         {
@@ -54,6 +75,8 @@ public class DungeonUI : MonoBehaviour
 
         mentalbar.value = player.GetMentality();
         mentaltext.text = string.Format("{0:00.0} ", player.GetMentality());
+
+        cointext.text = " Coin : " + player.GetCoin().ToString();
 
         staminabar.value = player.GetStamina();
         itemCounter.fillAmount = player.GetItemCount();

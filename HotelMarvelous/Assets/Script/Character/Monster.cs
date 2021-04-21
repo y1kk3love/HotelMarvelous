@@ -6,6 +6,8 @@ using UnityEngine.AI;
 public class Monster : MonoBehaviour
 {
     public GameObject rangeskill;
+    public GameObject obcoin;
+
     private GameObject player;
 
     private NavMeshAgent navi;
@@ -88,6 +90,8 @@ public class Monster : MonoBehaviour
     {
         if (monsterhp <= 0)
         {
+            navi = null;
+            Instantiate(obcoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
             Destroy(gameObject);
         }
     }
@@ -107,30 +111,26 @@ public class Monster : MonoBehaviour
                 }
                 break;
             case 1:
-                if (!isattacking)
+                if(navi != null)
                 {
-                    navi.SetDestination(player.transform.position);
-                    TargetFoward();
-                }
-                else
-                {
-                    if(gameObject != null)
+                    if (!isattacking)
                     {
-                        navi.SetDestination(transform.position);
+                        navi.SetDestination(player.transform.position);
+                        TargetFoward();
                     }
                     else
                     {
-                        return;
-                    }
+                        navi.SetDestination(transform.position);
 
-                    if (!isinstantiate)
-                    {
-                        StartCoroutine(MonsterBeamSkill());
-                    }
+                        if (!isinstantiate)
+                        {
+                            StartCoroutine(MonsterBeamSkill());
+                        }
 
-                    if(timer <= 0)
-                    {
-                        isattacking = false;
+                        if (timer <= 0)
+                        {
+                            isattacking = false;
+                        }
                     }
                 }
                 break;

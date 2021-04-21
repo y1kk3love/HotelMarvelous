@@ -8,7 +8,7 @@ public enum WEAPONID
     SPEAR
 }
 
-public enum ITEMCODE : int
+public enum ITEMCODE : byte
 {
     CROWN,
     SLOTMACHINE
@@ -31,12 +31,13 @@ public class Player : MonoBehaviour
     #endregion
 
     #region [Item]
+    private byte coin = 0;
 
     private float itemMagnification = 6;
     private float itemcount = 1;
     private bool isdispoitemon = false;
-    private int dispoitemcode = 0;
-    private int itemcode = 0;
+    private byte dispoitemcode = 0;
+    private byte itemcode = 0;
 
     #endregion
 
@@ -121,7 +122,7 @@ public class Player : MonoBehaviour
         }
         if (other.GetComponent<RewardItem>())
         {
-            int _itemcode;
+            byte _itemcode;
 
             RewardItem rewarditem = other.GetComponent<RewardItem>();
 
@@ -130,6 +131,19 @@ public class Player : MonoBehaviour
             itemcode = _itemcode;
 
             itemMagnification = resource.GetItemMagnification(itemcode);
+        }
+        if (other.gameObject.name == "Coin")
+        {
+            if(coin < 100)
+            {
+                coin++;
+                Destroy(other.gameObject);
+            }
+        }
+        if(other.gameObject.name == "MoveLift")
+        {
+            DungeonUI du = GameObject.Find("UI").GetComponent<DungeonUI>();
+            du.WEDIDIT = true;
         }
     }
 
@@ -172,12 +186,29 @@ public class Player : MonoBehaviour
         ontextzone = false;
     }
 
+    public void SetCoin(byte _coin, bool _add)
+    {
+        if (_add)
+        {
+            coin += _coin;
+        }
+        else
+        {
+            coin -= _coin;
+        }
+    }
+
+    public byte GetCoin()
+    {
+        return coin;
+    }
+
     public float GetMentality()
     {
         return mentality;
     }
 
-    public int GetItemCode()
+    public byte GetItemCode()
     {
         return itemcode;
     }   
@@ -191,7 +222,7 @@ public class Player : MonoBehaviour
         return hp;
     }
 
-    public int GetDispoItemCode()
+    public byte GetDispoItemCode()
     {
         if (isdispoitemon)
         {
@@ -329,7 +360,7 @@ public class Player : MonoBehaviour
             switch (itemcode)
             {
                 case 0:
-                    GameObject areaskill = Instantiate(resource.GetItemPrefeb((int)ITEMCODE.CROWN), transform.position, Quaternion.identity);
+                    GameObject areaskill = Instantiate(resource.GetItemPrefeb((byte)ITEMCODE.CROWN), transform.position, Quaternion.identity);
                     WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
                     wide.SetSkillPreset("Monster", 3f);
                     break;

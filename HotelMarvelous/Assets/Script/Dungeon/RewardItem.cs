@@ -7,7 +7,7 @@ public class RewardItem : MonoBehaviour
     private GameObject _child;
 
     [SerializeField]
-    private int itemcode = 1;
+    private byte itemcode = 1;
 
     void Start()
     {
@@ -26,12 +26,12 @@ public class RewardItem : MonoBehaviour
         }
     }
 
-    public int GetRewardItemcode()
+    public byte GetRewardItemcode()
     {
         return itemcode;
     }
 
-    public void SetRewardItemcode(int _code)
+    public void SetRewardItemcode(byte _code)
     {
         itemcode = _code;
     }
