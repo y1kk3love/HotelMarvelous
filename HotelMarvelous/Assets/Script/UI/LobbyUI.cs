@@ -15,7 +15,7 @@ public class LobbyUI : MonoBehaviour
 
     private byte talkIndex;
 
-    private Text talkText;
+    private TextAnim textanim;
 
     void Start()
     {
@@ -56,7 +56,17 @@ public class LobbyUI : MonoBehaviour
 
     private void TalkProcess(byte _zonename, byte _id)
     {
-        string talkData = textmanager.GetTalk(_zonename, _id, talkIndex);
+        string talkData = "";
+
+        if (textanim.GetIsAnim())
+        {
+            textanim.SetMessage("");
+            return;
+        }
+        else
+        {
+            talkData = textmanager.GetTalk(_zonename, _id, talkIndex);
+        }
 
         if(talkData == null)
         {
@@ -68,7 +78,7 @@ public class LobbyUI : MonoBehaviour
             return;
         }
 
-        talkText.text = talkData;
+        textanim.SetMessage(talkData);
 
         player.SetIsConversation(true);
         istalking = true;
@@ -78,7 +88,7 @@ public class LobbyUI : MonoBehaviour
     private void ResetUI()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        talkText = GameObject.Find("TalkText").GetComponent<Text>();
+        textanim = GameObject.Find("TalkText").GetComponent<TextAnim>();
         textmanager = gameObject.GetComponent<TextManager>();
         buttonimage = GameObject.Find("PressE");
         textbar = GameObject.Find("TextBar");
