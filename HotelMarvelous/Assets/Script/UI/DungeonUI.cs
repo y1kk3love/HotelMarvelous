@@ -22,13 +22,6 @@ public class DungeonUI : MonoBehaviour
     public Sprite[] dispoimagearr;
 
 
-
-    public bool WEDIDIT = false;
-    public Color THX;
-    public GameObject obob;
-
-
-
     void Start()
     {
         cointext = GameObject.Find("CoinText").GetComponent<Text>();
@@ -41,23 +34,10 @@ public class DungeonUI : MonoBehaviour
         dispoitemimage = transform.Find("DispoItem").GetComponent<Image>();
         mentaltext = GameObject.Find("MentalText").GetComponent<Text>();
         mentalbar = GameObject.Find("MentalityBar").GetComponent<Slider>();
-
-        obob = GameObject.Find("깊은감사");
-        obob.SetActive(false);
     }
 
     void Update()
     {
-        if (WEDIDIT)
-        {
-            obob.SetActive(true);
-            THX.a += (Time.deltaTime * 0.3f);
-
-            GameObject.Find("깊은감사").GetComponent<Image>().color = THX;
-        }
-
-
-
         itemimage.sprite = ResourceManager.Instance.GetItemSprite(player.GetItemCode());
 
         switch (player.GetDispoItemCode())
