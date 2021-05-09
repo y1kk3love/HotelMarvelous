@@ -143,7 +143,6 @@ public class Player : MonoBehaviour
         if(other.gameObject.name == "MoveLift")
         {
             DungeonUI du = GameObject.Find("UI").GetComponent<DungeonUI>();
-            du.WEDIDIT = true;
         }
     }
 
