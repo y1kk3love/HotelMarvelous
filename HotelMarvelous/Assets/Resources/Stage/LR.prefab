@@ -329,7 +329,7 @@ GameObject:
   - component: {fileID: 1291576313019050355}
   m_Layer: 0
   m_Name: LR
-  m_TagString: Untagged
+  m_TagString: Rooms
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -734,7 +734,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c495d9ba43578d648a64633a5365d375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  openingDir: 3
+  opendir: 3
   spawned: 0
 --- !u!65 &1378012658645503071
 BoxCollider:
@@ -810,7 +810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c495d9ba43578d648a64633a5365d375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  openingDir: 4
+  opendir: 2
   spawned: 0
 --- !u!65 &7640121403458610911
 BoxCollider:
@@ -855,7 +855,7 @@ GameObject:
   - component: {fileID: 9096975975960538412}
   m_Layer: 0
   m_Name: Destroyer
-  m_TagString: SpawnPoint
+  m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

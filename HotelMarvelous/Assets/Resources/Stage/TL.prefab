@@ -120,7 +120,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640858354240853531}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.457885, y: 1, z: 0.45000076}
+  m_LocalPosition: {x: 10.457885, y: 1, z: -0.4500008}
   m_LocalScale: {x: 0.4, y: 1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 640858354536501827}
@@ -329,7 +329,7 @@ GameObject:
   - component: {fileID: 640858354780012170}
   m_Layer: 0
   m_Name: TL
-  m_TagString: Untagged
+  m_TagString: Rooms
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -341,7 +341,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640858354780012169}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 94.1, y: 0, z: 12.8}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_Children:
@@ -349,7 +349,7 @@ Transform:
   - {fileID: 5679518003612473616}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &640858354780012164
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -530,7 +530,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640858355300787851}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.057885, y: 1, z: 0.45000076}
+  m_LocalPosition: {x: 11.057885, y: 1, z: -0.4500008}
   m_LocalScale: {x: 0.4, y: 1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 640858354536501827}
@@ -623,7 +623,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640858355732310151}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.758003, y: 1, z: -0.44999886}
+  m_LocalPosition: {x: 10.758003, y: 1, z: 0.4499989}
   m_LocalScale: {x: 1, y: 1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 640858354536501827}
@@ -703,7 +703,7 @@ GameObject:
   - component: {fileID: 5241114877112698626}
   m_Layer: 0
   m_Name: Destroyer
-  m_TagString: SpawnPoint
+  m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -790,7 +790,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2564719362715781691}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: -1, y: 0, z: 0}
   m_LocalScale: {x: 0.8, y: 1, z: 0.8}
   m_Children: []
   m_Father: {fileID: 5679518003612473616}
@@ -808,7 +808,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c495d9ba43578d648a64633a5365d375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  openingDir: 1
+  opendir: 2
   spawned: 0
 --- !u!65 &4810370636342466020
 BoxCollider:
@@ -917,7 +917,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c495d9ba43578d648a64633a5365d375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  openingDir: 4
+  opendir: 1
   spawned: 0
 --- !u!65 &8198350592076946119
 BoxCollider:
