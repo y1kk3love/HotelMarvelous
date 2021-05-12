@@ -43,3 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83b0fd9497cd07b4fbdff45c3c5d1d63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockWall: {fileID: 6539474203643731126, guid: 0acba4cee67735d45928250afac5bbb8,
+    type: 3}
+  doorWall: {fileID: 6539474203643731126, guid: 0acba4cee67735d45928250afac5bbb8,
+    type: 3}
