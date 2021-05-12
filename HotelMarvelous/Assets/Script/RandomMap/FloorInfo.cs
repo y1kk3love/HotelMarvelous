@@ -4,5 +4,10 @@ using UnityEngine;
 
 public class FloorInfo : MonoBehaviour
 {
-    
+    public byte roomsize;
+
+    private void Start()
+    {
+        
+    }
 }
