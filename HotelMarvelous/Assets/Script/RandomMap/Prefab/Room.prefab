@@ -45,5 +45,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockWall: {fileID: 6539474203643731126, guid: 0acba4cee67735d45928250afac5bbb8,
     type: 3}
-  doorWall: {fileID: 6539474203643731126, guid: 0acba4cee67735d45928250afac5bbb8,
+  doorWall: {fileID: 8872321378153529280, guid: f80606ce8afaf434f8aff5ae7367db89,
     type: 3}
