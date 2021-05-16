@@ -524,9 +524,9 @@ MonoBehaviour:
   floorprefab: {fileID: 7962226749410940180, guid: 2b01b01067ab2a94795466792cf85c00,
     type: 3}
   roomtype: 1
-  TESTROOMLIST: []
-  Roomcount: 3
-  isfirst: 1
+  instRoomList: []
+  curRoomCount: 0
+  maxRoomCount: 1
 --- !u!4 &881348171
 Transform:
   m_ObjectHideFlags: 0
