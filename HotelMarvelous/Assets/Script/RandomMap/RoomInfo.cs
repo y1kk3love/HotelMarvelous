@@ -15,6 +15,8 @@ public class RoomInfo : MonoBehaviour
 
     public GameObject blockWall;
     public GameObject doorWall;
+
+    public byte _size;
     void Start()
     {
         mapmanager = GameObject.Find("MapManager").GetComponent<MapManager>();
@@ -22,18 +24,29 @@ public class RoomInfo : MonoBehaviour
         floorPrefab = mapmanager.floorprefab;     //임시
 
         InstiateRoom();
+        InfiniteLoopChecker.Reset();
     }
 
     public void InstiateRoom()
     {
         int curX = (int)transform.position.x;
         int curY = (int)transform.position.y;
-        int boardX = curX + 127;
-        int boardY = curY + 127;
-        byte _size = RoomSize();
+        int boardX = curX + 25;
+        int boardY = curY + 25;
+        byte blockcount = 0;
+        _size = RoomSize();
 
         for (byte i = 0; i < _size; i++)
         {
+            if(blockcount > 2)
+            {
+                i = _size;
+            }
+            else
+            {
+                blockcount = 0;
+            }
+
             if (i == 0)
             {
                 mapmanager.mapboard[boardX, boardY] = (byte)roomType;
@@ -45,6 +58,8 @@ public class RoomInfo : MonoBehaviour
             }
             else
             {
+                InfiniteLoopChecker.Check();
+
                 switch (waydir)
                 {
                     case ROOMDIR.TOP:
@@ -64,9 +79,9 @@ public class RoomInfo : MonoBehaviour
                         {
                             if (i > 1)
                             {
-                                i--;
+                                //i--;
+                                blockcount++;
                             }
-                            break;
                         }
                         break;
                     case ROOMDIR.RIGHT:
@@ -86,9 +101,9 @@ public class RoomInfo : MonoBehaviour
                         {
                             if (i > 1)
                             {
-                                i--;
+                                //i--;
+                                blockcount++;
                             }
-                            break;
                         }
                         break;
                     case ROOMDIR.BOTTOM:
@@ -108,13 +123,13 @@ public class RoomInfo : MonoBehaviour
                         {
                             if (i > 1)
                             {
-                                i--;
+                                //i--;
+                                blockcount++;
                             }
-                            break;
                         }
                         break;
                     case ROOMDIR.LEFT:
-                        if (mapmanager.mapboard[boardX, boardY - 1] != (byte)ROOMTYPE.EMPTY)
+                        if (mapmanager.mapboard[boardX, boardY - 1] == (byte)ROOMTYPE.EMPTY)
                         {
                             mapmanager.mapboard[boardX, boardY - 1] = (byte)roomType;
 
@@ -130,9 +145,9 @@ public class RoomInfo : MonoBehaviour
                         {
                             if (i > 1)
                             {
-                                i--;
+                                //i--;
+                                blockcount++;
                             }
-                            break;
                         }
                         break;
                 }
@@ -191,7 +206,7 @@ public class RoomInfo : MonoBehaviour
                     switch (i)
                     {
                         case (byte)ROOMDIR.TOP:
-                            if (mapmanager.GetMapBoard()[(int)floorPos.x + 127, (int)floorPos.y + 128] == (byte)ROOMTYPE.EMPTY && doorpercent == 1 && maxdoor < 4)
+                            if (mapmanager.mapboard[(int)floorPos.x + 25, (int)floorPos.y + 26] == (byte)ROOMTYPE.EMPTY && doorpercent == 1 && maxdoor < 4)
                             {
                                 maxdoor++;
                                 doorposList.Add(new Vector2(floorPos.x, floorPos.y + 1));
@@ -203,7 +218,7 @@ public class RoomInfo : MonoBehaviour
                             }
                             break;
                         case (byte)ROOMDIR.RIGHT:
-                            if(mapmanager.GetMapBoard()[(int)floorPos.x + 128, (int)floorPos.y + 127] == (byte)ROOMTYPE.EMPTY && doorpercent == 1 && maxdoor < 4)
+                            if(mapmanager.mapboard[(int)floorPos.x + 26, (int)floorPos.y + 25] == (byte)ROOMTYPE.EMPTY && doorpercent == 1 && maxdoor < 4)
                             {
                                 maxdoor++;
                                 doorposList.Add(new Vector2(floorPos.x + 1, floorPos.y));
@@ -215,7 +230,7 @@ public class RoomInfo : MonoBehaviour
                             }
                             break;
                         case (byte)ROOMDIR.BOTTOM:
-                            if (mapmanager.GetMapBoard()[(int)floorPos.x + 127, (int)floorPos.y + 126] == (byte)ROOMTYPE.EMPTY && doorpercent == 1 && maxdoor < 4)
+                            if (mapmanager.mapboard[(int)floorPos.x + 25, (int)floorPos.y + 24] == (byte)ROOMTYPE.EMPTY && doorpercent == 1 && maxdoor < 4)
                             {
                                 maxdoor++;
                                 doorposList.Add(new Vector2(floorPos.x, floorPos.y - 1));
@@ -227,7 +242,7 @@ public class RoomInfo : MonoBehaviour
                             }
                             break;
                         case (byte)ROOMDIR.LEFT:
-                            if (mapmanager.GetMapBoard()[(int)floorPos.x + 126, (int)floorPos.y + 127] == (byte)ROOMTYPE.EMPTY && doorpercent == 1 && maxdoor < 4)
+                            if (mapmanager.mapboard[(int)floorPos.x + 24, (int)floorPos.y + 25] == (byte)ROOMTYPE.EMPTY && doorpercent == 1 && maxdoor < 4)
                             {
                                 maxdoor++;
                                 doorposList.Add(new Vector2(floorPos.x - 1, floorPos.y));
@@ -243,39 +258,28 @@ public class RoomInfo : MonoBehaviour
             }
         }
 
-        foreach(Vector2 passpos in doorposList)
+        foreach (Vector2 passpos in doorposList)
         {
             if (mapmanager.curRoomCount > mapmanager.maxRoomCount - 1)
             {
-                //Destroy(gameObject);
                 return;
             }
             else
             {
                 mapmanager.curRoomCount++;
-            }
 
-            if (roomType != ROOMTYPE.HALLWAY)
-            {
-                /*
-                GameObject room = Instantiate(mapmanager.roomprefab, passpos, Quaternion.identity);
-                room.transform.GetComponent<RoomInfo>().roomType = ROOMTYPE.HALLWAY;
+                if (roomType != ROOMTYPE.HALLWAY)
+                {
+                    //StartCoroutine(InstantiateRoom(passpos, ROOMTYPE.HALLWAY));
+                    mapmanager.needRoomPosList.Add(new Vector3(passpos.x, passpos.y, (byte)ROOMTYPE.HALLWAY));
+                }
+                else
+                {
+                    //ROOMTYPE randomroom = (ROOMTYPE)Random.Range(2, System.Enum.GetValues(typeof(ROOMTYPE)).Length);
 
-                mapmanager.instRoomList.Add(room);
-                */
-
-                StartCoroutine(InstantiateRoom(passpos, ROOMTYPE.HALLWAY));
-            }
-            else
-            {   /*
-                //ROOMTYPE randomroom = (ROOMTYPE)Random.Range(2, System.Enum.GetValues(typeof(ROOMTYPE)).Length);
-                GameObject room = Instantiate(mapmanager.roomprefab, passpos, Quaternion.identity);
-                room.transform.GetComponent<RoomInfo>().roomType = ROOMTYPE.GUEST;
-
-                mapmanager.instRoomList.Add(room);
-                */
-
-                StartCoroutine(InstantiateRoom(passpos, ROOMTYPE.GUEST));
+                    //StartCoroutine(InstantiateRoom(passpos, ROOMTYPE.GUEST));
+                    mapmanager.needRoomPosList.Add(new Vector3(passpos.x, passpos.y, (byte)ROOMTYPE.GUEST));
+                }
             }
         }
     }
@@ -315,7 +319,20 @@ public class RoomInfo : MonoBehaviour
         {
             waydir = 0;
         }
+    }
+}
 
-        Debug.Log(waydir);
+public static class InfiniteLoopChecker
+{
+    private static int infiniteLoopNum = 0;
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    public static void Reset() => infiniteLoopNum = 0;
+
+    [System.Diagnostics.Conditional("UNITY_EDITOR")]
+    public static void Check(int maxLoopNumber = 10000)
+    {
+        if (infiniteLoopNum++ > maxLoopNumber)
+            throw new System.Exception("Infinite Loop Detected.");
     }
 }

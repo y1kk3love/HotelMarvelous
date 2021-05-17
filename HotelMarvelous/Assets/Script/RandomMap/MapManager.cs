@@ -5,6 +5,7 @@ using UnityEngine;
 public enum ROOMTYPE : byte
 {
     EMPTY,
+    NEEDROOM,
     HALLWAY,
     GUEST,
     NPC
@@ -26,23 +27,36 @@ public class MapManager : MonoBehaviour
     public ROOMTYPE roomtype;
 
     public List<GameObject> instRoomList = new List<GameObject>();
+    public List<Vector3> needRoomPosList = new List<Vector3>();
 
-    public int[,] mapboard = new int[256, 256];
+    public int[,] mapboard = new int[50, 50];
     public int curRoomCount = 0;
     public int maxRoomCount = 5;
 
-    public int[,] GetMapBoard()
+    public string XY;
+
+    private void Update()
     {
-        return mapboard;
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            string[] xyarr = XY.Split(',');
+
+            int _x = int.Parse(xyarr[0]);
+            int _y = int.Parse(xyarr[1]);
+
+
+            Debug.Log(mapboard[_x + 25, _y + 25]);
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+            OnclickMapSpawn();
+        if (Input.GetKeyDown(KeyCode.D))
+            OnclickMadelete();
     }
 
     public void OnclickMapSpawn()
     {
-        GameObject room = Instantiate(roomprefab, new Vector3(0, 0, 0), Quaternion.identity);
-        room.transform.GetComponent<RoomInfo>().roomType = roomtype;
-
-        curRoomCount++;
-        instRoomList.Add(room);
+        StartCoroutine(InstnatiateRoom(true));
     }
 
     public void OnclickMadelete()
@@ -51,9 +65,61 @@ public class MapManager : MonoBehaviour
         {
             Destroy(go);
         }
-
+        needRoomPosList.Clear();
         instRoomList.Clear();
-        mapboard = new int[256, 256];
+        mapboard = new int[50, 50];
         curRoomCount = 0;
+    }
+
+    IEnumerator InstnatiateRoom(bool _start)
+    {
+        if (_start)
+        {
+            GameObject room = Instantiate(roomprefab, new Vector3(0, 0, 0), Quaternion.identity);
+            room.transform.GetComponent<RoomInfo>().roomType = roomtype;
+
+            curRoomCount++;
+            instRoomList.Add(room);
+        }
+        else
+        {
+            for(int i = 0; i < needRoomPosList.Count; i++)
+            {
+                yield return new WaitForSeconds(1f);
+
+                Vector2 v2pos = needRoomPosList[i];
+                byte _type = (byte)needRoomPosList[i].z;
+
+                Debug.Log(v2pos.x + " , " + v2pos.y);
+                if(mapboard[(byte)(v2pos.x + 25), (byte)(v2pos.y + 25)] != (byte)ROOMTYPE.NEEDROOM)
+                {
+                    continue;
+                }
+                else
+                {
+                    switch (_type)
+                    {
+                        case (byte)ROOMTYPE.HALLWAY:
+                            GameObject guest = Instantiate(roomprefab, v2pos, Quaternion.identity);
+                            guest.transform.GetComponent<RoomInfo>().roomType = ROOMTYPE.HALLWAY;
+
+                            instRoomList.Add(guest);
+                            break;
+                        case (byte)ROOMTYPE.GUEST:
+                            GameObject hallway = Instantiate(roomprefab, v2pos, Quaternion.identity);
+                            hallway.transform.GetComponent<RoomInfo>().roomType = ROOMTYPE.GUEST;
+
+                            instRoomList.Add(hallway);
+                            break;
+                    }
+                }
+            }
+
+            needRoomPosList.Clear();
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        StartCoroutine(InstnatiateRoom(false));
     }
 }

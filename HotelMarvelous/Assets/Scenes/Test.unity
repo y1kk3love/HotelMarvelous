@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -523,10 +523,12 @@ MonoBehaviour:
     type: 3}
   floorprefab: {fileID: 7962226749410940180, guid: 2b01b01067ab2a94795466792cf85c00,
     type: 3}
-  roomtype: 1
+  roomtype: 2
   instRoomList: []
+  needRoomPosList: []
   curRoomCount: 0
-  maxRoomCount: 1
+  maxRoomCount: 10
+  XY: 0, 0
 --- !u!4 &881348171
 Transform:
   m_ObjectHideFlags: 0
