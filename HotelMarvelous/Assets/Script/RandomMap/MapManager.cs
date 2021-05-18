@@ -19,6 +19,7 @@ public enum ROOMDIR
     LEFT
 }
 
+/*
 public class MapManager : MonoBehaviour
 {
     public GameObject roomprefab;       //임시 나중에 리소스에서 불러오는것 잊지마요!!
@@ -83,7 +84,7 @@ public class MapManager : MonoBehaviour
         }
         else
         {
-            for(int i = 0; i < needRoomPosList.Count; i++)
+            for(int i = 0; i < needRoomPosList.Count - 1; i++)
             {
                 yield return new WaitForSeconds(1f);
 
@@ -91,7 +92,7 @@ public class MapManager : MonoBehaviour
                 byte _type = (byte)needRoomPosList[i].z;
 
                 Debug.Log(v2pos.x + " , " + v2pos.y);
-                if(mapboard[(byte)(v2pos.x + 25), (byte)(v2pos.y + 25)] != (byte)ROOMTYPE.NEEDROOM)
+                if(mapboard[(byte)(v2pos.x + 25), (byte)(v2pos.y + 25)] != (byte)ROOMTYPE.EMPTY)
                 {
                     continue;
                 }
@@ -122,4 +123,10 @@ public class MapManager : MonoBehaviour
 
         StartCoroutine(InstnatiateRoom(false));
     }
+}
+*/
+
+public class MapManager : MonoBehaviour
+{
+
 }

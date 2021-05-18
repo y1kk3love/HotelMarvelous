@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+
 public class RoomInfo : MonoBehaviour
 {
     private MapManager mapmanager;
@@ -301,8 +303,8 @@ public class RoomInfo : MonoBehaviour
         switch (roomType)
         {
             case ROOMTYPE.GUEST:
-                //_i = (byte)Random.Range(1, 6);
-                _i = 4;
+                _i = (byte)Random.Range(1, 6);
+                //_i = 4;
                 break;
             case ROOMTYPE.HALLWAY:
                 _i = 2;
@@ -334,5 +336,58 @@ public static class InfiniteLoopChecker
     {
         if (infiniteLoopNum++ > maxLoopNumber)
             throw new System.Exception("Infinite Loop Detected.");
+    }
+}
+
+*/
+
+public class RoomInfo : MonoBehaviour
+{
+    public ROOMTYPE roomType;
+
+    public GameObject floorPrefab;
+
+    private void SpawnRoomFloor()
+    {
+        byte roomSize = Randomsize();
+        byte curX = (byte)transform.position.x;
+        byte curY = (byte)transform.position.y;
+
+        for(int i = 0; i < roomSize; i++)
+        {
+            if(i == 0)
+            {
+                GameObject _floor = Instantiate(floorPrefab, new Vector2(curX, curY), Quaternion.identity);
+                _floor.transform.parent = transform;
+            }
+            else
+            {
+
+            }
+        }
+    }
+
+    private byte Randomsize()
+    {
+        byte _value = 0;
+
+        switch (roomType)
+        {
+            case ROOMTYPE.HALLWAY:
+                _value = 2;
+                break;
+            case ROOMTYPE.GUEST:
+                _value = (byte)Random.Range(1, 6);
+                break;
+        }
+
+        return _value;
+    }
+
+    private string ReturnLocation(byte _x, byte _y)
+    {
+        string _laocation = string.Format("{1},{2}", _x, _y);
+
+        return _laocation;
     }
 }
