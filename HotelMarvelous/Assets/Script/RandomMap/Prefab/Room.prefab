@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2947994788601305890}
   m_Layer: 0
   m_Name: Room
-  m_TagString: Untagged
+  m_TagString: Rooms
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,7 +43,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83b0fd9497cd07b4fbdff45c3c5d1d63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockWall: {fileID: 6539474203643731126, guid: 0acba4cee67735d45928250afac5bbb8,
-    type: 3}
-  doorWall: {fileID: 8872321378153529280, guid: f80606ce8afaf434f8aff5ae7367db89,
-    type: 3}
+  mapmanager: {fileID: 0}
+  roomType: 0
