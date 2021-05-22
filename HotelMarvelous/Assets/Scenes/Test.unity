@@ -374,7 +374,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 881348170}
-        m_MethodName: OnclickMapSpawn
+        m_MethodName: OnclickStartButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -519,10 +519,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da50224481aa0b340bde465f5e2e56a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  roomType: 3
   roomPrefab: {fileID: 3061336903764226798, guid: 1359638e6ee54ef4da4abe2fce21086a,
     type: 3}
   floorPrefab: {fileID: 7962226749410940180, guid: 2b01b01067ab2a94795466792cf85c00,
     type: 3}
+  wallPrefab: {fileID: 6539474203643731126, guid: 0acba4cee67735d45928250afac5bbb8,
+    type: 3}
+  doorPrefab: {fileID: 8872321378153529280, guid: f80606ce8afaf434f8aff5ae7367db89,
+    type: 3}
+  maxRoomCount: 5
   curRoomCount: 0
 --- !u!4 &881348171
 Transform:
@@ -798,7 +804,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 881348170}
-        m_MethodName: OnclickMadelete
+        m_MethodName: OnclickResetButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -28,16 +28,22 @@ public enum WALLSTATE
 
 public class MapManager : MonoBehaviour
 {
+    public ROOMTYPE roomType;
+
     public FloorInfo[,] RoomBoard = new FloorInfo[50, 50];
 
     public GameObject roomPrefab;
     public GameObject floorPrefab;
+    public GameObject wallPrefab;
+    public GameObject doorPrefab;
 
+    public byte maxRoomCount = 5;
     public byte curRoomCount = 0;
 
-    private void OnclickStartButton()
+    public void OnclickStartButton()
     {
-        Instantiate(roomPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject room = Instantiate(roomPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        room.transform.GetComponent<RoomController>().roomType = roomType;
     }
 
     public void OnclickResetButton()
@@ -49,7 +55,8 @@ public class MapManager : MonoBehaviour
             Destroy(_room);
         }
 
-        RoomBoard = new FloorInfo[50, 50]; ;
+        RoomBoard = new FloorInfo[50, 50];
+        curRoomCount = 0;
     }
 }
 
