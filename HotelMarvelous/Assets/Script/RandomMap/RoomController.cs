@@ -18,7 +18,8 @@ public class RoomController : MonoBehaviour
     private GameObject doorPrefab;
 
     private byte centerOnBoard;               //배열의 중심인 (25,25)를 (0,0)으로 놓고 사용하기위한 변수
-    private byte curX, curY;
+    private sbyte curX;
+    private sbyte curY;
     private byte doorCount = 0;
 
 
@@ -31,13 +32,12 @@ public class RoomController : MonoBehaviour
         wallPrefab = mapmanager.wallPrefab;
         doorPrefab = mapmanager.doorPrefab;
 
-        curX = (byte)transform.position.x;
-        curY = (byte)transform.position.y;
+        curX = (sbyte)transform.position.x;
+        curY = (sbyte)transform.position.y;
 
         roomDir = (DIRECTION)Random.Range(0, System.Enum.GetValues(typeof(DIRECTION)).Length);
 
         SpawnRoomFloor();
-        SpawnFloorWall();
     }
 
     private void SpawnRoomFloor()
@@ -45,10 +45,17 @@ public class RoomController : MonoBehaviour
         if (mapmanager.curRoomCount < mapmanager.maxRoomCount)
         {
             byte roomsize = Randomsize();                       //생성해야할 방의 타입을 확인한 후 그에 따라서 랜덤값 반환;
+            byte dirblockcheck = 0;                             //4방향 모두 막혀있을 경우 반복문 탈출
 
             for (int i = 0; i < roomsize; i++)
             {
-                if (i == 0)                                      //첫 타일은 방의 좌표와 같은곳에 생성
+                if(dirblockcheck > 4)
+                {
+                    i++;
+                    return;
+                }
+
+                if (i == 0 && mapmanager.RoomBoard[PosParse(curX), PosParse(curY)] == null)                                      //첫 타일은 방의 좌표와 같은곳에 생성
                 {
                     GameObject _floor = Instantiate(floorPrefab, new Vector2(curX, curY), Quaternion.identity);
                     _floor.transform.parent = transform;
@@ -72,11 +79,14 @@ public class RoomController : MonoBehaviour
 
                                 SetInfoToBoard(new Vector2(curX, curY + 1), _floor, mapmanager.curRoomCount);                           //보드좌표에 생성된 바닥과 생성된 순서(방끼리 구분하기 위해)를 넣는다.
 
-                                curY++;             //생성된 경우 좌표값을 변경해줍니다.
-                                roomDir = 0;        //방향 카운터를 초기화
+                                curY++;                      //생성된 경우 좌표값을 변경해줍니다.
+                                dirblockcheck = 0;           //바닥 생성에 성공했을 경우 0으로 초기화
+                                roomDir = (DIRECTION)Random.Range(0, System.Enum.GetValues(typeof(DIRECTION)).Length);                  //방향 카운터를 랜덤 초기화
                             }
                             else
                             {
+                                i--;
+                                dirblockcheck++;
                                 roomDir++;          //바닥 생성이 불가능할 경우 방향 카운터++
                             }
                             break;
@@ -89,10 +99,13 @@ public class RoomController : MonoBehaviour
                                 SetInfoToBoard(new Vector2(curX + 1, curY), _floor, mapmanager.curRoomCount);
 
                                 curX++;
-                                roomDir = 0;
+                                dirblockcheck = 0;
+                                roomDir = (DIRECTION)Random.Range(0, System.Enum.GetValues(typeof(DIRECTION)).Length);
                             }
                             else
                             {
+                                i--;
+                                dirblockcheck++;
                                 roomDir++;
                             }
                             break;
@@ -105,10 +118,13 @@ public class RoomController : MonoBehaviour
                                 SetInfoToBoard(new Vector2(curX, curY - 1), _floor, mapmanager.curRoomCount);
 
                                 curY--;
-                                roomDir = 0;
+                                dirblockcheck = 0;
+                                roomDir = (DIRECTION)Random.Range(0, System.Enum.GetValues(typeof(DIRECTION)).Length);
                             }
                             else
                             {
+                                i--;
+                                dirblockcheck++;
                                 roomDir++;
                             }
                             break;
@@ -121,10 +137,13 @@ public class RoomController : MonoBehaviour
                                 SetInfoToBoard(new Vector2(curX - 1, curY), _floor, mapmanager.curRoomCount);
 
                                 curX--;
-                                roomDir = 0;
+                                dirblockcheck = 0;
+                                roomDir = (DIRECTION)Random.Range(0, System.Enum.GetValues(typeof(DIRECTION)).Length);
                             }
                             else
                             {
+                                i--;
+                                dirblockcheck++;
                                 roomDir++;
                             }
                             break;
@@ -384,7 +403,7 @@ public class RoomController : MonoBehaviour
                 _value = (byte)Random.Range(3, 6);
                 break;
             case ROOMTYPE.GUEST:
-                _value = (byte)Random.Range(1, 4);
+                _value = (byte)Random.Range(4, 5);
                 break;
         }
 
