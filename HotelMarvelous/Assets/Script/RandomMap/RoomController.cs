@@ -28,6 +28,11 @@ public class RoomController : MonoBehaviour
         mapmanager = GameObject.Find("MapManager").GetComponent<MapManager>();
         centerOnBoard = (byte)(Mathf.Sqrt(mapmanager.RoomBoard.Length) / 2);
 
+        if(mapmanager.RoomBoard[PosParse(curX), PosParse(curY)] != null)
+        {
+            Destroy(gameObject);
+        }
+
         floorPrefab = mapmanager.floorPrefab;
         wallPrefab = mapmanager.wallPrefab;
         doorPrefab = mapmanager.doorPrefab;
@@ -157,8 +162,8 @@ public class RoomController : MonoBehaviour
 
     private void SpawnFloorWall()
     {
-        byte randomdir = RandomWallDir();                               //만약 첫번째 방이 아닐 경우 이전방의 문 방향 값을 받아온다
-        byte percant = 3;                                               //문이 생길 확률 (1/percant)
+        byte randomdir = RandomWallDir();                               //만약 첫번째 방이 아닐 경우 이전방의 문 방향 값을 받아온
+        byte percant = 4;                                               //문이 생길 확률 (1/percant)
 
         foreach (Vector2 _pos in floorPosList)                           //벽을 만들 바닥의 배열
         {
@@ -173,6 +178,22 @@ public class RoomController : MonoBehaviour
                 for (byte i = randomdir; i < 4 + randomdir; i++)         //문이 달린 벽을 랜덤하게 생성해 주기 위한 순서
                 {
                     byte _dir = 0;
+
+                    switch (doorCount)                                   //문이 초반방에만 생기는 것을 막기 위해 확률을 낮게 만듬
+                    {
+                        case 0: 
+                            percant = 7;   //14%
+                            break;
+                        case 1:
+                            percant = 13;   //8%
+                            break;
+                        case 2:
+                            percant = 25;   //4%
+                            break;
+                        case 3:
+                            percant = 50;    //2%
+                            break;
+                    }
 
                     if(i > 3)
                     {
@@ -205,7 +226,7 @@ public class RoomController : MonoBehaviour
                             }
                             else if (topInfo == null && doorCount < 4)       //보드에 값이 비어있고 문이 4개를 넘지 않으면 일정 확률로 문만들고 방 생성
                             {
-                                if (mapmanager.curRoomCount < mapmanager.maxRoomCount)
+                                if (wallcheckarr[(byte)DIRECTION.TOP] == WALLSTATE.BLOCK)
                                 {
                                     if (doorCount == 0)
                                     {
@@ -221,11 +242,6 @@ public class RoomController : MonoBehaviour
 
                                         doorCount++;
                                     }
-                                }
-                                else
-                                {
-                                    topInfo.wallObj[(byte)DIRECTION.BOTTOM] = wallPrefab;
-                                    Destroy(gameObject);
                                 }
                             }
                             break;
@@ -249,7 +265,7 @@ public class RoomController : MonoBehaviour
                             }
                             else if (rightInfo == null && doorCount < 4)
                             {
-                                if (mapmanager.curRoomCount < mapmanager.maxRoomCount)
+                                if (wallcheckarr[(byte)DIRECTION.RIGHT] == WALLSTATE.BLOCK)
                                 {
                                     if (doorCount == 0)
                                     {
@@ -265,11 +281,6 @@ public class RoomController : MonoBehaviour
 
                                         doorCount++;
                                     }
-                                }
-                                else
-                                {
-                                    rightInfo.wallObj[(byte)DIRECTION.LEFT] = wallPrefab;
-                                    Destroy(gameObject);
                                 }
                             }
                             break;
@@ -310,11 +321,6 @@ public class RoomController : MonoBehaviour
                                         doorCount++;
                                     }
                                 }
-                                else
-                                {
-                                    borromInfo.wallObj[(byte)DIRECTION.TOP] = wallPrefab;
-                                    Destroy(gameObject);
-                                }
                             }
                             break;
                         case (byte)DIRECTION.LEFT:
@@ -337,7 +343,7 @@ public class RoomController : MonoBehaviour
                             }
                             else if (leftInfo == null && doorCount < 4)
                             {
-                                if (mapmanager.curRoomCount < mapmanager.maxRoomCount)
+                                if (wallcheckarr[(byte)DIRECTION.LEFT] == WALLSTATE.BLOCK)
                                 {
                                     if (doorCount == 0)
                                     {
@@ -353,11 +359,6 @@ public class RoomController : MonoBehaviour
 
                                         doorCount++;
                                     }
-                                }
-                                else
-                                {
-                                    leftInfo.wallObj[(byte)DIRECTION.RIGHT] = wallPrefab;
-                                    Destroy(gameObject);
                                 }
                             }
                             break;
@@ -375,6 +376,7 @@ public class RoomController : MonoBehaviour
                 sbyte _y = (sbyte)_pos.y;
 
                 int wallrotaion = 0;
+                DIRECTION _dir = DIRECTION.TOP;
                 Vector3 wallpos = new Vector3(0, 0, 0);
                 GameObject floor = mapmanager.RoomBoard[PosParse(_x), PosParse(_y)].floorObject;
 
@@ -383,18 +385,22 @@ public class RoomController : MonoBehaviour
                     case (byte)DIRECTION.TOP:
                         wallpos = new Vector3(_x, _y + 0.45f, -0.05f);
                         wallrotaion = 90;
+                        _dir = DIRECTION.TOP;
                         break;
                     case (byte)DIRECTION.RIGHT:
                         wallpos = new Vector3(_x + 0.45f, _y, -0.05f);
                         wallrotaion = 0;
+                        _dir = DIRECTION.RIGHT;
                         break;
                     case (byte)DIRECTION.BOTTOM:
                         wallpos = new Vector3(_x, _y - 0.45f, -0.05f);
                         wallrotaion = -90;
+                        _dir = DIRECTION.BOTTOM;
                         break;
                     case (byte)DIRECTION.LEFT:
                         wallpos = new Vector3(_x - 0.45f, _y, -0.05f);
                         wallrotaion = -180;
+                        _dir = DIRECTION.LEFT;
                         break;
                 }
 
@@ -471,7 +477,7 @@ public class RoomController : MonoBehaviour
                 _value = (byte)Random.Range(3, 6);
                 break;
             case ROOMTYPE.GUEST:
-                _value = (byte)Random.Range(4, 5);
+                _value = (byte)Random.Range(1, 5);
                 break;
         }
 
