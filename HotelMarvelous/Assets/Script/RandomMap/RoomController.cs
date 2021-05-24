@@ -38,11 +38,12 @@ public class RoomController : MonoBehaviour
         roomDir = (DIRECTION)Random.Range(0, System.Enum.GetValues(typeof(DIRECTION)).Length);
 
         SpawnRoomFloor();
+        SpawnFloorWall();
     }
 
     private void SpawnRoomFloor()
     {
-        if (mapmanager.curRoomCount < mapmanager.maxRoomCount)
+        if (mapmanager.curRoomCount < mapmanager.maxRoomCount && mapmanager.RoomBoard[PosParse(curX), PosParse(curY)] == null)
         {
             byte roomsize = Randomsize();                       //생성해야할 방의 타입을 확인한 후 그에 따라서 랜덤값 반환;
             byte dirblockcheck = 0;                             //4방향 모두 막혀있을 경우 반복문 탈출
@@ -55,12 +56,12 @@ public class RoomController : MonoBehaviour
                     return;
                 }
 
-                if (i == 0 && mapmanager.RoomBoard[PosParse(curX), PosParse(curY)] == null)                                      //첫 타일은 방의 좌표와 같은곳에 생성
+                if (i == 0)                                      //첫 타일은 방의 좌표와 같은곳에 생성
                 {
                     GameObject _floor = Instantiate(floorPrefab, new Vector2(curX, curY), Quaternion.identity);
                     _floor.transform.parent = transform;
 
-                    SetInfoToBoard(new Vector2(curX, curY), _floor, mapmanager.curRoomCount);
+                    SetInfoToBoard(_floor, mapmanager.curRoomCount);
                 }
                 else
                 {
@@ -77,7 +78,7 @@ public class RoomController : MonoBehaviour
                                 GameObject _floor = Instantiate(floorPrefab, new Vector2(curX, curY + 1), Quaternion.identity);         //바닥을 생성하고 방의 자식으로 넣는다.
                                 _floor.transform.parent = transform;
 
-                                SetInfoToBoard(new Vector2(curX, curY + 1), _floor, mapmanager.curRoomCount);                           //보드좌표에 생성된 바닥과 생성된 순서(방끼리 구분하기 위해)를 넣는다.
+                                SetInfoToBoard(_floor, mapmanager.curRoomCount);                           //보드좌표에 생성된 바닥과 생성된 순서(방끼리 구분하기 위해)를 넣는다.
 
                                 curY++;                      //생성된 경우 좌표값을 변경해줍니다.
                                 dirblockcheck = 0;           //바닥 생성에 성공했을 경우 0으로 초기화
@@ -96,7 +97,7 @@ public class RoomController : MonoBehaviour
                                 GameObject _floor = Instantiate(floorPrefab, new Vector2(curX + 1, curY), Quaternion.identity);
                                 _floor.transform.parent = transform;
 
-                                SetInfoToBoard(new Vector2(curX + 1, curY), _floor, mapmanager.curRoomCount);
+                                SetInfoToBoard(_floor, mapmanager.curRoomCount);
 
                                 curX++;
                                 dirblockcheck = 0;
@@ -115,7 +116,7 @@ public class RoomController : MonoBehaviour
                                 GameObject _floor = Instantiate(floorPrefab, new Vector2(curX, curY - 1), Quaternion.identity);
                                 _floor.transform.parent = transform;
 
-                                SetInfoToBoard(new Vector2(curX, curY - 1), _floor, mapmanager.curRoomCount);
+                                SetInfoToBoard(_floor, mapmanager.curRoomCount);
 
                                 curY--;
                                 dirblockcheck = 0;
@@ -134,7 +135,7 @@ public class RoomController : MonoBehaviour
                                 GameObject _floor = Instantiate(floorPrefab, new Vector2(curX - 1, curY), Quaternion.identity);
                                 _floor.transform.parent = transform;
 
-                                SetInfoToBoard(new Vector2(curX - 1, curY), _floor, mapmanager.curRoomCount);
+                                SetInfoToBoard(_floor, mapmanager.curRoomCount);
 
                                 curX--;
                                 dirblockcheck = 0;
@@ -156,25 +157,50 @@ public class RoomController : MonoBehaviour
 
     private void SpawnFloorWall()
     {
-        WALLSTATE[] wallcheckarr = new WALLSTATE[4];                    //그 바닥의 4방향 벽상태
-
         byte randomdir = RandomWallDir();                               //만약 첫번째 방이 아닐 경우 이전방의 문 방향 값을 받아온다
         byte percant = 3;                                               //문이 생길 확률 (1/percant)
 
         foreach (Vector2 _pos in floorPosList)                           //벽을 만들 바닥의 배열
         {
+            WALLSTATE[] wallcheckarr = new WALLSTATE[4];                    //그 바닥의 4방향 벽상태
+
+            byte spawndir = 0;
+
+            #region [CheckWallDir]
+
             foreach (Vector2 _checkpos in floorPosList)                  //같은 방의 바닥끼리 벽을 비우기 위해 비교할 바닥의 배열
             {
-                for (int i = randomdir; i < 4 + randomdir; i++)         //문이 달린 벽을 랜덤하게 생성해 주기 위한 순서
+                for (byte i = randomdir; i < 4 + randomdir; i++)         //문이 달린 벽을 랜덤하게 생성해 주기 위한 순서
                 {
-                    switch (Mathf.Abs(i - 4))
+                    byte _dir = 0;
+
+                    if(i > 3)
+                    {
+                        _dir = (byte)(i - 4);
+                    }
+                    else
+                    {
+                        _dir = i;
+                    }
+
+                    switch (_dir)
                     {
                         case (byte)DIRECTION.TOP:
+
+                            if(wallcheckarr[(byte)DIRECTION.TOP] == WALLSTATE.EMPTY)
+                            {
+                                break;
+                            }
 
                             FloorInfo topInfo = mapmanager.RoomBoard[PosParse(_pos.x), PosParse(_pos.y + 1)];
 
                             if (new Vector2(_pos.x, _pos.y + 1) == _checkpos)           //확인한 칸에 이미 같은 방의 바닥이 있으면 벽을 비운다.
                             {
+                                if(wallcheckarr[(byte)DIRECTION.TOP] == WALLSTATE.DOOR)
+                                {
+                                    doorCount--;
+                                }
+
                                 wallcheckarr[(byte)DIRECTION.TOP] = WALLSTATE.EMPTY;
                             }
                             else if (topInfo == null && doorCount < 4)       //보드에 값이 비어있고 문이 4개를 넘지 않으면 일정 확률로 문만들고 방 생성
@@ -202,21 +228,23 @@ public class RoomController : MonoBehaviour
                                     Destroy(gameObject);
                                 }
                             }
-                            else if (topInfo != null && topInfo.roomType != ROOMTYPE.HALLWAY)
-                            {       //확인한 칸에 이미 바닥이 있고, 그 바닥의 방타입이 복도가 아닐때
-                                wallcheckarr[(byte)DIRECTION.TOP] = WALLSTATE.DOOR;
-
-                                topInfo.wallObj[(byte)DIRECTION.BOTTOM] = doorPrefab;
-
-                                doorCount++;
-                            }
                             break;
                         case (byte)DIRECTION.RIGHT:
+
+                            if (wallcheckarr[(byte)DIRECTION.RIGHT] == WALLSTATE.EMPTY)
+                            {
+                                break;
+                            }
 
                             FloorInfo rightInfo = mapmanager.RoomBoard[PosParse(_pos.x + 1), PosParse(_pos.y)];
 
                             if (new Vector2(_pos.x + 1, _pos.y) == _checkpos)
                             {
+                                if (wallcheckarr[(byte)DIRECTION.RIGHT] == WALLSTATE.DOOR)
+                                {
+                                    doorCount--;
+                                }
+
                                 wallcheckarr[(byte)DIRECTION.RIGHT] = WALLSTATE.EMPTY;
                             }
                             else if (rightInfo == null && doorCount < 4)
@@ -244,21 +272,23 @@ public class RoomController : MonoBehaviour
                                     Destroy(gameObject);
                                 }
                             }
-                            else if (rightInfo != null && rightInfo.roomType != ROOMTYPE.HALLWAY)
-                            {
-                                wallcheckarr[(byte)DIRECTION.RIGHT] = WALLSTATE.DOOR;
-
-                                rightInfo.wallObj[(byte)DIRECTION.LEFT] = doorPrefab;
-
-                                doorCount++;
-                            }
                             break;
                         case (byte)DIRECTION.BOTTOM:
+
+                            if (wallcheckarr[(byte)DIRECTION.BOTTOM] == WALLSTATE.EMPTY)
+                            {
+                                break;
+                            }
 
                             FloorInfo borromInfo = mapmanager.RoomBoard[PosParse(_pos.x), PosParse(_pos.y - 1)];
 
                             if (new Vector2(_pos.x, _pos.y - 1) == _checkpos)
                             {
+                                if (wallcheckarr[(byte)DIRECTION.BOTTOM] == WALLSTATE.DOOR)
+                                {
+                                    doorCount--;
+                                }
+
                                 wallcheckarr[(byte)DIRECTION.BOTTOM] = WALLSTATE.EMPTY;
                             }
                             else if (borromInfo == null && doorCount < 4)
@@ -286,25 +316,23 @@ public class RoomController : MonoBehaviour
                                     Destroy(gameObject);
                                 }
                             }
-                            else if (borromInfo != null && borromInfo.roomType != ROOMTYPE.HALLWAY)
-                            {
-                                wallcheckarr[(byte)DIRECTION.BOTTOM] = WALLSTATE.DOOR;
-
-                                borromInfo.wallObj[(byte)DIRECTION.TOP] = doorPrefab;
-
-                                doorCount++;
-                            }
                             break;
                         case (byte)DIRECTION.LEFT:
-                            if (new Vector2(_pos.x - 1, _pos.y) == _checkpos)
+
+                            if (wallcheckarr[(byte)DIRECTION.LEFT] == WALLSTATE.EMPTY)
                             {
-                                wallcheckarr[(byte)DIRECTION.LEFT] = WALLSTATE.EMPTY;
+                                break;
                             }
 
                             FloorInfo leftInfo = mapmanager.RoomBoard[PosParse(_pos.x - 1), PosParse(_pos.y)];
 
                             if (new Vector2(_pos.x - 1, _pos.y) == _checkpos)
                             {
+                                if (wallcheckarr[(byte)DIRECTION.LEFT] == WALLSTATE.DOOR)
+                                {
+                                    doorCount--;
+                                }
+
                                 wallcheckarr[(byte)DIRECTION.LEFT] = WALLSTATE.EMPTY;
                             }
                             else if (leftInfo == null && doorCount < 4)
@@ -332,33 +360,73 @@ public class RoomController : MonoBehaviour
                                     Destroy(gameObject);
                                 }
                             }
-                            else if (leftInfo != null && leftInfo.roomType != ROOMTYPE.HALLWAY)
-                            {
-                                wallcheckarr[(byte)DIRECTION.LEFT] = WALLSTATE.DOOR;
-
-                                leftInfo.wallObj[(byte)DIRECTION.RIGHT] = doorPrefab;
-
-                                doorCount++;
-                            }
                             break;
                     }
                 }
-
             }
+
+            #endregion
+
+            #region [SpawnWall]
+
+            foreach (WALLSTATE wallstate in wallcheckarr)
+            {
+                sbyte _x = (sbyte)_pos.x;
+                sbyte _y = (sbyte)_pos.y;
+
+                int wallrotaion = 0;
+                Vector3 wallpos = new Vector3(0, 0, 0);
+                GameObject floor = mapmanager.RoomBoard[PosParse(_x), PosParse(_y)].floorObject;
+
+                switch (spawndir)
+                {
+                    case (byte)DIRECTION.TOP:
+                        wallpos = new Vector3(_x, _y + 0.45f, -0.05f);
+                        wallrotaion = 90;
+                        break;
+                    case (byte)DIRECTION.RIGHT:
+                        wallpos = new Vector3(_x + 0.45f, _y, -0.05f);
+                        wallrotaion = 0;
+                        break;
+                    case (byte)DIRECTION.BOTTOM:
+                        wallpos = new Vector3(_x, _y - 0.45f, -0.05f);
+                        wallrotaion = -90;
+                        break;
+                    case (byte)DIRECTION.LEFT:
+                        wallpos = new Vector3(_x - 0.45f, _y, -0.05f);
+                        wallrotaion = -180;
+                        break;
+                }
+
+                if (wallstate == WALLSTATE.BLOCK)
+                {
+                    Instantiate(wallPrefab, wallpos, Quaternion.Euler(0, 0, wallrotaion)).transform.parent = floor.transform;
+                }
+                else if(wallstate == WALLSTATE.DOOR)
+                {
+                    Instantiate(doorPrefab, wallpos, Quaternion.Euler(0, 0, wallrotaion)).transform.parent = floor.transform;
+                }
+
+                spawndir++;
+            }
+
+            #endregion
         }
+
+        Debug.Log(doorCount);
     }
 
-    private void SetInfoToBoard(Vector2 _pos, GameObject _roomobj, byte _index)
+    private void SetInfoToBoard(GameObject _roomobj, byte _index)
     {
         FloorInfo floorinfo = new FloorInfo();
+        Vector2 _pos = new Vector2(_roomobj.transform.position.x, _roomobj.transform.position.y);
 
-        floorinfo.floorPos = _pos;
         floorinfo.floorObject = _roomobj;
         floorinfo.roomIndex = _index;
         floorinfo.roomType = roomType;
 
         mapmanager.RoomBoard[PosParse(_pos.x), PosParse(_pos.y)] = floorinfo;
-
+        
         floorPosList.Add(_pos);
     }
 

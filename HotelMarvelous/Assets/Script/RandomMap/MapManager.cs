@@ -58,12 +58,21 @@ public class MapManager : MonoBehaviour
         RoomBoard = new FloorInfo[50, 50];
         curRoomCount = 0;
     }
+
+    public void OnclickBuildWall()
+    {
+        GameObject[] rooms = GameObject.FindGameObjectsWithTag("Rooms");
+
+        foreach (GameObject _room in rooms)
+        {
+            _room.transform.GetComponent<RoomController>();
+        }
+    }
 }
 
 public class FloorInfo
 {
     public byte roomIndex = 0;
-    public Vector2 floorPos = new Vector3(0,0);
     public GameObject floorObject = null;
     public GameObject[] wallObj = new GameObject[4];
     public ROOMTYPE roomType = ROOMTYPE.EMPTY;
