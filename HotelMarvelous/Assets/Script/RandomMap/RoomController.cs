@@ -11,7 +11,7 @@ public class RoomController : MonoBehaviour
     private DIRECTION roomDir;                //4방향이 모두 막혔는지 확인하기 위한 카운터
 
     private List<Vector2> floorPosList = new List<Vector2>();        //생성된 바닥의 좌표를 가지고 있는 리스트
-    private List<Vector2> nextFloorPosList = new List<Vector2>();    //다음으로 생성될 방의 좌표
+    private List<Vector3> nextFloorPosList = new List<Vector3>();    //다음으로 생성될 방의 좌표
 
     private GameObject floorPrefab;           //초기화 필요
     private GameObject wallPrefab;
@@ -42,15 +42,23 @@ public class RoomController : MonoBehaviour
 
         roomDir = (DIRECTION)Random.Range(0, System.Enum.GetValues(typeof(DIRECTION)).Length);
 
-        SpawnRoomFloor();
-        SpawnFloorWall();
+        if (roomType == ROOMTYPE.HALLWAY)
+        {
+            SpawnHallwayFloor();
+            SpawnHallwayWall();
+        }
+        else
+        {
+            SpawnRoomFloor();
+            SpawnFloorWall();
+        } 
     }
 
     private void SpawnRoomFloor()
     {
         if (mapmanager.curRoomCount < mapmanager.maxRoomCount && mapmanager.RoomBoard[PosParse(curX), PosParse(curY)] == null)
         {
-            byte roomsize = Randomsize();                       //생성해야할 방의 타입을 확인한 후 그에 따라서 랜덤값 반환;
+            byte roomsize = RandomSize();                       //생성해야할 방의 타입을 확인한 후 그에 따라서 랜덤값 반환;
             byte dirblockcheck = 0;                             //4방향 모두 막혀있을 경우 반복문 탈출
 
             for (int i = 0; i < roomsize; i++)
@@ -238,7 +246,7 @@ public class RoomController : MonoBehaviour
                                     {
                                         wallcheckarr[(byte)DIRECTION.TOP] = WALLSTATE.DOOR;
 
-                                        nextFloorPosList.Add(new Vector2(_pos.x, _pos.y + 1));
+                                        nextFloorPosList.Add(new Vector3(_pos.x, _pos.y + 1, (float)DIRECTION.BOTTOM));
 
                                         doorCount++;
                                     }
@@ -277,7 +285,7 @@ public class RoomController : MonoBehaviour
                                     {
                                         wallcheckarr[(byte)DIRECTION.RIGHT] = WALLSTATE.DOOR;
 
-                                        nextFloorPosList.Add(new Vector2(_pos.x + 1, _pos.y));
+                                        nextFloorPosList.Add(new Vector3(_pos.x + 1, _pos.y, (float)DIRECTION.LEFT));
 
                                         doorCount++;
                                     }
@@ -316,7 +324,7 @@ public class RoomController : MonoBehaviour
                                     {
                                         wallcheckarr[(byte)DIRECTION.BOTTOM] = WALLSTATE.DOOR;
 
-                                        nextFloorPosList.Add(new Vector2(_pos.x, _pos.y - 1));
+                                        nextFloorPosList.Add(new Vector3(_pos.x, _pos.y - 1, (float)DIRECTION.TOP));
 
                                         doorCount++;
                                     }
@@ -355,7 +363,7 @@ public class RoomController : MonoBehaviour
                                     {
                                         wallcheckarr[(byte)DIRECTION.LEFT] = WALLSTATE.DOOR;
 
-                                        nextFloorPosList.Add(new Vector2(_pos.x - 1, _pos.y));
+                                        nextFloorPosList.Add(new Vector3(_pos.x - 1, _pos.y, (float)DIRECTION.RIGHT));
 
                                         doorCount++;
                                     }
@@ -422,6 +430,42 @@ public class RoomController : MonoBehaviour
         Debug.Log(doorCount);
     }
 
+    private void SpawnHallwayFloor()
+    {
+        if(enterDir != null)
+        {
+            switch (enterDir)
+            {
+                case DIRECTION.TOP:
+                    if (mapmanager.RoomBoard[curX, curY + 1] == null)
+                    {
+                        Instantiate(floorPrefab, new Vector2(curX, curY), Quaternion.identity);
+
+
+                    }
+                    break;
+                case DIRECTION.RIGHT:
+
+                    break;
+                case DIRECTION.BOTTOM:
+
+                    break;
+                case DIRECTION.LEFT:
+
+                    break;
+            }
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void SpawnHallwayWall()
+    {
+
+    }
+
     private void SetInfoToBoard(GameObject _roomobj, byte _index)
     {
         FloorInfo floorinfo = new FloorInfo();
@@ -466,7 +510,7 @@ public class RoomController : MonoBehaviour
         }
     }
 
-    private byte Randomsize()
+    private byte RandomSize()
     {
         //방 탑입에 따라 생성해야할 방의 수를 지정
         byte _value = 0;

@@ -11,7 +11,7 @@ public enum ROOMTYPE : byte
     NPC
 }
 
-public enum DIRECTION
+public enum DIRECTION : byte
 {
     TOP,
     RIGHT,
@@ -19,7 +19,7 @@ public enum DIRECTION
     LEFT
 }
 
-public enum WALLSTATE
+public enum WALLSTATE : byte
 {
     BLOCK,
     EMPTY,
