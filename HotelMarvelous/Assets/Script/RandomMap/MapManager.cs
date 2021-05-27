@@ -5,7 +5,6 @@ using UnityEngine;
 public enum ROOMTYPE : byte
 {
     EMPTY,
-    NEEDROOM,
     HALLWAY,
     GUEST,
     NPC
