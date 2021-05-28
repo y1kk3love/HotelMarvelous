@@ -175,7 +175,7 @@ public class RoomController : MonoBehaviour
 
     private void CreateRoomWall()
     {
-        byte randomdir = RandomWallDir();                               //만약 첫번째 방이 아닐 경우 이전방의 문 방향 값을 받아온
+        DIRECTION randomdir = (DIRECTION)RandomWallDir();                               //만약 첫번째 방이 아닐 경우 이전방의 문 방향 값을 받아온
         byte percant = 4;                                               //문이 생길 확률 (1/percant)
 
         foreach (Vector2 _pos in floorPosList)                           //벽을 만들 바닥의 배열
@@ -184,10 +184,8 @@ public class RoomController : MonoBehaviour
 
             foreach (Vector2 _checkpos in floorPosList)                  //같은 방의 바닥끼리 벽을 비우기 위해 비교할 바닥의 배열
             {
-                for (byte i = randomdir; i < 4 + randomdir; i++)         //문이 달린 벽을 랜덤하게 생성해 주기 위한 순서
+                for (DIRECTION i = randomdir; i < 4 + randomdir; i++)         //문이 달린 벽을 랜덤하게 생성해 주기 위한 순서
                 {
-                    DIRECTION? _dir = enterDir;
-
                     switch (doorCount)                                   //문이 초반방에만 생기는 것을 막기 위해 확률을 낮게 만듬
                     {
                         //방의 사이즈에 따른 확률 변화가 필요할듯??
@@ -205,16 +203,16 @@ public class RoomController : MonoBehaviour
                             break;
                     }
 
-                    if(i > 3)
+                    if(i > DIRECTION.LEFT)
                     {
-                        _dir = (DIRECTION)(i - 4);
+                        randomdir = i - 4;
                     }
                     else
                     {
-                        _dir = (DIRECTION)i;
+                        randomdir = i;
                     }
 
-                    switch (_dir)
+                    switch (randomdir)
                     {
                         case DIRECTION.TOP:
 
@@ -234,13 +232,15 @@ public class RoomController : MonoBehaviour
 
                                 wallcheckarr[(byte)DIRECTION.TOP] = WALLSTATE.EMPTY;
                             }
-                            else if (topInfo == null && doorCount < 4)       //보드에 값이 비어있고 문이 4개를 넘지 않으면 일정 확률로 문만들고 방 생성
+                            else if (/*topInfo == null && */doorCount < 1)       //문이 4개를 넘지 않으면 일정 확률로 문만들고 방 생성
                             {
                                 if (wallcheckarr[(byte)DIRECTION.TOP] == WALLSTATE.BLOCK)
                                 {
                                     if (doorCount == 0)
                                     {
                                         wallcheckarr[(byte)DIRECTION.TOP] = WALLSTATE.DOOR;
+
+                                        nextFloorPosList.Add(new Vector3(_pos.x, _pos.y + 1, (float)DIRECTION.BOTTOM));
 
                                         doorCount++;
                                     }
@@ -273,13 +273,15 @@ public class RoomController : MonoBehaviour
 
                                 wallcheckarr[(byte)DIRECTION.RIGHT] = WALLSTATE.EMPTY;
                             }
-                            else if (rightInfo == null && doorCount < 4)
+                            else if (/*rightInfo == null && */doorCount < 1)
                             {
                                 if (wallcheckarr[(byte)DIRECTION.RIGHT] == WALLSTATE.BLOCK)
                                 {
                                     if (doorCount == 0)
                                     {
                                         wallcheckarr[(byte)DIRECTION.RIGHT] = WALLSTATE.DOOR;
+
+                                        nextFloorPosList.Add(new Vector3(_pos.x + 1, _pos.y, (float)DIRECTION.LEFT));
 
                                         doorCount++;
                                     }
@@ -312,13 +314,15 @@ public class RoomController : MonoBehaviour
 
                                 wallcheckarr[(byte)DIRECTION.BOTTOM] = WALLSTATE.EMPTY;
                             }
-                            else if (borromInfo == null && doorCount < 4)
+                            else if (/*borromInfo == null && */doorCount < 1)
                             {
                                 if (wallcheckarr[(byte)DIRECTION.BOTTOM] == WALLSTATE.BLOCK)
                                 {
                                     if (doorCount == 0)
                                     {
                                         wallcheckarr[(byte)DIRECTION.BOTTOM] = WALLSTATE.DOOR;
+
+                                        nextFloorPosList.Add(new Vector3(_pos.x, _pos.y - 1, (float)DIRECTION.TOP));
 
                                         doorCount++;
                                     }
@@ -351,13 +355,15 @@ public class RoomController : MonoBehaviour
 
                                 wallcheckarr[(byte)DIRECTION.LEFT] = WALLSTATE.EMPTY;
                             }
-                            else if (leftInfo == null && doorCount < 4)
+                            else if (/*leftInfo == null && */ doorCount < 1)
                             {
                                 if (wallcheckarr[(byte)DIRECTION.LEFT] == WALLSTATE.BLOCK)
                                 {
                                     if (doorCount == 0)
                                     {
                                         wallcheckarr[(byte)DIRECTION.LEFT] = WALLSTATE.DOOR;
+
+                                        nextFloorPosList.Add(new Vector3(_pos.x - 1, _pos.y, (float)DIRECTION.RIGHT));
 
                                         doorCount++;
                                     }
@@ -565,8 +571,6 @@ public class RoomController : MonoBehaviour
     private void SpawnNextRoom(List<Vector3> _vec3list)
     {
         StartCoroutine(Delay(_vec3list));
-
-        
     }
 
     IEnumerator Delay(List<Vector3> _vec3list)
