@@ -21,7 +21,7 @@ public class Monster : MonoBehaviour
 
     private int touchdamage;
     private float mentaldamage; 
-    private int monsterhp;
+    private float monsterhp;
     private float monspeed = 1;
     private float timer = 0.5f;
     private float raylength = 5;
@@ -80,7 +80,7 @@ public class Monster : MonoBehaviour
         Debug.DrawRay(this.transform.position, Debugdir * raylength, Color.red);
     }
 
-    public void MonGetDamage(int _damage)
+    public void MonGetDamage(float _damage)
     {
         Debug.Log("Get " + _damage + " Damage");
         monsterhp -= _damage;

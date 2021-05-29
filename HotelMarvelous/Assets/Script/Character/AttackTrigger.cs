@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AttackTrigger : MonoBehaviour
 {
-    private int damage;
+    private float damage;
 
     void OnTriggerEnter(Collider other)
     {
@@ -14,7 +14,7 @@ public class AttackTrigger : MonoBehaviour
         }
     }
 
-    public void SetDamage(int _damage)
+    public void SetDamage(float _damage)
     {
         damage = _damage;
     }

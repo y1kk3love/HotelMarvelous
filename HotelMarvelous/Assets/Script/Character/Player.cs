@@ -22,8 +22,10 @@ public class Player : MonoBehaviour
     #region [Status]
 
     private int damage = 3;
+    private int damperm2, damperm1, dampern, damperp1;
     private int hp = 200;
-    private float stamina = 20;
+    private float criticalPercent = 3.0f;
+    private float stamina = 20.0f;
     private float runspeed = 1.5f;
     private float speed = 1f;
     private float mentality = 50.0f;
@@ -76,6 +78,11 @@ public class Player : MonoBehaviour
     void Start()
     {
         anim = gameObject.GetComponent<Animator>();
+
+        damperm2 = 15;
+        damperm1 = 15;
+        dampern = 40;
+        damperp1 = 15;
 
         if (GameObject.Find("ResourceManager") != null)
         {
@@ -287,7 +294,7 @@ public class Player : MonoBehaviour
     private void Attack_00_Enter()
     {
         atkrangeList[0].SetActive(true);
-        atkrangeList[0].GetComponent<AttackTrigger>().SetDamage(damage);
+        atkrangeList[0].GetComponent<AttackTrigger>().SetDamage(CalculateDamagePercent());
     }
 
     private void Attack_00_Exit()
@@ -385,13 +392,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void CalculateDirection()
-    {
-        angle = Mathf.Atan2(input.x, input.y);
-        angle = Mathf.Rad2Deg * angle;
-        angle += Camera.main.transform.eulerAngles.y;
-    }
-
     private void Rotate()
     {
         targetrotation = Quaternion.Euler(0, angle, 0);
@@ -401,7 +401,63 @@ public class Player : MonoBehaviour
     private void Move()
     {
         anim.SetBool("Run", true);
-        transform.position += transform.forward * velocity * Time.deltaTime *  speed;
+        transform.position += transform.forward * velocity * Time.deltaTime * speed;
+    }
+
+    private void CalculateDirection()
+    {
+        angle = Mathf.Atan2(input.x, input.y);
+        angle = Mathf.Rad2Deg * angle;
+        angle += Camera.main.transform.eulerAngles.y;
+    }
+
+    private float CalculateDamagePercent()
+    {
+        int _percent = Random.Range(0, 100);
+        float _damage = damage;
+
+        if(_percent < damperm2)
+        {
+            _damage -= 2;
+        }
+        else if(_percent < damperm2 + damperm1)
+        {
+            _damage--;
+        }
+        else if(_percent < damperm2 + damperm1 + dampern)
+        {
+            return _damage;
+        }
+        else if(_percent < damperm2 + damperm1 + dampern + damperp1)
+        {
+            _damage++; 
+        }
+        else
+        {
+            _damage += 2;
+        }
+
+        if (CalculateIsCritical())
+        {
+            _damage *= 1.8f;
+        }
+
+        Debug.Log(_damage);
+        return _damage;
+    }
+
+    private bool CalculateIsCritical()
+    {
+        int curpercent = Random.Range(0, 1000);
+
+        if(curpercent < criticalPercent * 10)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     IEnumerator Attack_00()
