@@ -10,6 +10,8 @@ public class DungeonUI : MonoBehaviour
     private Text hptext;
     private Text mentaltext;
     private Text cointext;
+    private Text keytext;
+    private Text beantext;
 
     private Slider hpbar;
     private Slider staminabar;
@@ -25,6 +27,9 @@ public class DungeonUI : MonoBehaviour
     void Start()
     {
         cointext = GameObject.Find("CoinText").GetComponent<Text>();
+        keytext = GameObject.Find("KeyText").GetComponent<Text>();
+        beantext = GameObject.Find("BeanText").GetComponent<Text>();
+
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         hpbar = gameObject.transform.Find("HPBar").GetComponent<Slider>();
         hptext = hpbar.transform.Find("HPText").GetComponent<Text>();
@@ -51,12 +56,14 @@ public class DungeonUI : MonoBehaviour
         }
 
         hpbar.value = player.GetHp();
-        hptext.text = hpbar.maxValue + " / " + player.GetHp();
+        hptext.text = hpbar.maxValue + " / " + Mathf.Ceil(player.GetHp());
 
         mentalbar.value = player.GetMentality();
         mentaltext.text = string.Format("{0:00.0} ", player.GetMentality());
 
         cointext.text = " Coin : " + player.GetCoin().ToString();
+        keytext.text = " Key : " + player.GetKeys().ToString();
+        beantext.text = " Bean : " + player.GetBeans().ToString();
 
         staminabar.value = player.GetStamina();
         itemCounter.fillAmount = player.GetItemCount();

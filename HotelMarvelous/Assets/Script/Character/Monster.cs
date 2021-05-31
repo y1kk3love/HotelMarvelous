@@ -6,7 +6,18 @@ using UnityEngine.AI;
 public class Monster : MonoBehaviour
 {
     public GameObject rangeskill;
-    public GameObject obcoin;
+
+    #region [DropItem]
+
+    private GameObject obCoin;
+    private GameObject obKey;
+    private GameObject obMasterKey;
+    private GameObject obBean;
+    private GameObject obHealHp;
+    private GameObject obHealMental;
+    private GameObject obHealAll;
+
+    #endregion
 
     private GameObject player;
 
@@ -52,6 +63,7 @@ public class Monster : MonoBehaviour
 
         navi.speed = monspeed * 5;
     }
+
     void Update()
     {
         MonsterDeath();
@@ -91,8 +103,92 @@ public class Monster : MonoBehaviour
         if (monsterhp <= 0)
         {
             navi = null;
-            Instantiate(obcoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+            SpawnItem();
             Destroy(gameObject);
+        }
+    }
+
+    private void SpawnItem()
+    {
+        if(Random.Range(0, 100) < 40)                                                                   //40%
+        {
+            int _stateper = Random.Range(0, 100);
+
+            if (_stateper < 50)                                         //50%
+            {
+                int _coinper = Random.Range(0, 100);
+
+                if(_coinper < 89)           //89%
+                {
+                    GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _coin.AddComponent<ConsumItem>();
+                    conitem.consumitem = CONSUMITEM.COIN;
+                }
+                else if (_coinper < 96)     //7%
+                {
+                    for(int i = 0; i < 2; i++)
+                    {
+                        GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                        ConsumItem conitem = _coin.AddComponent<ConsumItem>();
+                        conitem.consumitem = CONSUMITEM.COIN;
+                    }
+                }
+                else                        //4%
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                        ConsumItem conitem = _coin.AddComponent<ConsumItem>();
+                        conitem.consumitem = CONSUMITEM.COIN;
+                    }
+                }
+            }
+            else if (_stateper < 80)                                    //30%
+            {
+                int _keyper = Random.Range(0, 100);
+
+                if(_keyper < 99)            //99%
+                {
+                    GameObject _key = Instantiate(obKey, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _key.AddComponent<ConsumItem>();
+                    conitem.consumitem = CONSUMITEM.KEYS;
+                }
+                else                        //1%
+                {
+                    GameObject _masterkey = Instantiate(obMasterKey, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
+                    conitem.consumitem = CONSUMITEM.MASTERKEY;
+                }
+            }
+            else                                                        //20%
+            {
+                int _beanper = Random.Range(0, 100);
+
+                if (_beanper < 89)          //89%
+                {
+                    GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _bean.AddComponent<ConsumItem>();
+                    conitem.consumitem = CONSUMITEM.BEANS;
+                }
+                else if(_beanper < 96)      //7%
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                        ConsumItem conitem = _bean.AddComponent<ConsumItem>();
+                        conitem.consumitem = CONSUMITEM.BEANS;
+                    }
+                }
+                else                        //4%
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                        ConsumItem conitem = _bean.AddComponent<ConsumItem>();
+                        conitem.consumitem = CONSUMITEM.BEANS;
+                    }
+                }
+            }
         }
     }
 

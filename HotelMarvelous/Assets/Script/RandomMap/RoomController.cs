@@ -28,7 +28,16 @@ public class RoomController : MonoBehaviour
         centerOnBoard = (byte)(Mathf.Sqrt(mapmanager.RoomBoard.Length) / 2);
 
         roomPrefab = mapmanager.roomPrefab;
-        floorPrefab = mapmanager.floorPrefab;
+
+        if (roomType != ROOMTYPE.HALLWAY)
+        {
+            floorPrefab = mapmanager.floorPrefab;
+        }
+        else
+        {
+            floorPrefab = mapmanager.floor2Prefab;
+        }
+        
         wallPrefab = mapmanager.wallPrefab;
         doorPrefab = mapmanager.doorPrefab;
 

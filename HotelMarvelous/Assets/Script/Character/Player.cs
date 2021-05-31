@@ -2,18 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum WEAPONID
-{
-    SWORD,
-    SPEAR
-}
-
-public enum ITEMCODE : byte
-{
-    CROWN,
-    SLOTMACHINE
-}
-
 //[RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
@@ -23,17 +11,21 @@ public class Player : MonoBehaviour
 
     private int damage = 3;
     private int damperm2, damperm1, dampern, damperp1;
-    private int hp = 200;
+    private float hp = 200;
     private float criticalPercent = 3.0f;
     private float stamina = 20.0f;
     private float runspeed = 1.5f;
     private float speed = 1f;
     private float mentality = 50.0f;
+    private int defense = 5;
 
     #endregion
 
     #region [Item]
+
     private byte coin = 0;
+    private byte roomKeys = 0;
+    private byte beans = 0;
 
     private float itemMagnification = 6;
     private float itemcount = 1;
@@ -139,12 +131,33 @@ public class Player : MonoBehaviour
 
             itemMagnification = resource.GetItemMagnification(itemcode);
         }
-        if (other.gameObject.name == "Coin")
+        if (other.gameObject.tag == "ConsumItem")
         {
-            if(coin < 100)
+            ConsumItem _consumitem = other.GetComponent<ConsumItem>();
+
+            switch (_consumitem.consumitem)
             {
-                coin++;
-                Destroy(other.gameObject);
+                case CONSUMITEM.COIN:
+                    if (coin < 100)
+                    {
+                        coin++;
+                        Destroy(other.gameObject);
+                    }
+                    break;
+                case CONSUMITEM.KEYS:
+                    if (roomKeys < 100)
+                    {
+                        roomKeys++;
+                        Destroy(other.gameObject);
+                    }
+                    break;
+                case CONSUMITEM.BEANS:
+                    if (beans < 100)
+                    {
+                        beans++;
+                        Destroy(other.gameObject);
+                    }
+                    break;
             }
         }
         if(other.gameObject.name == "MoveLift")
@@ -204,6 +217,16 @@ public class Player : MonoBehaviour
         }
     }
 
+    public byte GetBeans()
+    {
+        return beans;
+    }
+
+    public byte GetKeys()
+    {
+        return roomKeys;
+    }
+
     public byte GetCoin()
     {
         return coin;
@@ -223,7 +246,7 @@ public class Player : MonoBehaviour
     {
         return itemcount / itemMagnification;
     }
-    public int GetHp()
+    public float GetHp()
     {
         return hp;
     }
@@ -284,7 +307,7 @@ public class Player : MonoBehaviour
 
     public void SetDamage(int _damage)
     {
-        hp -= _damage;
+        hp -= _damage * (1 + defense / 100);
     }
 
     #endregion

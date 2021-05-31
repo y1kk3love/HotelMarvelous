@@ -585,6 +585,8 @@ MonoBehaviour:
     type: 3}
   floorPrefab: {fileID: 7962226749410940180, guid: 2b01b01067ab2a94795466792cf85c00,
     type: 3}
+  floor2Prefab: {fileID: 7962226749410940180, guid: 564196c9ade0bc642b8259a81bed8faf,
+    type: 3}
   wallPrefab: {fileID: 6539474203643731126, guid: 0acba4cee67735d45928250afac5bbb8,
     type: 3}
   doorPrefab: {fileID: 8872321378153529280, guid: f80606ce8afaf434f8aff5ae7367db89,

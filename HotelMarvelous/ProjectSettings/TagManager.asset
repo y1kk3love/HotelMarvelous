@@ -9,6 +9,7 @@ TagManager:
   - Lobby
   - Monster
   - Attack
+  - ConsumItem
   layers:
   - Default
   - TransparentFX

@@ -2,37 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ROOMTYPE : byte
-{
-    EMPTY,
-    HALLWAY,
-    GUEST,
-    NPC
-}
-
-public enum DIRECTION : byte
-{
-    TOP,
-    RIGHT,
-    BOTTOM,
-    LEFT
-}
-
-public enum WALLSTATE : byte
-{
-    BLOCK,
-    EMPTY,
-    DOOR
-}
-
 public class MapManager : MonoBehaviour
 {
     public ROOMTYPE roomType;
 
     public FloorInfo[,] RoomBoard = new FloorInfo[50, 50];
 
-    public GameObject roomPrefab;
+    public GameObject roomPrefab;           //리소스에서 불러와줘야해요
     public GameObject floorPrefab;
+    public GameObject floor2Prefab;
     public GameObject wallPrefab;
     public GameObject doorPrefab;
 
