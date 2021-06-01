@@ -21,6 +21,7 @@ public class RoomController : MonoBehaviour
     private byte centerOnBoard;               //배열의 중심인 (25,25)를 (0,0)으로 놓고 사용하기위한 변수
     private sbyte curX, curY;                 //바닥을 자식으로 둔 방의 좌표 = 1번째 바닥의 좌표
     private byte doorCount = 0;
+    private byte doorMax = 4;
 
     void Start()
     {
@@ -241,7 +242,7 @@ public class RoomController : MonoBehaviour
 
                                 wallcheckarr[(byte)DIRECTION.TOP] = WALLSTATE.EMPTY;
                             }
-                            else if (/*topInfo == null && */doorCount < 1)       //문이 4개를 넘지 않으면 일정 확률로 문만들고 방 생성
+                            else if (/*topInfo == null && */doorCount < doorMax)       //문이 4개를 넘지 않으면 일정 확률로 문만들고 방 생성
                             {
                                 if (wallcheckarr[(byte)DIRECTION.TOP] == WALLSTATE.BLOCK)
                                 {
@@ -282,7 +283,7 @@ public class RoomController : MonoBehaviour
 
                                 wallcheckarr[(byte)DIRECTION.RIGHT] = WALLSTATE.EMPTY;
                             }
-                            else if (/*rightInfo == null && */doorCount < 1)
+                            else if (/*rightInfo == null && */doorCount < doorMax)
                             {
                                 if (wallcheckarr[(byte)DIRECTION.RIGHT] == WALLSTATE.BLOCK)
                                 {
@@ -323,7 +324,7 @@ public class RoomController : MonoBehaviour
 
                                 wallcheckarr[(byte)DIRECTION.BOTTOM] = WALLSTATE.EMPTY;
                             }
-                            else if (/*borromInfo == null && */doorCount < 1)
+                            else if (/*borromInfo == null && */doorCount < doorMax)
                             {
                                 if (wallcheckarr[(byte)DIRECTION.BOTTOM] == WALLSTATE.BLOCK)
                                 {
@@ -364,7 +365,7 @@ public class RoomController : MonoBehaviour
 
                                 wallcheckarr[(byte)DIRECTION.LEFT] = WALLSTATE.EMPTY;
                             }
-                            else if (/*leftInfo == null && */ doorCount < 1)
+                            else if (/*leftInfo == null && */ doorCount < doorMax)
                             {
                                 if (wallcheckarr[(byte)DIRECTION.LEFT] == WALLSTATE.BLOCK)
                                 {
