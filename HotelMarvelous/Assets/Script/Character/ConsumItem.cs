@@ -4,5 +4,10 @@ using UnityEngine;
 
 public class ConsumItem : MonoBehaviour
 {
-    public CONSUMITEM consumitem;
+    public DROPITEM consumitem;
+
+    void Start()
+    {
+        //model = resource[(byte)consumitem]
+    }
 }

@@ -21,12 +21,21 @@ public enum WALLSTATE : byte
     DOOR
 }
 
-public enum CONSUMITEM
+public enum DROPITEM
 {
     COIN,
     KEYS,
     MASTERKEY,
-    BEANS
+    BEANS,
+    HPS,
+    HPM,
+    HPL,
+    MENTALS,
+    MENTALM,
+    MENTALL,
+    TOTALHEALS,
+    TOTALHEALM,
+    TOTALHEALL
 }
 
 public enum WEAPONID

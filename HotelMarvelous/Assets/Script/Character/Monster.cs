@@ -110,83 +110,161 @@ public class Monster : MonoBehaviour
 
     private void SpawnItem()
     {
+        //소모성 재화
         if(Random.Range(0, 100) < 40)                                                                   //40%
         {
             int _stateper = Random.Range(0, 100);
 
-            if (_stateper < 50)                                         //50%
+            if (_stateper < 50)                                         //50% 전체금화
             {
                 int _coinper = Random.Range(0, 100);
 
-                if(_coinper < 89)           //89%
+                if(_coinper < 89)           //89% 금화 1개
                 {
                     GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                     ConsumItem conitem = _coin.AddComponent<ConsumItem>();
-                    conitem.consumitem = CONSUMITEM.COIN;
+                    conitem.consumitem = DROPITEM.COIN;
                 }
-                else if (_coinper < 96)     //7%
+                else if (_coinper < 96)     //7% 금화 2개
                 {
                     for(int i = 0; i < 2; i++)
                     {
                         GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                         ConsumItem conitem = _coin.AddComponent<ConsumItem>();
-                        conitem.consumitem = CONSUMITEM.COIN;
+                        conitem.consumitem = DROPITEM.COIN;
                     }
                 }
-                else                        //4%
+                else                        //4% 금화 5개
                 {
                     for (int i = 0; i < 5; i++)
                     {
                         GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                         ConsumItem conitem = _coin.AddComponent<ConsumItem>();
-                        conitem.consumitem = CONSUMITEM.COIN;
+                        conitem.consumitem = DROPITEM.COIN;
                     }
                 }
             }
-            else if (_stateper < 80)                                    //30%
+            else if (_stateper < 80)                                    //30% 전체열쇠
             {
                 int _keyper = Random.Range(0, 100);
 
-                if(_keyper < 99)            //99%
+                if(_keyper < 99)            //99% 열쇠 1개
                 {
                     GameObject _key = Instantiate(obKey, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                     ConsumItem conitem = _key.AddComponent<ConsumItem>();
-                    conitem.consumitem = CONSUMITEM.KEYS;
+                    conitem.consumitem = DROPITEM.KEYS;
                 }
-                else                        //1%
+                else                        //1% 마스터키
                 {
                     GameObject _masterkey = Instantiate(obMasterKey, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                     ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
-                    conitem.consumitem = CONSUMITEM.MASTERKEY;
+                    conitem.consumitem = DROPITEM.MASTERKEY;
                 }
             }
-            else                                                        //20%
+            else                                                        //20% 전체원두
             {
                 int _beanper = Random.Range(0, 100);
 
-                if (_beanper < 89)          //89%
+                if (_beanper < 89)          //89% 원두 1개
                 {
                     GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                     ConsumItem conitem = _bean.AddComponent<ConsumItem>();
-                    conitem.consumitem = CONSUMITEM.BEANS;
+                    conitem.consumitem = DROPITEM.BEANS;
                 }
-                else if(_beanper < 96)      //7%
+                else if(_beanper < 96)      //7% 원두 2개
                 {
                     for (int i = 0; i < 2; i++)
                     {
                         GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                         ConsumItem conitem = _bean.AddComponent<ConsumItem>();
-                        conitem.consumitem = CONSUMITEM.BEANS;
+                        conitem.consumitem = DROPITEM.BEANS;
                     }
                 }
-                else                        //4%
+                else                        //4% 원두 5개
                 {
                     for (int i = 0; i < 5; i++)
                     {
                         GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                         ConsumItem conitem = _bean.AddComponent<ConsumItem>();
-                        conitem.consumitem = CONSUMITEM.BEANS;
+                        conitem.consumitem = DROPITEM.BEANS;
                     }
+                }
+            }
+        }
+
+        //몬스터 드랍 회복 아이템
+        if(Random.Range(0,100) < 10)                                                                    //10%
+        {
+            int totalhealper = Random.Range(0, 100);
+
+            if(totalhealper < 45)                                       //45% 전체체력회복
+            {
+                int hphealper = Random.Range(0, 100);
+
+                if(hphealper < 70)          //70% +3
+                {
+                    GameObject _hp = Instantiate(obHealHp, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _hp.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.HPS;
+                }
+                else if(hphealper < 95)     //25% +5
+                {
+                    GameObject _hp = Instantiate(obHealHp, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _hp.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.HPM;
+                }
+                else                        //5% +10
+                {
+                    GameObject _hp = Instantiate(obHealHp, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _hp.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.HPL;
+                }
+            }
+            else if(totalhealper < 90)                                  //45% 전체정신력회복
+            {
+                int mentalper = Random.Range(0, 100);
+
+                if(mentalper < 70)          //70% +0.5
+                {
+                    GameObject _mental = Instantiate(obHealMental, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _mental.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.MENTALS;
+                }
+                else if(mentalper < 95)     //25% +1.0
+                {
+                    GameObject _mental = Instantiate(obHealMental, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _mental.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.MENTALM;
+                }
+                else                        //5% +5.0
+                {
+                    GameObject _mental = Instantiate(obHealMental, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _mental.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.MENTALL;
+                }
+            }
+            else                                                        //10% 전체체력,정신력회복
+            {
+                int totalper = Random.Range(0, 100);
+
+                if(totalper < 80)           //80% +3 && +1.0
+                {
+                    GameObject _total = Instantiate(obHealAll, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _total.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.TOTALHEALS;
+
+                }
+                else if(totalper < 96)      //16% +5 && 3.0
+                {
+                    GameObject _total = Instantiate(obHealAll, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _total.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.TOTALHEALM;
+                }
+                else                        //4% +20 & +10.0
+                {
+                    GameObject _total = Instantiate(obHealAll, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                    ConsumItem conitem = _total.AddComponent<ConsumItem>();
+                    conitem.consumitem = DROPITEM.TOTALHEALL;
                 }
             }
         }

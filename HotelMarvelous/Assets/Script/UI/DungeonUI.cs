@@ -12,6 +12,7 @@ public class DungeonUI : MonoBehaviour
     private Text cointext;
     private Text keytext;
     private Text beantext;
+    private Text extraLifeText;
 
     private Slider hpbar;
     private Slider staminabar;
@@ -26,19 +27,26 @@ public class DungeonUI : MonoBehaviour
 
     void Start()
     {
-        cointext = GameObject.Find("CoinText").GetComponent<Text>();
-        keytext = GameObject.Find("KeyText").GetComponent<Text>();
-        beantext = GameObject.Find("BeanText").GetComponent<Text>();
+        cointext = GameObject.Find("Coin_Text").GetComponent<Text>();
+        keytext = GameObject.Find("Key_Text").GetComponent<Text>();
+        beantext = GameObject.Find("Bean_Text").GetComponent<Text>();
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        hpbar = gameObject.transform.Find("HPBar").GetComponent<Slider>();
-        hptext = hpbar.transform.Find("HPText").GetComponent<Text>();
-        staminabar = gameObject.transform.Find("StaminaBar").GetComponent<Slider>();
-        itemCounter = GameObject.Find("ItemCounter").GetComponent<Image>();
-        itemimage = GameObject.Find("ItemImage").GetComponent<Image>();
-        dispoitemimage = transform.Find("DispoItem").GetComponent<Image>();
-        mentaltext = GameObject.Find("MentalText").GetComponent<Text>();
-        mentalbar = GameObject.Find("MentalityBar").GetComponent<Slider>();
+
+        hpbar = GameObject.Find("HPBar_Slider").GetComponent<Slider>();
+        hptext = GameObject.Find("HP_Text").GetComponent<Text>();
+
+        staminabar = GameObject.Find("StaminaBar_Slider").GetComponent<Slider>();
+
+        extraLifeText = GameObject.Find("ExtraLife_Text").GetComponent<Text>();
+
+        mentaltext = GameObject.Find("Mental_Text").GetComponent<Text>();
+        mentalbar = GameObject.Find("MentalityBar_Slider").GetComponent<Slider>();
+
+        itemCounter = GameObject.Find("ItemCounter_Image").GetComponent<Image>();
+        itemimage = GameObject.Find("Item_Image").GetComponent<Image>();
+
+        dispoitemimage = transform.Find("DispoItem_Image").GetComponent<Image>();
     }
 
     void Update()
@@ -55,9 +63,11 @@ public class DungeonUI : MonoBehaviour
                 break;
         }
 
+        hpbar.maxValue = player.GetMaxHp();
         hpbar.value = player.GetHp();
         hptext.text = hpbar.maxValue + " / " + Mathf.Ceil(player.GetHp());
 
+        mentalbar.maxValue = player.GetMaxMentality();
         mentalbar.value = player.GetMentality();
         mentaltext.text = string.Format("{0:00.0} ", player.GetMentality());
 

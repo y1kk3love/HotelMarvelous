@@ -181,6 +181,10 @@ public class RoomController : MonoBehaviour
             mapmanager.curRoomCount++;                          //타일끼리 비교하기 위한 방의 인덱스값 맵 생성 성공시
             mapmanager.curRoomIndex++;
         }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void CreateRoomWall()

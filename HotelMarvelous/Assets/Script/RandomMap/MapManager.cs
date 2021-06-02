@@ -41,6 +41,7 @@ public class MapManager : MonoBehaviour
 
         RoomBoard = new FloorInfo[50, 50];
         curRoomCount = 0;
+        curRoomIndex = 0;
     }
 
     public void OnclickBuildWall()

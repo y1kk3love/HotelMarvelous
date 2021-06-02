@@ -11,12 +11,15 @@ public class Player : MonoBehaviour
 
     private int damage = 3;
     private int damperm2, damperm1, dampern, damperp1;
-    private float hp = 200;
+    private float hp = 0;
+    private float maxHp = 30;
     private float criticalPercent = 3.0f;
     private float stamina = 20.0f;
     private float runspeed = 1.5f;
     private float speed = 1f;
-    private float mentality = 50.0f;
+    private float mentality = 0.0f;
+    private float maxMentality = 20.0f;
+    private byte extraLife = 1;
     private int defense = 5;
 
     #endregion
@@ -30,6 +33,7 @@ public class Player : MonoBehaviour
     private float itemMagnification = 6;
     private float itemcount = 1;
     private bool isdispoitemon = false;
+    private bool isMasterKey = false;
     private byte dispoitemcode = 0;
     private byte itemcode = 0;
 
@@ -76,6 +80,9 @@ public class Player : MonoBehaviour
         dampern = 40;
         damperp1 = 15;
 
+        hp = maxHp;
+        mentality = maxMentality;
+
         if (GameObject.Find("ResourceManager") != null)
         {
             resource = GameObject.Find("ResourceManager").GetComponent<ResourceManager>();
@@ -84,6 +91,37 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (isMasterKey)
+        {
+            roomKeys = 100;
+        }
+
+        if(hp < maxHp)
+        {
+            hp = maxHp;
+        }
+
+        if(hp <= 0) 
+        {
+            if(extraLife == 1)
+            {
+                //사망처리
+            }
+            else if(extraLife > 1)
+            {
+                extraLife--;
+
+                if(maxHp/2 <= 5)
+                {
+                    maxHp = 5;
+                }
+                else
+                {
+                    maxHp /= 2;
+                }
+            }
+        }
+
         if (isconv)
         {
             anim.SetBool("Run", false);
@@ -137,26 +175,165 @@ public class Player : MonoBehaviour
 
             switch (_consumitem.consumitem)
             {
-                case CONSUMITEM.COIN:
+                case DROPITEM.COIN:
                     if (coin < 100)
                     {
                         coin++;
                         Destroy(other.gameObject);
                     }
                     break;
-                case CONSUMITEM.KEYS:
+                case DROPITEM.KEYS:
                     if (roomKeys < 100)
                     {
                         roomKeys++;
                         Destroy(other.gameObject);
                     }
                     break;
-                case CONSUMITEM.BEANS:
+                case DROPITEM.MASTERKEY:
+                    isMasterKey = true;
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.BEANS:
                     if (beans < 100)
                     {
                         beans++;
                         Destroy(other.gameObject);
                     }
+                    break;
+                case DROPITEM.HPS:
+                    if(hp + 3 <= maxHp)
+                    {
+                        hp += 3;
+                    }
+                    else
+                    {
+                        hp = maxHp;
+                    }
+
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.HPM:
+                    if (hp + 5 <= maxHp)
+                    {
+                        hp += 5;
+                    }
+                    else
+                    {
+                        hp = maxHp;
+                    }
+
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.HPL:
+                    if (hp + 10 <= maxHp)
+                    {
+                        hp += 10;
+                    }
+                    else
+                    {
+                        hp = maxHp;
+                    }
+
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.MENTALS:
+                    if (mentality + 0.5f <= maxMentality)
+                    {
+                        mentality += 0.5f;
+                    }
+                    else
+                    {
+                        mentality = maxMentality;
+                    }
+
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.MENTALM:
+                    if (mentality + 1.0f <= maxMentality)
+                    {
+                        mentality += 1.0f;
+                    }
+                    else
+                    {
+                        mentality = maxMentality;
+                    }
+
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.MENTALL:
+                    if (mentality + 5.0f <= maxMentality)
+                    {
+                        mentality += 5.0f;
+                    }
+                    else
+                    {
+                        mentality = maxMentality;
+                    }
+
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.TOTALHEALS:
+                    if (hp + 3 <= maxHp)
+                    {
+                        hp += 3;
+                    }
+                    else
+                    {
+                        hp = maxHp;
+                    }
+
+                    if (mentality + 1.0f <= maxMentality)
+                    {
+                        mentality += 1.0f;
+                    }
+                    else
+                    {
+                        mentality = maxMentality;
+                    }
+
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.TOTALHEALM:
+                    if (hp + 5 <= maxHp)
+                    {
+                        hp += 5;
+                    }
+                    else
+                    {
+                        hp = maxHp;
+                    }
+
+                    if (mentality + 3.0f <= maxMentality)
+                    {
+                        mentality += 3.0f;
+                    }
+                    else
+                    {
+                        mentality = maxMentality;
+                    }
+
+                    Destroy(other.gameObject);
+                    break;
+                case DROPITEM.TOTALHEALL:
+                    if (hp + 20 <= maxHp)
+                    {
+                        hp += 20;
+                    }
+                    else
+                    {
+                        hp = maxHp;
+                    }
+
+                    if (mentality + 10.0f <= maxMentality)
+                    {
+                        mentality += 10.0f;
+                    }
+                    else
+                    {
+                        mentality = maxMentality;
+                    }
+
+                    Destroy(other.gameObject);
                     break;
             }
         }
@@ -215,6 +392,16 @@ public class Player : MonoBehaviour
         {
             coin -= _coin;
         }
+    }
+
+    public float GetMaxMentality()
+    {
+        return maxMentality;
+    }
+
+    public float GetMaxHp()
+    {
+        return maxHp;
     }
 
     public byte GetBeans()
