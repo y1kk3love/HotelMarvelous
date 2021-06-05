@@ -399,7 +399,10 @@ public class RoomController : MonoBehaviour
             SpawnWall(wallcheckarr, _pos);
         }
 
-        SpawnNextRoom(nextFloorPosList);
+        if(mapmanager.curRoomCount < mapmanager.maxRoomCount)
+        {
+            SpawnNextRoom(nextFloorPosList);
+        }
     }
 
     private void SpawnHallwayFloor()
@@ -445,8 +448,8 @@ public class RoomController : MonoBehaviour
                     else
                     {
                         //생성한 방의 문을 막힌벽으로 바꾸기
-                        FloorInfo info = mapmanager.RoomBoard[PosParse(curX), PosParse(curY + 1)];
-                        info.wallObjArr[(byte)DIRECTION.TOP] = wallPrefab;
+                        ChangeWall(new Vector2(curX, curY + 1), (byte)DIRECTION.TOP);
+                        Debug.Log("막기 성공" + curX + " " + (curY + 1));
 
                         Destroy(gameObject);
                     }
@@ -486,8 +489,8 @@ public class RoomController : MonoBehaviour
                     else
                     {
                         //생성한 방의 문을 막힌벽으로 바꾸기
-                        FloorInfo info = mapmanager.RoomBoard[PosParse(curX + 1), PosParse(curY)];
-                        info.wallObjArr[(byte)DIRECTION.RIGHT] = wallPrefab;
+                        ChangeWall(new Vector2(curX + 1, curY), (byte)DIRECTION.RIGHT);
+                        Debug.Log("막기 성공" + (curX + 1) + " " + curY);
 
                         Destroy(gameObject);
                     }
@@ -527,8 +530,8 @@ public class RoomController : MonoBehaviour
                     else
                     {
                         //생성한 방의 문을 막힌벽으로 바꾸기
-                        FloorInfo info = mapmanager.RoomBoard[PosParse(curX), PosParse(curY - 1)];
-                        info.wallObjArr[(byte)DIRECTION.BOTTOM] = wallPrefab;
+                        ChangeWall(new Vector2(curX, curY - 1), (byte)DIRECTION.BOTTOM);
+                        Debug.Log("막기 성공" + curX + " " + (curY - 1));
 
                         Destroy(gameObject);
                     }
@@ -568,8 +571,8 @@ public class RoomController : MonoBehaviour
                     else
                     {
                         //생성한 방의 문을 막힌벽으로 바꾸기
-                        FloorInfo info = mapmanager.RoomBoard[PosParse(curX - 1), PosParse(curY)];
-                        info.wallObjArr[(byte)DIRECTION.LEFT] = wallPrefab;
+                        ChangeWall(new Vector2(curX - 1, curY), (byte)DIRECTION.LEFT);
+                        Debug.Log("막기 성공" + (curX - 1) + " " + curY);
 
                         Destroy(gameObject);
                     }
@@ -589,7 +592,8 @@ public class RoomController : MonoBehaviour
 
     IEnumerator Delay(List<Vector3> _vec3list)
     {
-        yield return new WaitForSeconds(1.0f);
+
+        yield return new WaitForSeconds(0.001f);
 
         ROOMTYPE _roomtype = 0;
 
@@ -604,28 +608,37 @@ public class RoomController : MonoBehaviour
 
         foreach (Vector3 _vec3 in _vec3list)
         {
-            Vector2 _pos = new Vector2(_vec3.x, _vec3.y);
-            DIRECTION _dir = (DIRECTION)_vec3.z;
+            if (mapmanager.RoomBoard[PosParse(_vec3.x), PosParse(_vec3.y)] == null)
+            {
+                Vector2 _pos = new Vector2(_vec3.x, _vec3.y);
+                DIRECTION _dir = (DIRECTION)_vec3.z;
 
-            GameObject room = Instantiate(roomPrefab, _pos, Quaternion.identity);
-            RoomController roomcontroller = room.transform.GetComponent<RoomController>();
-            roomcontroller.roomType = _roomtype;
-            roomcontroller.enterDir = _dir;
+                GameObject room = Instantiate(roomPrefab, _pos, Quaternion.identity);
+                RoomController roomcontroller = room.transform.GetComponent<RoomController>();
+                roomcontroller.roomType = _roomtype;
+                roomcontroller.enterDir = _dir;
+            }
+            else
+            {
+                FloorInfo info = mapmanager.RoomBoard[PosParse(_vec3.x), PosParse(_vec3.y)];
+                info.wallObjArr[(int)_vec3.z] = wallPrefab;
+            }
         }
     }
 
     private void SpawnWall(WALLSTATE[] _wallstatearr, Vector2 _pos)
     {
+        sbyte _x = (sbyte)_pos.x;
+        sbyte _y = (sbyte)_pos.y;
+
         byte spawndir = 0;
+        int wallrotaion = 0;
+        Vector3 wallpos = new Vector3(0, 0, 0);
 
         foreach (WALLSTATE wallstate in _wallstatearr)
         {
-            sbyte _x = (sbyte)_pos.x;
-            sbyte _y = (sbyte)_pos.y;
-
-            int wallrotaion = 0;
-            Vector3 wallpos = new Vector3(0, 0, 0);
-            GameObject floor = mapmanager.RoomBoard[PosParse(_x), PosParse(_y)].floorObject;
+            FloorInfo info = mapmanager.RoomBoard[PosParse(_x), PosParse(_y)];
+            GameObject floor = info.floorObject;
 
             switch (spawndir)
             {
@@ -649,19 +662,52 @@ public class RoomController : MonoBehaviour
 
             if (wallstate == WALLSTATE.BLOCK)
             {
-                Instantiate(wallPrefab, wallpos, Quaternion.Euler(0, 0, wallrotaion)).transform.parent = floor.transform;
+                GameObject wall = Instantiate(wallPrefab, wallpos, Quaternion.Euler(0, 0, wallrotaion));
+                wall.transform.parent = floor.transform;
+
+                info.wallObjArr[spawndir] = wall;
             }
             else if (wallstate == WALLSTATE.DOOR)
             {
-                Instantiate(doorPrefab, wallpos, Quaternion.Euler(0, 0, wallrotaion)).transform.parent = floor.transform;
+                GameObject door = Instantiate(doorPrefab, wallpos, Quaternion.Euler(0, 0, wallrotaion));
+                door.transform.parent = floor.transform;
+
+                info.wallObjArr[spawndir] = door;
             }
 
             spawndir++;
         }
     }
 
+    private void ChangeWall(Vector2 _pos, byte _dir)
+    {
+        //생성한 방의 문을 막힌벽으로 바꾸기
+        FloorInfo info = mapmanager.RoomBoard[PosParse(_pos.x), PosParse(_pos.y)];
+
+        GameObject oldwall = info.wallObjArr[_dir];
+        GameObject _parent = oldwall.transform.parent.gameObject;
+        Vector3 curwallpos = oldwall.transform.position;
+        Quaternion curwallrot = oldwall.transform.rotation;
+        GameObject newwall;
+
+        if (oldwall == wallPrefab)
+        {
+            newwall = Instantiate(doorPrefab, curwallpos, curwallrot);
+            newwall.transform.parent = _parent.transform;
+        }
+        else
+        {
+            newwall = Instantiate(wallPrefab, curwallpos, curwallrot);
+            newwall.transform.parent = _parent.transform;
+        }
+
+        Destroy(info.wallObjArr[_dir]);
+        info.wallObjArr[_dir] = newwall;
+    }
+
     private void SetInfoToBoard(GameObject _roomobj, byte _index)
     {
+        //맵 2차배열에 값 입력
         FloorInfo floorinfo = new FloorInfo();
         Vector2 _pos = new Vector2(_roomobj.transform.position.x, _roomobj.transform.position.y);
 
