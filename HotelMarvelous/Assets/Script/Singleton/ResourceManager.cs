@@ -20,7 +20,7 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
     public void GetItemReSources()
     {
-        string _path = Application.dataPath + "/StreamAssets/itemMagnification.txt";
+        string _path = Application.dataPath + "/StreamingAssets/itemMagnification.txt";
         string[] textArr = File.ReadAllLines(_path);
         string[] _textarr = new string[1];
         GameObject tempobjet = null;
