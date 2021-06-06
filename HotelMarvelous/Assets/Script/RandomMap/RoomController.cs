@@ -48,6 +48,8 @@ public class RoomController : MonoBehaviour
         roomDir = (DIRECTION)Random.Range(0, System.Enum.GetValues(typeof(DIRECTION)).Length);
 
         SpawnFloorProcess();
+
+        StartCoroutine(ChangeWallafterDelay(nextFloorPosList));
     }
 
     private void SpawnFloorProcess()
@@ -399,10 +401,7 @@ public class RoomController : MonoBehaviour
             SpawnWall(wallcheckarr, _pos);
         }
 
-        if(mapmanager.curRoomCount < mapmanager.maxRoomCount)
-        {
-            SpawnNextRoom(nextFloorPosList);
-        }
+        SpawnNextRoom(nextFloorPosList);
     }
 
     private void SpawnHallwayFloor()
@@ -448,8 +447,7 @@ public class RoomController : MonoBehaviour
                     else
                     {
                         //생성한 방의 문을 막힌벽으로 바꾸기
-                        ChangeWall(new Vector2(curX, curY + 1), (byte)DIRECTION.TOP);
-                        Debug.Log("막기 성공" + curX + " " + (curY + 1));
+                        ChangeWall(new Vector2(curX, curY + 1), (byte)DIRECTION.BOTTOM, false);
 
                         Destroy(gameObject);
                     }
@@ -489,8 +487,7 @@ public class RoomController : MonoBehaviour
                     else
                     {
                         //생성한 방의 문을 막힌벽으로 바꾸기
-                        ChangeWall(new Vector2(curX + 1, curY), (byte)DIRECTION.RIGHT);
-                        Debug.Log("막기 성공" + (curX + 1) + " " + curY);
+                        ChangeWall(new Vector2(curX + 1, curY), (byte)DIRECTION.LEFT, false);
 
                         Destroy(gameObject);
                     }
@@ -530,8 +527,7 @@ public class RoomController : MonoBehaviour
                     else
                     {
                         //생성한 방의 문을 막힌벽으로 바꾸기
-                        ChangeWall(new Vector2(curX, curY - 1), (byte)DIRECTION.BOTTOM);
-                        Debug.Log("막기 성공" + curX + " " + (curY - 1));
+                        ChangeWall(new Vector2(curX, curY - 1), (byte)DIRECTION.TOP, false);
 
                         Destroy(gameObject);
                     }
@@ -571,8 +567,7 @@ public class RoomController : MonoBehaviour
                     else
                     {
                         //생성한 방의 문을 막힌벽으로 바꾸기
-                        ChangeWall(new Vector2(curX - 1, curY), (byte)DIRECTION.LEFT);
-                        Debug.Log("막기 성공" + (curX - 1) + " " + curY);
+                        ChangeWall(new Vector2(curX - 1, curY), (byte)DIRECTION.RIGHT, false);
 
                         Destroy(gameObject);
                     }
@@ -587,12 +582,11 @@ public class RoomController : MonoBehaviour
 
     private void SpawnNextRoom(List<Vector3> _vec3list)
     {
-        StartCoroutine(Delay(_vec3list));
+        StartCoroutine(RoomSpawnDelay(_vec3list));
     }
 
-    IEnumerator Delay(List<Vector3> _vec3list)
+    IEnumerator RoomSpawnDelay(List<Vector3> _vec3list)
     {
-
         yield return new WaitForSeconds(0.001f);
 
         ROOMTYPE _roomtype = 0;
@@ -608,11 +602,11 @@ public class RoomController : MonoBehaviour
 
         foreach (Vector3 _vec3 in _vec3list)
         {
+            Vector2 _pos = new Vector2(_vec3.x, _vec3.y);
+            DIRECTION _dir = (DIRECTION)_vec3.z;
+
             if (mapmanager.RoomBoard[PosParse(_vec3.x), PosParse(_vec3.y)] == null)
             {
-                Vector2 _pos = new Vector2(_vec3.x, _vec3.y);
-                DIRECTION _dir = (DIRECTION)_vec3.z;
-
                 GameObject room = Instantiate(roomPrefab, _pos, Quaternion.identity);
                 RoomController roomcontroller = room.transform.GetComponent<RoomController>();
                 roomcontroller.roomType = _roomtype;
@@ -620,8 +614,8 @@ public class RoomController : MonoBehaviour
             }
             else
             {
-                FloorInfo info = mapmanager.RoomBoard[PosParse(_vec3.x), PosParse(_vec3.y)];
-                info.wallObjArr[(int)_vec3.z] = wallPrefab;
+                ChangeWall(_pos, (byte)_dir, true);
+                //Debug.Log("벽사라짐" + _vec3.x + " " + _vec3.y);
             }
         }
     }
@@ -679,30 +673,91 @@ public class RoomController : MonoBehaviour
         }
     }
 
-    private void ChangeWall(Vector2 _pos, byte _dir)
+    IEnumerator ChangeWallafterDelay(List<Vector3> _roompos)
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        foreach (Vector3 _vec3 in _roompos)
+        {
+            Vector2 _pos = new Vector2(_vec3.x, _vec3.y);
+            byte _dir = (byte)_vec3.z;
+
+            if(mapmanager.RoomBoard[PosParse(_vec3.x), PosParse(_vec3.y)] != null)
+            {
+                ChangeWall(_pos, _dir, true);
+            }
+            else
+            {
+                Debug.Log("찾음" + _pos);
+
+                switch (_dir)
+                {
+                    case (byte)DIRECTION.TOP:
+                        _pos = new Vector2(_vec3.x, _vec3.y - 1);
+
+                        ChangeWall(_pos, (byte)DIRECTION.BOTTOM, false);
+                        break;
+                    case (byte)DIRECTION.RIGHT:
+                        _pos = new Vector2(_vec3.x - 1, _vec3.y);
+
+                        ChangeWall(_pos, (byte)DIRECTION.LEFT, false);
+                        break;
+                    case (byte)DIRECTION.BOTTOM:
+                        _pos = new Vector2(_vec3.x, _vec3.y + 1);
+
+                        ChangeWall(_pos, (byte)DIRECTION.TOP, false);
+                        break;
+                    case (byte)DIRECTION.LEFT:
+                        _pos = new Vector2(_vec3.x + 1, _vec3.y);
+
+                        ChangeWall(_pos, (byte)DIRECTION.RIGHT, false);
+                        break;
+                }
+            }
+        }
+    }
+
+    private void ChangeWall(Vector2 _pos, byte _dir, bool _needopen)
     {
         //생성한 방의 문을 막힌벽으로 바꾸기
         FloorInfo info = mapmanager.RoomBoard[PosParse(_pos.x), PosParse(_pos.y)];
 
-        GameObject oldwall = info.wallObjArr[_dir];
-        GameObject _parent = oldwall.transform.parent.gameObject;
-        Vector3 curwallpos = oldwall.transform.position;
-        Quaternion curwallrot = oldwall.transform.rotation;
-        GameObject newwall;
-
-        if (oldwall == wallPrefab)
+        try
         {
-            newwall = Instantiate(doorPrefab, curwallpos, curwallrot);
-            newwall.transform.parent = _parent.transform;
-        }
-        else
-        {
-            newwall = Instantiate(wallPrefab, curwallpos, curwallrot);
-            newwall.transform.parent = _parent.transform;
-        }
+            GameObject oldwall = info.wallObjArr[_dir];
 
-        Destroy(info.wallObjArr[_dir]);
-        info.wallObjArr[_dir] = newwall;
+            if (oldwall != null)
+            {
+                GameObject _parent = oldwall.transform.parent.gameObject;
+                Vector3 curwallpos = oldwall.transform.position;
+                Quaternion curwallrot = oldwall.transform.rotation;
+                GameObject newwall;
+
+                //Debug.Log("막기 성공" + curX + " " + curY);
+                if (oldwall == null)
+                {
+                    Debug.Log("띠용");
+                    return;
+                }
+                if (_needopen)
+                {
+                    newwall = Instantiate(doorPrefab, curwallpos, curwallrot);
+                    newwall.transform.parent = _parent.transform;
+                }
+                else
+                {
+                    newwall = Instantiate(wallPrefab, curwallpos, curwallrot);
+                    newwall.transform.parent = _parent.transform;
+                }
+
+                Destroy(info.wallObjArr[_dir]);
+                info.wallObjArr[_dir] = newwall;
+            }
+        }
+        catch
+        {
+
+        }
     }
 
     private void SetInfoToBoard(GameObject _roomobj, byte _index)
