@@ -47,6 +47,8 @@ public class DungeonUI : MonoBehaviour
         itemimage = GameObject.Find("Item_Image").GetComponent<Image>();
 
         dispoitemimage = transform.Find("DispoItem_Image").GetComponent<Image>();
+
+        ScenesManager.Instance.ShowPauseButton();
     }
 
     void Update()

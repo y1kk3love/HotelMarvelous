@@ -96,11 +96,6 @@ public class Player : MonoBehaviour
             roomKeys = 100;
         }
 
-        if(hp < maxHp)
-        {
-            hp = maxHp;
-        }
-
         if(hp <= 0) 
         {
             if(extraLife == 1)
@@ -495,6 +490,31 @@ public class Player : MonoBehaviour
     public void SetDamage(int _damage)
     {
         hp -= _damage * (1 + defense / 100);
+
+        if(hp <= 0)
+        {
+            if(extraLife > 0)
+            {
+                extraLife--;
+                hp = maxHp / 2;
+                maxHp = maxHp / 2;
+            }
+            else
+            {
+                hp = 0;
+
+                StartCoroutine(DeathProcess());
+            }
+        }
+    }
+
+    IEnumerator DeathProcess()
+    {
+        //사망모션 넣을 자리
+
+        yield return new WaitForSeconds(0.1f);
+
+        ScenesManager.Instance.MoveToScene("Lobby");
     }
 
     #endregion

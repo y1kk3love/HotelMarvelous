@@ -95,6 +95,8 @@ public class LobbyUI : MonoBehaviour
 
         buttonimage.SetActive(false);
         textbar.SetActive(false);
+
+        ScenesManager.Instance.ShowPauseButton();
     }
 }
 

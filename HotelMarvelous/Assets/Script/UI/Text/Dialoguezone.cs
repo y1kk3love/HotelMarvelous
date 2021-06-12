@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public enum TEXTZONE : byte
 {    
@@ -18,7 +17,7 @@ public class Dialoguezone : MonoBehaviour
     {
         if (other.CompareTag("Player") && textzone == TEXTZONE.TODUNGEON)
         {
-            SceneManager.LoadScene("Dungeon");
+            ScenesManager.Instance.MoveToScene("Dungeon");
         }
     }
 }

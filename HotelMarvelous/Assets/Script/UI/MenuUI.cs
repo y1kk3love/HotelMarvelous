@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MenuUI : MonoBehaviour
 {
@@ -26,6 +25,6 @@ public class MenuUI : MonoBehaviour
             yield return null;
         }
 
-        SceneManager.LoadScene("Lobby");
+        ScenesManager.Instance.MoveToScene("Lobby");
     }
 }

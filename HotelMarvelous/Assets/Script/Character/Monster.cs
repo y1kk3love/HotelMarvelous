@@ -81,7 +81,8 @@ public class Monster : MonoBehaviour
 
             player.SetDamage(touchdamage);
             player.SetMentality(mentaldamage);
-            Debug.Log(player.GetHp());
+            Debug.Log("PlayerHP : " + player.GetHp());
+            Debug.Log("PlayerMental : " + player.GetMentality());
         }
     }
 

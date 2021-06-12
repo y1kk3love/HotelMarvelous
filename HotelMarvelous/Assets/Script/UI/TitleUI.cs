@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using UnityEngine.SceneManagement;
 
 public class TitleUI : MonoBehaviour
 {
@@ -80,7 +79,7 @@ public class TitleUI : MonoBehaviour
 
     public void TestSkip()
     {
-        SceneManager.LoadScene("Dungeon");
+        ScenesManager.Instance.MoveToScene("Dungeon");
     }
 
     public void CheckIn()
@@ -124,7 +123,7 @@ public class TitleUI : MonoBehaviour
             yield return null;
         }
 
-        SceneManager.LoadScene("Menu");
+        ScenesManager.Instance.MoveToScene("Menu");
     }
 
     //비디오 스킵
