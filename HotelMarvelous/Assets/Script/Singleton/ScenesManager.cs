@@ -9,6 +9,7 @@ using game;
 public class ScenesManager : MonoSingleton<ScenesManager>
 {
     public GameObject pauseUI;
+    public OptionInfo optionInfo;
 
     void Start()
     {
@@ -22,7 +23,13 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
     public void ShowPauseButton()
     {
-        Instantiate(pauseUI, new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject option = Instantiate(pauseUI, new Vector3(0, 0, 0), Quaternion.identity);
+        option.transform.parent = GameObject.Find("UI").transform;
         Debug.Log("설정버튼 생성완료");
+    }
+
+    public void SetOption()
+    {
+
     }
 }
