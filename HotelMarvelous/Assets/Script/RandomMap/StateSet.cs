@@ -52,8 +52,8 @@ public enum ITEMCODE : byte
 
 public enum RESOULUTION : byte
 {
-    R1336X768,
-    R1440X900,
+    R1336X0768,
+    R1440X0900,
     R1920X1080,
     R2560X1440,
     R3480X2160
@@ -65,7 +65,7 @@ public enum FULLSCREENS : byte
     FULLSCREEN
 }
 
-public enum KEYSETBUTTON : byte
+public enum KEYSETBUTTON
 {
     RECHARGE,
     DISPOSABLE,

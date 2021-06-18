@@ -681,14 +681,18 @@ public class RoomController : MonoBehaviour
         {
             Vector2 _pos = new Vector2(_vec3.x, _vec3.y);
             byte _dir = (byte)_vec3.z;
+            FloorInfo info = mapmanager.RoomBoard[PosParse(_vec3.x), PosParse(_vec3.y)];
 
-            if(mapmanager.RoomBoard[PosParse(_vec3.x), PosParse(_vec3.y)] != null)
+
+            if (info != null && info.roomType != this.roomType)
             {
                 ChangeWall(_pos, _dir, true);
+
+                Debug.Log("막기" + _pos);
             }
             else
             {
-                Debug.Log("찾음" + _pos);
+                Debug.Log("뚫기" + _pos);
 
                 switch (_dir)
                 {

@@ -17,26 +17,13 @@ public class PauseUI : MonoBehaviour
     protected GameObject buttonSetKey;
     protected static List<GameObject> KeySetButtonList = new List<GameObject>();
 
-    private Text textRecharge;
-    private Text textDisposable;
-    private Text textRun;
-    private Text textMiniMap;
-    private Text textPause;
-    private Text textTreasure;
-
     private static Text textSetKeyInfo;
 
     private Dropdown dropdownResolution;
     private Dropdown dropdownFullScreen;
 
-    private KeyCode recharge;
-    private KeyCode disposable;
-    private KeyCode run;
-    private KeyCode minimap;
-    private KeyCode pause;
-    private KeyCode treasure;
-
     private bool isChangingKey = false;
+    private bool isPause = false;
 
     void Start()
     {
@@ -51,12 +38,33 @@ public class PauseUI : MonoBehaviour
 
         textSetKeyInfo = GameObject.Find("Text_SetKey").GetComponent<Text>();
 
+        optionInfo = ScenesManager.Instance.optionInfo;
+
         panelButtons.SetActive(false);
         textSetKeyInfo.text = "";
         scrollviewControl.SetActive(false);
         panelSound.SetActive(false);
         panelPause.SetActive(false);
         panelOption.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!isPause)
+            {
+                isPause = true;
+
+                OnclickbuttonPause();
+            }
+            else
+            {
+                isPause = false;
+                OnclickbuttonCountinue();
+                OnclickCancel();
+            }
+        }
     }
 
     void OnGUI()
@@ -68,22 +76,22 @@ public class PauseUI : MonoBehaviour
             switch (ketsetbutton)
             {
                 case KEYSETBUTTON.RECHARGE:
-                    recharge = KeyEvent.keyCode;
+                    ScenesManager.Instance.optionInfo.recharge = KeyEvent.keyCode;
                     break;
                 case KEYSETBUTTON.DISPOSABLE:
-                    disposable = KeyEvent.keyCode;
+                    ScenesManager.Instance.optionInfo.disposable = KeyEvent.keyCode;
                     break;
                 case KEYSETBUTTON.RUN:
-                    run = KeyEvent.keyCode;
+                    ScenesManager.Instance.optionInfo.run = KeyEvent.keyCode;
                     break;
                 case KEYSETBUTTON.MINIMAP:
-                    minimap = KeyEvent.keyCode;
+                    ScenesManager.Instance.optionInfo.minimap = KeyEvent.keyCode;
                     break;
                 case KEYSETBUTTON.PAUSE:
-                    pause = KeyEvent.keyCode;
+                    ScenesManager.Instance.optionInfo.pause = KeyEvent.keyCode;
                     break;
                 case KEYSETBUTTON.TREASURE:
-                    treasure = KeyEvent.keyCode;
+                    ScenesManager.Instance.optionInfo.treasure = KeyEvent.keyCode;
                     break;
             }
 
@@ -102,18 +110,24 @@ public class PauseUI : MonoBehaviour
     {
         panelPause.SetActive(true);
         panelButtons.SetActive(true);
+
+        ScenesManager.Instance.onOption = true;
         Time.timeScale = 0;
     }
 
     public void OnclickbuttonCountinue()
     {
         panelPause.SetActive(false);
+
+        ScenesManager.Instance.onOption = false;
         Time.timeScale = 1;
     }
 
     public void OnclickbuttonRestart()
     {
         Time.timeScale = 1;
+
+        ScenesManager.Instance.onOption = false;
         ScenesManager.Instance.MoveToScene("Dungeon");
     }
     public void OnclickbuttonSaveAndQuit()
@@ -130,6 +144,8 @@ public class PauseUI : MonoBehaviour
     public void OnclickbuttonMoveToMenu()
     {
         Time.timeScale = 1;
+
+        ScenesManager.Instance.onOption = false;
         ScenesManager.Instance.MoveToScene("Menu");
     }
     public void OnclickbuttonQuit()
@@ -164,15 +180,8 @@ public class PauseUI : MonoBehaviour
 
     public void OnclickConfirm()
     {
-        optionInfo.resolution = (byte)dropdownResolution.value;
-        optionInfo.fullscreen = (byte)dropdownFullScreen.value;
-
-        optionInfo.recharge = recharge;
-        optionInfo.disposable = disposable;
-        optionInfo.run = run;
-        optionInfo.minimap = minimap;
-        optionInfo.pause = pause;
-        optionInfo.treasure = treasure;
+        ScenesManager.Instance.optionInfo.resolution = (RESOULUTION)dropdownResolution.value;
+        ScenesManager.Instance.optionInfo.fullscreen = (FULLSCREENS)dropdownFullScreen.value;
 
         panelPause.SetActive(false);
         panelButtons.SetActive(false);
@@ -181,14 +190,16 @@ public class PauseUI : MonoBehaviour
         scrollviewControl.SetActive(false);
         panelSound.SetActive(false);
 
-        ScenesManager.Instance.optionInfo = optionInfo;
+        ScenesManager.Instance.onOption = false;
+        ScenesManager.Instance.SetStartScreenOption();
+
         Time.timeScale = 1;
     }
 
     public void OnclickCancel()
     {
-        dropdownResolution.value = optionInfo.resolution;
-        dropdownFullScreen.value = optionInfo.fullscreen;
+        dropdownResolution.value = (byte)optionInfo.resolution;
+        dropdownFullScreen.value = (byte)optionInfo.fullscreen;
 
         foreach (GameObject button in KeySetButtonList)
         {
@@ -201,6 +212,10 @@ public class PauseUI : MonoBehaviour
         panelDisplay.SetActive(true);
         scrollviewControl.SetActive(false);
         panelSound.SetActive(false);
+
+        ScenesManager.Instance.optionInfo = optionInfo;
+
+        ScenesManager.Instance.onOption = false;
 
         Time.timeScale = 1;
     }
@@ -216,17 +231,4 @@ public class PauseUI : MonoBehaviour
     }
 
     #endregion
-}
-
-public class OptionInfo
-{
-    public byte resolution = (byte)RESOULUTION.R1920X1080;
-    public byte fullscreen = (byte)FULLSCREENS.FULLSCREEN;
-
-    public KeyCode recharge = KeyCode.Space;
-    public KeyCode disposable = KeyCode.LeftControl;
-    public KeyCode run = KeyCode.LeftShift;
-    public KeyCode minimap = KeyCode.Tab;
-    public KeyCode pause = KeyCode.Escape;
-    public KeyCode treasure = KeyCode.T;
 }

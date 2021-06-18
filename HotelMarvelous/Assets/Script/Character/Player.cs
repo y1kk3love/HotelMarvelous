@@ -123,7 +123,7 @@ public class Player : MonoBehaviour
             return;
         }
 
-        if (!isattack)
+        if (!isattack && !ScenesManager.Instance.onOption)
         {
             GetMovementInput();
             GetSkillInput();
@@ -562,7 +562,7 @@ public class Player : MonoBehaviour
             StartCoroutine(Attack_00());
         }
 
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(ScenesManager.Instance.optionInfo.run))
         {
             if(stamina > 0)
             {
@@ -589,7 +589,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && itemcount / itemMagnification >= 1)
+        if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.recharge) && itemcount / itemMagnification >= 1)
         {
             itemcount = 0;
 
@@ -606,7 +606,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftControl) && isdispoitemon)
+        if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.disposable) && isdispoitemon)
         {
             if (itemcount / itemMagnification != 1)
             {
