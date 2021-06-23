@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ToolManager : MonoBehaviour
 {
     private Camera camera = null;
 
-    GameObject obRoomPick;
-    GameObject obPickedRoom;
+    private GameObject obRoomPick;
+    private GameObject obPickedRoom;
+    private GameObject obFloor;
 
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];
 
@@ -29,6 +31,7 @@ public class ToolManager : MonoBehaviour
         camera = Camera.main.GetComponent<Camera>();
 
         obRoomPick = Resources.Load("MapTools/Prefab/RoomPick") as GameObject;
+        obFloor = Resources.Load("MapTools/Prefab/Floor") as GameObject;
     }
 
     void Update()
@@ -37,6 +40,8 @@ public class ToolManager : MonoBehaviour
         CameraWheelZoom();
 
         FloorPick();
+
+        MapControl();
     }
 
     #region [CameraMove]
@@ -49,7 +54,7 @@ public class ToolManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             dragGridStartPos = Input.mousePosition;
-            dragBPCamPos = transform.position;
+            dragBPCamPos = camera.transform.position;
         }
         else if (Input.GetKeyUp(KeyCode.Mouse1))
         {
@@ -60,7 +65,7 @@ public class ToolManager : MonoBehaviour
         {
             Vector2 dir = (Vector2)dragGridStartPos - dragBPCurPos;
 
-            transform.position = dragBPCamPos + dir * (camera.orthographicSize  / (minCamZoom + maxCamZoom) / 2);
+            camera.transform.position = dragBPCamPos + dir * (camera.orthographicSize  / (minCamZoom + maxCamZoom) / 2);
         }
     }
 
@@ -85,6 +90,7 @@ public class ToolManager : MonoBehaviour
 
     #endregion
 
+    #region [MapSelect]
     private void FloorPick()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -94,6 +100,11 @@ public class ToolManager : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
+                if (EventSystem.current.IsPointerOverGameObject())
+                {
+                    return;
+                }
+
                 Vector2 _Pos = hit.point;
 
                 curTileX = EditPosParse(_Pos.x);
@@ -111,14 +122,54 @@ public class ToolManager : MonoBehaviour
                 {
                     obPickedRoom.transform.position = new Vector2(curTileX, curTileY);
                 }
-
-                if(mapBoardArr[curTileX, curTileY] != null)
-                {
-
-                }
             }
         }
     }
+
+    #endregion
+
+    #region [MapControl]
+
+    private void MapControl()
+    {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            CreateMap();
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            DeleteMap();
+        }
+    }
+
+    public void CreateMap()
+    {
+        if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] == null)
+        {
+            GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (BoardPosParse(curTileX) - 25), (BoardPosParse(curTileY)) - 25));
+            emptytile.transform.position = new Vector3(curTileX, curTileY, 9);
+
+            GameObject floor = Instantiate(obFloor, new Vector3(curTileX, curTileY, 9), Quaternion.identity);
+            floor.transform.parent = emptytile.transform;
+
+            mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] = new TileInfo();
+            mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile = emptytile;
+        }
+    }
+
+    public void DeleteMap()
+    {
+        if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
+        {
+            Destroy(mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile);
+
+            mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] = null;
+        }
+    }
+    #endregion
+
+    #region [Calculator]
 
     //청사진에서의 움직임을 위한 변환
     private int EditPosParse(float _pos)
@@ -138,9 +189,18 @@ public class ToolManager : MonoBehaviour
             return (int)System.Math.Truncate(_pos / 9) * 9;
         }
     }
+
+    private byte BoardPosParse(int _pos)
+    {
+        return (byte)(_pos / 9 + 25);
+    }
+
+    #endregion
 }
 
 class TileInfo
 {
-    private WALLSTATE[] doorArr = new WALLSTATE[4];
+    public GameObject obTile;
+
+    public WALLSTATE[] doorArr = new WALLSTATE[4];
 }
