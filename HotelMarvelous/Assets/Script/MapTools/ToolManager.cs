@@ -6,31 +6,31 @@ using UnityEngine.EventSystems;
 
 public class ToolManager : MonoBehaviour
 {
-    private Camera bpCamera;
+    private Camera bpCamera;                                     //청사진 카메라
 
-    private GameObject obRoomPick;
-    private GameObject obPickedRoom;
-    private GameObject obFloor;
-    private GameObject obBlockWall;
-    private GameObject obDoorWall;
+    private GameObject obRoomPick;                               //17x17 그리드 리소스
+    private GameObject obPickedRoom;                             //생성된 17x17 그리드의 오브젝트
+    private GameObject obFloor;                                  //타일 바닥 리소스
+    private GameObject obBlockWall;                              //막힌 벽 리소스
+    private GameObject obDoorWall;                               //문있는 벽 리소스
 
-    private Text textTilePos;
-    private InputField textRoomIndex;
+    private Text textTilePos;                                    //선택된 타일의 좌표, 방인덱스등이 나오는 텍스트
+    private InputField textRoomIndex;                            //방의 인덱스를 입력받는 인풋필드
 
-    private TileInfo[,] mapBoardArr = new TileInfo[51, 51];
+    private TileInfo[,] mapBoardArr = new TileInfo[51, 51];      //타일의 정보를 담은 클래스를 가진 배열
+    private TileInfo curTile = new TileInfo();                   //현재 선택된 타일의 정보
 
-    private int curTileX, curTileY;
+    private int curTileX, curTileY;                              //현재 선택한 타일의 실제 좌표 18/1사이즈
 
-    private float cameraWheelSpeed = 20.0f;
-    private float minCamZoom = 5.0f;
-    private float maxCamZoom = 450.0f;
-    private float maxTileSize;
+    private float cameraWheelSpeed = 20.0f;                      //카메라 줌 스피드
+    private float minCamZoom = 5.0f;                             //카메라 줌 최소사이즈
+    private float maxCamZoom = 450.0f;                           //카메라 줌 최대사이즈
 
-    private Vector2? dragGridStartPos = null;
-    private Vector2 dragBPCurPos;
-    private Vector2 dragBPCamPos;
+    private Vector2? dragGridStartPos = null;                    //카메라 이동을 시작한 위치, 기준점
+    private Vector2 dragBPCurPos;                                //현재 마우스의 위치
+    private Vector2 dragBPCamPos;                                //카메라 이동을 시작했을때 카메라의 위치
 
-    private bool isRoomSelect = false;
+    private bool isTileSelect = false;                           //타일이 선택되었는지 확인
 
     void Start()
     {
@@ -47,12 +47,15 @@ public class ToolManager : MonoBehaviour
 
     void Update()
     {
+        //카메라 이동과 줌
         CameraDragMove();
         CameraWheelZoom();
 
+        //타일 선택과 인덱스 단축키
         FloorPick();
         IndexUpper();
 
+        //타일생성 삭제 등 관리
         MapControl();
     }
 
@@ -134,9 +137,9 @@ public class ToolManager : MonoBehaviour
                     _index = "-1";
                 }
 
-                if (!isRoomSelect)
+                if (!isTileSelect)
                 {
-                    isRoomSelect = true;
+                    isTileSelect = true;
 
                     textTilePos.text = string.Format("Tile X : {0} //  Y : {1} // Index {2}", (curTileX / 18), (curTileY / 18), _index);
                     obPickedRoom = Instantiate(obRoomPick, new Vector2(curTileX, curTileY), Quaternion.identity);
@@ -149,6 +152,7 @@ public class ToolManager : MonoBehaviour
                     if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
                     {
                         textRoomIndex.text = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
+                        curTile = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)];
                     }
                 }
             }
@@ -190,11 +194,13 @@ public class ToolManager : MonoBehaviour
 
     private void MapControl()
     {
+        //타일 생성 단축키
         if (Input.GetKeyDown(KeyCode.Q))
         {
             CreateMap();
         }
 
+        //타일 삭제 단축키
         if (Input.GetKeyDown(KeyCode.E))
         {
             DeleteMap();
@@ -214,7 +220,7 @@ public class ToolManager : MonoBehaviour
             mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] = new TileInfo();
             mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile = emptytile;
 
-            if(textRoomIndex.text == "")
+            if(textRoomIndex.text == "")        //최초 실행일때 인덱스값 1 설정
             {
                 textRoomIndex.text = "1";
                 mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex = 1;
@@ -224,18 +230,63 @@ public class ToolManager : MonoBehaviour
                 mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex = byte.Parse(textRoomIndex.text);
             }
 
-            BuildWall(mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)]);
             textTilePos.text = string.Format("Tile X : {0} //  Y : {1} // Index {2}", (curTileX / 18), (curTileY / 18), mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex);
+
+            BuildWall(mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)]);       //생성된 타일 위에 벽 생성
+            curTile = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)];
         }
     }
 
     public void DeleteMap()
     {
+        //맵을 오브젝트 삭제 후 배열에서도 비우기
         if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
         {
             Destroy(mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile);
 
             mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] = null;
+        }
+    }
+
+    private void ControlTileWall(TileInfo _tileinfo)
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.TOP];
+
+            if(_dir > 3)
+            {
+                _dir = 0;
+            }
+            else
+            {
+                _dir++;
+            }
+
+            _tileinfo.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)_dir;
+        }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.RIGHT];
+
+            if (_dir > 3)
+            {
+                _dir = 0;
+            }
+            else
+            {
+                _dir++;
+            }
+
+            _tileinfo.doorArr[(byte)DIRECTION.RIGHT] = (WALLSTATE)_dir;
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+
         }
     }
 
@@ -246,7 +297,9 @@ public class ToolManager : MonoBehaviour
             Destroy(_tileinfo.obTile.transform.Find("Walls").gameObject);
         }
 
-        GameObject emptywall;
+        TileInfo _aroundinfo = null;    //상하좌우 주변 타일의 정보
+
+        GameObject emptywall;           //벽들을 자식으로 가지고 있을 빈오브젝트
 
         emptywall = new GameObject("Walls");
         emptywall.transform.parent = _tileinfo.obTile.transform;
@@ -257,7 +310,7 @@ public class ToolManager : MonoBehaviour
 
             Vector2 _pos = _tileinfo.obTile.transform.position;
 
-            switch (_tileinfo.doorArr[i])
+            switch (_tileinfo.doorArr[i])       //배열에서 벽 확인
             {
                 case WALLSTATE.BLOCK:
                     _wall = obBlockWall;
@@ -272,20 +325,72 @@ public class ToolManager : MonoBehaviour
             switch (i)
             {
                 case (int)DIRECTION.TOP:
-                    GameObject topWall = Instantiate(_wall, new Vector2(_pos.x, _pos.y + 8.5f), Quaternion.Euler(0, 0, 90));
-                    topWall.transform.parent = emptywall.transform;
+                    _aroundinfo = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY + 18)];
+
+                    if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)    //이웃에 같은 인덱스의 타일이 있으면 그 공간을 비우고 이웃의 벽도 허물어준다.
+                    {
+                        _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+
+                        _aroundinfo.doorArr[(byte)DIRECTION.BOTTOM] = WALLSTATE.EMPTY;
+                        Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("BottomWall").gameObject);
+                    }
+                    else
+                    {
+                        GameObject topWall = Instantiate(_wall, new Vector2(_pos.x, _pos.y + 8.5f), Quaternion.Euler(0, 0, 90));
+                        topWall.name = "TopWall";
+                        topWall.transform.parent = emptywall.transform;
+                    }
                     break;
                 case (int)DIRECTION.RIGHT:
-                    GameObject rightWall = Instantiate(_wall, new Vector2(_pos.x + 8.5f, _pos.y), Quaternion.Euler(0, 0, 0));
-                    rightWall.transform.parent = emptywall.transform;
+                    _aroundinfo = mapBoardArr[BoardPosParse(curTileX + 18), BoardPosParse(curTileY)];
+
+                    if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                    {
+                        _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+
+                        _aroundinfo.doorArr[(byte)DIRECTION.LEFT] = WALLSTATE.EMPTY;
+                        Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("LeftWall").gameObject);
+                    }
+                    else
+                    {
+                        GameObject rightWall = Instantiate(_wall, new Vector2(_pos.x + 8.5f, _pos.y), Quaternion.Euler(0, 0, 0));
+                        rightWall.name = "RightWall";
+                        rightWall.transform.parent = emptywall.transform;
+                    }
                     break;
                 case (int)DIRECTION.BOTTOM:
-                    GameObject bottomWall = Instantiate(_wall, new Vector2(_pos.x, _pos.y - 8.5f), Quaternion.Euler(0, 0, -90));
-                    bottomWall.transform.parent = emptywall.transform;
+                    _aroundinfo = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY - 18)];
+
+                    if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                    {
+                        _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+
+                        _aroundinfo.doorArr[(byte)DIRECTION.TOP] = WALLSTATE.EMPTY;
+                        Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("TopWall").gameObject);
+                    }
+                    else
+                    {
+                        GameObject bottomWall = Instantiate(_wall, new Vector2(_pos.x, _pos.y - 8.5f), Quaternion.Euler(0, 0, -90));
+                        bottomWall.name = "BottomWall";
+                        bottomWall.transform.parent = emptywall.transform;
+                    }
                     break;
                 case (int)DIRECTION.LEFT:
-                    GameObject leftWall = Instantiate(_wall, new Vector2(_pos.x - 8.5f, _pos.y), Quaternion.Euler(0, 0, -180));
-                    leftWall.transform.parent = emptywall.transform;
+                    _aroundinfo = mapBoardArr[BoardPosParse(curTileX - 18), BoardPosParse(curTileY)];
+
+                    if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                    {
+                        _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+
+                        _aroundinfo.doorArr[(byte)DIRECTION.RIGHT] = WALLSTATE.EMPTY;
+                        Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("RightWall").gameObject);
+                    }
+                    else
+                    {
+                        GameObject leftWall = Instantiate(_wall, new Vector2(_pos.x - 8.5f, _pos.y), Quaternion.Euler(0, 0, -180));
+                        leftWall.name = "LeftWall";
+                        leftWall.transform.parent = emptywall.transform;
+                    }
                     break;
             }
         }
@@ -314,6 +419,7 @@ public class ToolManager : MonoBehaviour
         }
     }
 
+    //배열에서의 데이터 관리를 위한 변환
     private byte BoardPosParse(int _pos)
     {
         return (byte)(_pos / 9 + 25);
