@@ -15,10 +15,16 @@ public class ToolManager : MonoBehaviour
     private GameObject obDoorWall;                               //문있는 벽 리소스
 
     private Text textTilePos;                                    //선택된 타일의 좌표, 방인덱스등이 나오는 텍스트
+    
     private InputField textRoomIndex;                            //방의 인덱스를 입력받는 인풋필드
 
+    private Dropdown dbTopWall;                                  //타일 벽을 설정하기 위한 드롭다운들
+    private Dropdown dbRightWall;
+    private Dropdown dbBottomWall;
+    private Dropdown dbLeftWall;
+
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];      //타일의 정보를 담은 클래스를 가진 배열
-    private TileInfo curTile = new TileInfo();                   //현재 선택된 타일의 정보
+    private TileInfo curTile = null;                   //현재 선택된 타일의 정보
 
     private int curTileX, curTileY;                              //현재 선택한 타일의 실제 좌표 18/1사이즈
 
@@ -31,6 +37,7 @@ public class ToolManager : MonoBehaviour
     private Vector2 dragBPCamPos;                                //카메라 이동을 시작했을때 카메라의 위치
 
     private bool isTileSelect = false;                           //타일이 선택되었는지 확인
+    private bool isWallChanging = false;                         //UI를 통해 벽을 수정중인지 확인
 
     void Start()
     {
@@ -40,6 +47,11 @@ public class ToolManager : MonoBehaviour
         obFloor = Resources.Load("MapTools/Prefab/Floor") as GameObject;
         obBlockWall = Resources.Load("MapTools/Prefab/Wall") as GameObject;
         obDoorWall = Resources.Load("MapTools/Prefab/Door") as GameObject;
+
+        dbTopWall = GameObject.Find("DdTopWall").GetComponent<Dropdown>();
+        dbRightWall = GameObject.Find("DdRightWall").GetComponent<Dropdown>();
+        dbBottomWall = GameObject.Find("DdBottomWall").GetComponent<Dropdown>();
+        dbLeftWall = GameObject.Find("DdLeftWall").GetComponent<Dropdown>();
 
         textTilePos = GameObject.Find("TextTilePos").GetComponent<Text>();
         textRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
@@ -57,6 +69,7 @@ public class ToolManager : MonoBehaviour
 
         //타일생성 삭제 등 관리
         MapControl();
+        ControlTileWall(curTile);
     }
 
     #region [CameraMove]
@@ -110,6 +123,8 @@ public class ToolManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
+            isWallChanging = false;
+
             Ray ray = bpCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
@@ -148,11 +163,30 @@ public class ToolManager : MonoBehaviour
                 {
                     textTilePos.text = string.Format("Tile X : {0} //  Y : {1} // Index {2}", (curTileX / 18), (curTileY / 18), _index);
                     obPickedRoom.transform.position = new Vector2(curTileX, curTileY);
+                    curTile = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)];
 
                     if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
                     {
                         textRoomIndex.text = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
-                        curTile = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)];
+
+                        for (int i = 0; i < 4; i++)
+                        {
+                            switch (i)
+                            {
+                                case (int)DIRECTION.TOP:
+                                    dbTopWall.value = (byte)curTile.doorArr[i];
+                                    break;
+                                case (int)DIRECTION.RIGHT:
+                                    dbRightWall.value = (byte)curTile.doorArr[i];
+                                    break;
+                                case (int)DIRECTION.BOTTOM:
+                                    dbBottomWall.value = (byte)curTile.doorArr[i];
+                                    break;
+                                case (int)DIRECTION.LEFT:
+                                    dbLeftWall.value = (byte)curTile.doorArr[i];
+                                    break;
+                            }
+                        }
                     }
                 }
             }
@@ -161,7 +195,7 @@ public class ToolManager : MonoBehaviour
 
     private void IndexUpper()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (textRoomIndex.text == "")
             {
@@ -172,7 +206,7 @@ public class ToolManager : MonoBehaviour
                 textRoomIndex.text = (byte.Parse(textRoomIndex.text) + 1).ToString();
             }
         }
-        else if (Input.GetKeyDown(KeyCode.LeftControl))
+        else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             if (textRoomIndex.text == "")
             {
@@ -211,7 +245,7 @@ public class ToolManager : MonoBehaviour
     {
         if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] == null)
         {
-            GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (BoardPosParse(curTileX) - 25), (BoardPosParse(curTileY)) - 25));
+            GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (curTileX / 18), (curTileY / 18)));
             emptytile.transform.position = new Vector3(curTileX, curTileY, 9);
 
             GameObject floor = Instantiate(obFloor, new Vector3(curTileX, curTileY, 9), Quaternion.identity);
@@ -250,43 +284,76 @@ public class ToolManager : MonoBehaviour
 
     private void ControlTileWall(TileInfo _tileinfo)
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        if(_tileinfo != null)
         {
-            byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.TOP];
-
-            if(_dir > 3)
+            if (Input.GetKeyDown(KeyCode.W))
             {
-                _dir = 0;
+                byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.TOP];
+
+                if (_dir > 1)
+                {
+                    _dir = 0;
+                }
+                else
+                {
+                    _dir++;
+                }
+
+                _tileinfo.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)_dir;
+                //dbTopWall.value = (byte)_tileinfo.doorArr[(byte)DIRECTION.TOP];               
+                BuildWall(_tileinfo);
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.D))
             {
-                _dir++;
+                byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.RIGHT];
+
+                if (_dir > 1)
+                {
+                    _dir = 0;
+                }
+                else
+                {
+                    _dir++;
+                }
+
+                _tileinfo.doorArr[(byte)DIRECTION.RIGHT] = (WALLSTATE)_dir;
+                //dbRightWall.value = (byte)_tileinfo.doorArr[(byte)DIRECTION.RIGHT];
+                BuildWall(_tileinfo);
             }
-
-            _tileinfo.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)_dir;
-        }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.RIGHT];
-
-            if (_dir > 3)
+            else if (Input.GetKeyDown(KeyCode.S))
             {
-                _dir = 0;
+                byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.BOTTOM];
+
+                if (_dir > 1)
+                {
+                    _dir = 0;
+                }
+                else
+                {
+                    _dir++;
+                }
+
+                _tileinfo.doorArr[(byte)DIRECTION.BOTTOM] = (WALLSTATE)_dir;
+                //dbBottomWall.value = (byte)_tileinfo.doorArr[(byte)DIRECTION.BOTTOM];
+                BuildWall(_tileinfo);
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.A))
             {
-                _dir++;
+                byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.LEFT];
+
+                if (_dir > 1)
+                {
+                    _dir = 0;
+                }
+                else
+                {
+                    _dir++;
+                }
+
+                _tileinfo.doorArr[(byte)DIRECTION.LEFT] = (WALLSTATE)_dir;
+                //dbLeftWall.value = (byte)_tileinfo.doorArr[(byte)DIRECTION.LEFT];
+                BuildWall(_tileinfo);
             }
-
-            _tileinfo.doorArr[(byte)DIRECTION.RIGHT] = (WALLSTATE)_dir;
-        }
-        else if (Input.GetKeyDown(KeyCode.S))
-        {
-
-        }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-
         }
     }
 
@@ -316,7 +383,7 @@ public class ToolManager : MonoBehaviour
                     _wall = obBlockWall;
                     break;
                 case WALLSTATE.EMPTY:
-                    return;
+                    break;
                 case WALLSTATE.DOOR:
                     _wall = obDoorWall;
                     break;
@@ -325,75 +392,155 @@ public class ToolManager : MonoBehaviour
             switch (i)
             {
                 case (int)DIRECTION.TOP:
-                    _aroundinfo = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY + 18)];
 
-                    if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)    //이웃에 같은 인덱스의 타일이 있으면 그 공간을 비우고 이웃의 벽도 허물어준다.
+                    if (_wall != null)
                     {
-                        _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+                        _aroundinfo = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY + 18)];
 
-                        _aroundinfo.doorArr[(byte)DIRECTION.BOTTOM] = WALLSTATE.EMPTY;
-                        Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("BottomWall").gameObject);
+                        if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)    //이웃에 같은 인덱스의 타일이 있으면 그 공간을 비우고 이웃의 벽도 허물어준다.
+                        {
+                            _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+
+                            _aroundinfo.doorArr[(byte)DIRECTION.BOTTOM] = WALLSTATE.EMPTY;
+
+                            if (_aroundinfo.obTile.transform.Find("Walls").Find("BottomWall") != null)
+                            {
+                                Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("BottomWall").gameObject);
+                            }
+                        }
+                        else
+                        {
+                            GameObject topWall = Instantiate(_wall, new Vector2(_pos.x, _pos.y + 8.5f), Quaternion.Euler(0, 0, 90));
+                            topWall.name = "TopWall";
+                            topWall.transform.parent = emptywall.transform;
+                        }
+
+                        dbTopWall.value = (byte)_tileinfo.doorArr[i];
                     }
                     else
                     {
-                        GameObject topWall = Instantiate(_wall, new Vector2(_pos.x, _pos.y + 8.5f), Quaternion.Euler(0, 0, 90));
-                        topWall.name = "TopWall";
-                        topWall.transform.parent = emptywall.transform;
+                        dbTopWall.value = 1;
                     }
+
                     break;
                 case (int)DIRECTION.RIGHT:
-                    _aroundinfo = mapBoardArr[BoardPosParse(curTileX + 18), BoardPosParse(curTileY)];
 
-                    if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                    if (_wall != null)
                     {
-                        _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+                        _aroundinfo = mapBoardArr[BoardPosParse(curTileX + 18), BoardPosParse(curTileY)];
 
-                        _aroundinfo.doorArr[(byte)DIRECTION.LEFT] = WALLSTATE.EMPTY;
-                        Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("LeftWall").gameObject);
+                        if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                        {
+                            _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+
+                            _aroundinfo.doorArr[(byte)DIRECTION.LEFT] = WALLSTATE.EMPTY;
+
+                            if (_aroundinfo.obTile.transform.Find("Walls").Find("LeftWall") != null)
+                            {
+                                Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("LeftWall").gameObject);
+                            }
+                        }
+                        else
+                        {
+                            GameObject rightWall = Instantiate(_wall, new Vector2(_pos.x + 8.5f, _pos.y), Quaternion.Euler(0, 0, 0));
+                            rightWall.name = "RightWall";
+                            rightWall.transform.parent = emptywall.transform;
+                        }
+
+                        dbRightWall.value = (byte)_tileinfo.doorArr[i];
                     }
                     else
                     {
-                        GameObject rightWall = Instantiate(_wall, new Vector2(_pos.x + 8.5f, _pos.y), Quaternion.Euler(0, 0, 0));
-                        rightWall.name = "RightWall";
-                        rightWall.transform.parent = emptywall.transform;
+                        dbRightWall.value = 1;
                     }
                     break;
                 case (int)DIRECTION.BOTTOM:
-                    _aroundinfo = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY - 18)];
 
-                    if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                    if (_wall != null)
                     {
-                        _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+                        _aroundinfo = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY - 18)];
 
-                        _aroundinfo.doorArr[(byte)DIRECTION.TOP] = WALLSTATE.EMPTY;
-                        Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("TopWall").gameObject);
+                        if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                        {
+                            _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+
+                            _aroundinfo.doorArr[(byte)DIRECTION.TOP] = WALLSTATE.EMPTY;
+
+                            if (_aroundinfo.obTile.transform.Find("Walls").Find("TopWall") != null)
+                            {
+                                Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("TopWall").gameObject);
+                            }
+                        }
+                        else
+                        {
+                            GameObject bottomWall = Instantiate(_wall, new Vector2(_pos.x, _pos.y - 8.5f), Quaternion.Euler(0, 0, -90));
+                            bottomWall.name = "BottomWall";
+                            bottomWall.transform.parent = emptywall.transform;
+                        }
+
+                        dbBottomWall.value = (byte)_tileinfo.doorArr[i];
                     }
                     else
                     {
-                        GameObject bottomWall = Instantiate(_wall, new Vector2(_pos.x, _pos.y - 8.5f), Quaternion.Euler(0, 0, -90));
-                        bottomWall.name = "BottomWall";
-                        bottomWall.transform.parent = emptywall.transform;
+                        dbBottomWall.value = 1;
                     }
+
                     break;
                 case (int)DIRECTION.LEFT:
-                    _aroundinfo = mapBoardArr[BoardPosParse(curTileX - 18), BoardPosParse(curTileY)];
 
-                    if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                    if (_wall != null)
                     {
-                        _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+                        _aroundinfo = mapBoardArr[BoardPosParse(curTileX - 18), BoardPosParse(curTileY)];
 
-                        _aroundinfo.doorArr[(byte)DIRECTION.RIGHT] = WALLSTATE.EMPTY;
-                        Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("RightWall").gameObject);
+                        if (_aroundinfo != null && _tileinfo.roomIndex == _aroundinfo.roomIndex)
+                        {
+                            _tileinfo.doorArr[i] = WALLSTATE.EMPTY;
+
+                            _aroundinfo.doorArr[(byte)DIRECTION.RIGHT] = WALLSTATE.EMPTY;
+
+                            if (_aroundinfo.obTile.transform.Find("Walls").Find("RightWall") != null)
+                            {
+                                Destroy(_aroundinfo.obTile.transform.Find("Walls").Find("RightWall").gameObject);
+                            }
+                        }
+                        else
+                        {
+                            GameObject leftWall = Instantiate(_wall, new Vector2(_pos.x - 8.5f, _pos.y), Quaternion.Euler(0, 0, -180));
+                            leftWall.name = "LeftWall";
+                            leftWall.transform.parent = emptywall.transform;
+                        }
+
+                        dbLeftWall.value = (byte)_tileinfo.doorArr[i];
                     }
                     else
                     {
-                        GameObject leftWall = Instantiate(_wall, new Vector2(_pos.x - 8.5f, _pos.y), Quaternion.Euler(0, 0, -180));
-                        leftWall.name = "LeftWall";
-                        leftWall.transform.parent = emptywall.transform;
+                        dbLeftWall.value = 1;
                     }
+
                     break;
             }
         }
+    }
+
+    public void OnDropdownnEvent(int index)
+    {
+        if (curTile != null && isWallChanging)
+        {
+            curTile.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)dbTopWall.value;
+            curTile.doorArr[(byte)DIRECTION.RIGHT] = (WALLSTATE)dbRightWall.value;
+            curTile.doorArr[(byte)DIRECTION.BOTTOM] = (WALLSTATE)dbBottomWall.value;
+            curTile.doorArr[(byte)DIRECTION.LEFT] = (WALLSTATE)dbLeftWall.value;
+
+            BuildWall(curTile);
+            isWallChanging = false;
+        }
+    }
+
+    public void OnDropdownWallChange()
+    {
+        isWallChanging = true;
+
+        Debug.Log(isWallChanging);
     }
 
     #endregion
