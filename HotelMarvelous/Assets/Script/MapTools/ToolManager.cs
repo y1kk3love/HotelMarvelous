@@ -13,6 +13,8 @@ public class ToolManager : MonoBehaviour
     private GameObject obFloor;                                  //타일 바닥 리소스
     private GameObject obBlockWall;                              //막힌 벽 리소스
     private GameObject obDoorWall;                               //문있는 벽 리소스
+    private GameObject obDragBox;                                //드래그 박스 리소스
+    private GameObject obCurDragBox = null;
 
     private Text textTilePos;                                    //선택된 타일의 좌표, 방인덱스등이 나오는 텍스트
     
@@ -36,6 +38,9 @@ public class ToolManager : MonoBehaviour
     private Vector2 dragBPCurPos;                                //현재 마우스의 위치
     private Vector2 dragBPCamPos;                                //카메라 이동을 시작했을때 카메라의 위치
 
+    private Vector2 dragBoxStartPos;                             //드래그 박스를 위한 좌표
+    private Vector2 dragBoxCurPos;
+
     private bool isTileSelect = false;                           //타일이 선택되었는지 확인
     private bool isWallChanging = false;                         //UI를 통해 벽을 수정중인지 확인
 
@@ -47,6 +52,7 @@ public class ToolManager : MonoBehaviour
         obFloor = Resources.Load("MapTools/Prefab/Floor") as GameObject;
         obBlockWall = Resources.Load("MapTools/Prefab/Wall") as GameObject;
         obDoorWall = Resources.Load("MapTools/Prefab/Door") as GameObject;
+        obDragBox = Resources.Load("MapTools/Prefab/BoxSelect") as GameObject;
 
         dbTopWall = GameObject.Find("DdTopWall").GetComponent<Dropdown>();
         dbRightWall = GameObject.Find("DdRightWall").GetComponent<Dropdown>();
@@ -121,27 +127,28 @@ public class ToolManager : MonoBehaviour
     #region [MapSelect]
     private void FloorPick()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        Ray ray = bpCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
-            isWallChanging = false;
-
-            Ray ray = bpCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            if (EventSystem.current.IsPointerOverGameObject())
             {
-                if (EventSystem.current.IsPointerOverGameObject())
-                {
-                    return;
-                }
+                return;
+            }
 
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
                 Vector2 _Pos = hit.point;
+                string _index;
 
+                dragBoxStartPos = _Pos;
                 curTileX = EditPosParse(_Pos.x);
                 curTileY = EditPosParse(_Pos.y);
 
+                isWallChanging = false;
+
                 //Debug.Log(" 선택된 좌표 : " + _Pos);
-                string _index;
 
                 if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
                 {
@@ -190,6 +197,25 @@ public class ToolManager : MonoBehaviour
                     }
                 }
             }
+        }
+
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            if(obCurDragBox == null)
+            {
+                obCurDragBox = Instantiate(obDragBox, dragBoxStartPos, Quaternion.identity);
+            }
+
+            dragBoxCurPos = hit.point;
+
+            obCurDragBox.transform.position = ((dragBoxStartPos + dragBoxCurPos) / 2);
+            obCurDragBox.transform.localScale = new Vector2(Mathf.Abs(dragBoxStartPos.x - dragBoxCurPos.x), Mathf.Abs(dragBoxStartPos.y - dragBoxCurPos.y));
+        }
+
+        if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            Destroy(obCurDragBox);
+            obCurDragBox = null;
         }
     }
 
@@ -539,8 +565,6 @@ public class ToolManager : MonoBehaviour
     public void OnDropdownWallChange()
     {
         isWallChanging = true;
-
-        Debug.Log(isWallChanging);
     }
 
     #endregion
