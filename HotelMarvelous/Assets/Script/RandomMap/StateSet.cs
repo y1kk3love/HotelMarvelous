@@ -1,4 +1,4 @@
-﻿public enum ROOMTYPE : byte
+﻿public enum ROOMTYPE
 {
     EMPTY,
     HALLWAY,

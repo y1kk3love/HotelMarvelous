@@ -19,7 +19,7 @@ public class ToolManager : MonoBehaviour
 
     private Text textTilePos;                                    //선택된 타일의 좌표, 방인덱스등이 나오는 텍스트
     
-    private InputField textRoomIndex;                            //방의 인덱스를 입력받는 인풋필드
+    private InputField InputFRoomIndex;                            //방의 인덱스를 입력받는 인풋필드
 
     private Dropdown dbTopWall;                                  //타일 벽을 설정하기 위한 드롭다운들
     private Dropdown dbRightWall;
@@ -43,8 +43,8 @@ public class ToolManager : MonoBehaviour
     private Vector2 dragBoxCurPos;
 
     private List<Vector2> selectTilesList = new List<Vector2>();
-    private List<GameObject> dragSelectBoxList = new List<GameObject>();
 
+    private bool isGridMode = false;
     private bool isTileSelect = false;                           //타일이 선택되었는지 확인
     private bool isWallChanging = false;                         //UI를 통해 벽을 수정중인지 확인
 
@@ -64,7 +64,9 @@ public class ToolManager : MonoBehaviour
         dbLeftWall = GameObject.Find("DdLeftWall").GetComponent<Dropdown>();
 
         textTilePos = GameObject.Find("TextTilePos").GetComponent<Text>();
-        textRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
+        InputFRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
+
+        obPickedRoom = new GameObject("Grids");
     }
 
     void Update()
@@ -76,6 +78,7 @@ public class ToolManager : MonoBehaviour
         //타일 선택과 인덱스 단축키
         FloorPick();
         IndexUpper();
+        RoomTypeChanger();
 
         //타일생성 삭제 등 관리
         MapControl();
@@ -138,6 +141,7 @@ public class ToolManager : MonoBehaviour
         {
             if (EventSystem.current.IsPointerOverGameObject())
             {
+                Destroy(obCurDragBox);
                 return;
             }
 
@@ -145,6 +149,7 @@ public class ToolManager : MonoBehaviour
             {
                 Vector2 _Pos = hit.point;
                 string _index;
+                ROOMTYPE _type = ROOMTYPE.EMPTY;
 
                 dragBoxStartPos = _Pos;
                 curTileX = EditPosParse(_Pos.x);
@@ -157,6 +162,7 @@ public class ToolManager : MonoBehaviour
                 if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
                 {
                     _index = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
+                    _type = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomType;
                 }
                 else
                 {
@@ -167,18 +173,18 @@ public class ToolManager : MonoBehaviour
                 {
                     isTileSelect = true;
 
-                    textTilePos.text = string.Format("Tile X : {0} //  Y : {1} // Index {2}", (curTileX / 18), (curTileY / 18), _index);
-                    obPickedRoom = Instantiate(obRoomPick, new Vector2(curTileX, curTileY), Quaternion.identity);
+                    textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), _index, _type);
+                    //obPickedRoom = Instantiate(obRoomPick, new Vector2(curTileX, curTileY), Quaternion.identity);
                 }
                 else
                 {
-                    textTilePos.text = string.Format("Tile X : {0} //  Y : {1} // Index {2}", (curTileX / 18), (curTileY / 18), _index);
-                    obPickedRoom.transform.position = new Vector2(curTileX, curTileY);
+                    textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), _index, _type);
+                    //obPickedRoom.transform.position = new Vector2(curTileX, curTileY);
                     curTile = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)];
 
                     if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
                     {
-                        textRoomIndex.text = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
+                        InputFRoomIndex.text = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
 
                         for (int i = 0; i < 4; i++)
                         {
@@ -203,7 +209,7 @@ public class ToolManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKey(KeyCode.Mouse0) && !isGridMode)
         {
             if(obCurDragBox == null)
             {
@@ -216,7 +222,7 @@ public class ToolManager : MonoBehaviour
             obCurDragBox.transform.localScale = new Vector2(Mathf.Abs(dragBoxStartPos.x - dragBoxCurPos.x), Mathf.Abs(dragBoxStartPos.y - dragBoxCurPos.y));
         }
 
-        if (Input.GetKeyUp(KeyCode.Mouse0))
+        if (Input.GetKeyUp(KeyCode.Mouse0) && !isGridMode)
         {
             selectTilesList.Clear();
 
@@ -261,27 +267,106 @@ public class ToolManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (textRoomIndex.text == "")
+            if (InputFRoomIndex.text == "")
             {
-                textRoomIndex.text = "1";
+                InputFRoomIndex.text = "1";
             }
             else
             {
-                textRoomIndex.text = (byte.Parse(textRoomIndex.text) + 1).ToString();
+                InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) + 1).ToString();
             }
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            if (textRoomIndex.text == "")
+            if (InputFRoomIndex.text == "")
             {
-                textRoomIndex.text = "0";
+                InputFRoomIndex.text = "0";
             }
             else
             {
-                if (byte.Parse(textRoomIndex.text) > 0)
+                if (byte.Parse(InputFRoomIndex.text) > 0)
                 {
-                    textRoomIndex.text = (byte.Parse(textRoomIndex.text) - 1).ToString();
+                    InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) - 1).ToString();
                 }
+            }
+        }
+    }
+
+    private void RoomTypeChanger()
+    {
+        if(curTile != null)
+        {
+            if (Input.GetKeyDown(KeyCode.Keypad0))
+            {
+                foreach (Vector2 _pos in selectTilesList)
+                {
+                    int _x = (int)_pos.x;
+                    int _y = (int)_pos.y;
+
+                    if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
+                    {
+                        TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
+
+                        _info.roomType = ROOMTYPE.EMPTY;
+                        _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = Color.white;
+                    }
+                }
+
+                textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, ROOMTYPE.EMPTY);
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad1))
+            {
+                foreach (Vector2 _pos in selectTilesList)
+                {
+                    int _x = (int)_pos.x;
+                    int _y = (int)_pos.y;
+
+                    if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
+                    {
+                        TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
+
+                        _info.roomType = ROOMTYPE.HALLWAY;
+                        _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = Color.red;
+                    }
+                }
+
+                textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, ROOMTYPE.HALLWAY);
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad2))
+            {
+                foreach (Vector2 _pos in selectTilesList)
+                {
+                    int _x = (int)_pos.x;
+                    int _y = (int)_pos.y;
+
+                    if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
+                    {
+                        TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
+
+                        _info.roomType = ROOMTYPE.GUEST;
+                        _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = Color.yellow;
+                    }
+                }
+
+                textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, ROOMTYPE.GUEST);
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad3))
+            {
+                foreach (Vector2 _pos in selectTilesList)
+                {
+                    int _x = (int)_pos.x;
+                    int _y = (int)_pos.y;
+
+                    if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
+                    {
+                        TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
+
+                        _info.roomType = ROOMTYPE.NPC;
+                        _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = Color.green;
+                    }
+                }
+
+                textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, ROOMTYPE.NPC);
             }
         }
     }
@@ -307,106 +392,112 @@ public class ToolManager : MonoBehaviour
 
     public void CreateMap()
     {
-        foreach(Vector2 _pos in selectTilesList)
+        if (!isGridMode)
         {
-            int _x = (int)_pos.x;
-            int _y = (int)_pos.y;
-
-            if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] == null)
+            foreach (Vector2 _pos in selectTilesList)
             {
-                GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (_x / 18), (_y / 18)));
-                emptytile.transform.position = new Vector3(_x, _y, 9);
+                int _x = (int)_pos.x;
+                int _y = (int)_pos.y;
 
-                GameObject floor = Instantiate(obFloor, new Vector3(_x, _y, 9), Quaternion.identity);
-                floor.transform.parent = emptytile.transform;
-
-                mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = new TileInfo();
-                mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile = emptytile;
-
-                if (textRoomIndex.text == "")        //최초 실행일때 인덱스값 1 설정
+                if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] == null)
                 {
-                    textRoomIndex.text = "1";
-                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex = 1;
-                }
-                else
-                {
-                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex = byte.Parse(textRoomIndex.text);
-                }
+                    GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (_x / 18), (_y / 18)));
+                    emptytile.transform.position = new Vector3(_x, _y, 9);
 
-                textTilePos.text = string.Format("Tile X : {0} //  Y : {1} // Index {2}", (_x / 18), (_y / 18), mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex);
+                    GameObject floor = Instantiate(obFloor, new Vector3(_x, _y, 9), Quaternion.identity);
+                    floor.transform.parent = emptytile.transform;
 
-                curTile = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
+                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = new TileInfo();
+                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile = emptytile;
+
+                    if (InputFRoomIndex.text == "")        //최초 실행일때 인덱스값 1 설정
+                    {
+                        InputFRoomIndex.text = "1";
+                        mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex = 1;
+                    }
+                    else
+                    {
+                        mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex = byte.Parse(InputFRoomIndex.text);
+                    }
+
+                    textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (_x / 18), (_y / 18), mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex, ROOMTYPE.EMPTY);
+
+                    curTile = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
+                }
             }
-        }
 
-        foreach (Vector2 _pos in selectTilesList)
-        {
-            BuildWall(mapBoardArr[BoardPosParse((int)_pos.x), BoardPosParse((int)_pos.y)]);       //생성된 타일 위에 벽 생성
+            foreach (Vector2 _pos in selectTilesList)
+            {
+                BuildWall(mapBoardArr[BoardPosParse((int)_pos.x), BoardPosParse((int)_pos.y)]);       //생성된 타일 위에 벽 생성
+            }
         }
     }
 
     public void DeleteMap()
     {
-        foreach (Vector2 _pos in selectTilesList)
+        if (!isGridMode)
         {
-            int _x = (int)_pos.x;
-            int _y = (int)_pos.y;
-
-            //맵을 오브젝트 삭제 후 배열에서도 비우기
-            if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
+            foreach (Vector2 _pos in selectTilesList)
             {
-                Destroy(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile);
+                int _x = (int)_pos.x;
+                int _y = (int)_pos.y;
 
-                mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = null;
-
-                for (int i = 0; i < 4; i++)
+                //맵을 오브젝트 삭제 후 배열에서도 비우기
+                if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
                 {
-                    switch (i)
+                    Destroy(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile);
+
+                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = null;
+
+                    for (int i = 0; i < 4; i++)
                     {
-                        case (int)DIRECTION.TOP:
-                            TileInfo _TT = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y + 18)];
+                        switch (i)
+                        {
+                            case (int)DIRECTION.TOP:
+                                TileInfo _TT = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y + 18)];
 
-                            if (_TT != null)
-                            {
-                                _TT.doorArr[(byte)DIRECTION.BOTTOM] = WALLSTATE.BLOCK;
+                                if (_TT != null)
+                                {
+                                    _TT.doorArr[(byte)DIRECTION.BOTTOM] = WALLSTATE.BLOCK;
 
-                                BuildWall(_TT);
-                            }
-                            break;
-                        case (int)DIRECTION.RIGHT:
-                            TileInfo _RT = mapBoardArr[BoardPosParse(_x + 18), BoardPosParse(_y)];
+                                    BuildWall(_TT);
+                                }
+                                break;
+                            case (int)DIRECTION.RIGHT:
+                                TileInfo _RT = mapBoardArr[BoardPosParse(_x + 18), BoardPosParse(_y)];
 
-                            if (_RT != null)
-                            {
-                                _RT.doorArr[(byte)DIRECTION.LEFT] = WALLSTATE.BLOCK;
+                                if (_RT != null)
+                                {
+                                    _RT.doorArr[(byte)DIRECTION.LEFT] = WALLSTATE.BLOCK;
 
-                                BuildWall(_RT);
-                            }
-                            break;
-                        case (int)DIRECTION.BOTTOM:
-                            TileInfo _BT = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y - 18)];
+                                    BuildWall(_RT);
+                                }
+                                break;
+                            case (int)DIRECTION.BOTTOM:
+                                TileInfo _BT = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y - 18)];
 
-                            if (_BT != null)
-                            {
-                                _BT.doorArr[(byte)DIRECTION.TOP] = WALLSTATE.BLOCK;
+                                if (_BT != null)
+                                {
+                                    _BT.doorArr[(byte)DIRECTION.TOP] = WALLSTATE.BLOCK;
 
-                                BuildWall(_BT);
-                            }
-                            break;
-                        case (int)DIRECTION.LEFT:
-                            TileInfo _LT = mapBoardArr[BoardPosParse(_x - 18), BoardPosParse(_y)];
+                                    BuildWall(_BT);
+                                }
+                                break;
+                            case (int)DIRECTION.LEFT:
+                                TileInfo _LT = mapBoardArr[BoardPosParse(_x - 18), BoardPosParse(_y)];
 
-                            if (_LT != null)
-                            {
-                                _LT.doorArr[(byte)DIRECTION.RIGHT] = WALLSTATE.BLOCK;
+                                if (_LT != null)
+                                {
+                                    _LT.doorArr[(byte)DIRECTION.RIGHT] = WALLSTATE.BLOCK;
 
-                                BuildWall(_LT);
-                            }
-                            break;
+                                    BuildWall(_LT);
+                                }
+                                break;
+                        }
                     }
                 }
             }
-        }
+        }        
     }
 
     private void ControlTileWall(TileInfo _tileinfo)
@@ -678,6 +769,38 @@ public class ToolManager : MonoBehaviour
         isWallChanging = true;
     }
 
+
+    public void OnClickButtonGridMode()
+    {
+        Text _buttontext = GameObject.Find("TextGridMode").GetComponent<Text>();
+
+        if (!isGridMode)
+        {
+            isGridMode = true;
+            _buttontext.text = "가구 배치중";
+
+            for(int _x = -25; _x < 25; _x++)
+            {
+                for (int _y = -25; _y < 25; _y++)
+                {
+                    if(mapBoardArr[BoardPosParse(_x * 18), BoardPosParse(_y * 18)] != null)
+                    {
+                        GameObject _grid = Instantiate(obRoomPick, new Vector2(_x * 18, _y * 18), Quaternion.identity);
+                        _grid.transform.parent = obPickedRoom.transform;
+                    }
+                }
+            }
+        }
+        else
+        {
+            isGridMode = false;
+            _buttontext.text = "방 생성중";
+
+            Destroy(obPickedRoom);
+            obPickedRoom = new GameObject("Grid");
+        }
+    }
+
     #endregion
 
     #region [Calculator]
@@ -715,6 +838,8 @@ class TileInfo
     public GameObject obTile;
 
     public byte roomIndex;
+
+    public ROOMTYPE roomType = ROOMTYPE.EMPTY;
 
     public WALLSTATE[] doorArr = new WALLSTATE[4];
 }
