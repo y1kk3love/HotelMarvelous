@@ -18,16 +18,19 @@ public class ToolManager : MonoBehaviour
     private GameObject obCurDragSelectBox = null;                //현재 생성된 드래스 선택 박스들을 넣은 빈오브젝트
 
     private Text textTilePos;                                    //선택된 타일의 좌표, 방인덱스등이 나오는 텍스트
-    
-    private InputField InputFRoomIndex;                            //방의 인덱스를 입력받는 인풋필드
+    private Text textMakeTile;
+    private Text textDelTile;
+
+    private InputField InputFRoomIndex;                          //방의 인덱스를 입력받는 인풋필드
 
     private Dropdown dbTopWall;                                  //타일 벽을 설정하기 위한 드롭다운들
     private Dropdown dbRightWall;
     private Dropdown dbBottomWall;
     private Dropdown dbLeftWall;
+    private Dropdown dbMonType;                                  //몬스터 타입을 받아올 드롭다운
 
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];      //타일의 정보를 담은 클래스를 가진 배열
-    private TileInfo curTile = null;                   //현재 선택된 타일의 정보
+    private TileInfo curTile = null;                             //현재 선택된 타일의 정보
 
     private int curTileX, curTileY;                              //현재 선택한 타일의 실제 좌표 18/1사이즈
 
@@ -44,7 +47,7 @@ public class ToolManager : MonoBehaviour
 
     private List<Vector2> selectTilesList = new List<Vector2>();
 
-    private bool isGridMode = false;
+    private bool isGridMode = false;                             //그리드모드인지 확인
     private bool isTileSelect = false;                           //타일이 선택되었는지 확인
     private bool isWallChanging = false;                         //UI를 통해 벽을 수정중인지 확인
 
@@ -62,8 +65,26 @@ public class ToolManager : MonoBehaviour
         dbRightWall = GameObject.Find("DdRightWall").GetComponent<Dropdown>();
         dbBottomWall = GameObject.Find("DdBottomWall").GetComponent<Dropdown>();
         dbLeftWall = GameObject.Find("DdLeftWall").GetComponent<Dropdown>();
+        dbMonType = GameObject.Find("DropdownMonsterType").GetComponent<Dropdown>();
+
+        int monTypeMax = System.Enum.GetValues(typeof(MONSTERTYPE)).Length;
+        string[] _typename = new string[monTypeMax];
+        
+        for (int i = 0; i < monTypeMax; i++)
+        {
+            MONSTERTYPE _type = (MONSTERTYPE)i;
+            Dropdown.OptionData newData = new Dropdown.OptionData();
+
+            _typename[i] = _type.ToString();
+            newData.text = _typename[i];
+            dbMonType.options.Add(newData);
+
+            Debug.Log(_typename[i]);
+        }
 
         textTilePos = GameObject.Find("TextTilePos").GetComponent<Text>();
+        textMakeTile = GameObject.Find("TextMakeTile").GetComponent<Text>();
+        textDelTile = GameObject.Find("TextDelTile").GetComponent<Text>();
         InputFRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
 
         obPickedRoom = new GameObject("Grids");
@@ -71,6 +92,11 @@ public class ToolManager : MonoBehaviour
 
     void Update()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
         //카메라 이동과 줌
         CameraDragMove();
         CameraWheelZoom();
@@ -155,6 +181,14 @@ public class ToolManager : MonoBehaviour
                 curTileX = EditPosParse(_Pos.x);
                 curTileY = EditPosParse(_Pos.y);
 
+                if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
+                {
+                    int x = BPPosParse(hit.point.x);
+                    int y = BPPosParse(hit.point.y);
+
+                    Debug.Log(string.Format("({0}, // , {1})", x, y));
+                }
+
                 isWallChanging = false;
 
                 //Debug.Log(" 선택된 좌표 : " + _Pos);
@@ -209,17 +243,24 @@ public class ToolManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKey(KeyCode.Mouse0) && !isGridMode)
+        if (Input.GetKey(KeyCode.Mouse0))
         {
-            if(obCurDragBox == null)
+            if (!isGridMode)
             {
-                obCurDragBox = Instantiate(obDragBox, dragBoxStartPos, Quaternion.identity);
+                if (obCurDragBox == null)
+                {
+                    obCurDragBox = Instantiate(obDragBox, dragBoxStartPos, Quaternion.identity);
+                }
+
+                dragBoxCurPos = hit.point;
+
+                obCurDragBox.transform.position = ((dragBoxStartPos + dragBoxCurPos) / 2);
+                obCurDragBox.transform.localScale = new Vector2(Mathf.Abs(dragBoxStartPos.x - dragBoxCurPos.x), Mathf.Abs(dragBoxStartPos.y - dragBoxCurPos.y));
             }
-
-            dragBoxCurPos = hit.point;
-
-            obCurDragBox.transform.position = ((dragBoxStartPos + dragBoxCurPos) / 2);
-            obCurDragBox.transform.localScale = new Vector2(Mathf.Abs(dragBoxStartPos.x - dragBoxCurPos.x), Mathf.Abs(dragBoxStartPos.y - dragBoxCurPos.y));
+            else
+            {
+                
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.Mouse0) && !isGridMode)
@@ -267,29 +308,35 @@ public class ToolManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (InputFRoomIndex.text == "")
+            if (!isGridMode)
             {
-                InputFRoomIndex.text = "1";
-            }
-            else
-            {
-                InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) + 1).ToString();
+                if (InputFRoomIndex.text == "")
+                {
+                    InputFRoomIndex.text = "1";
+                }
+                else
+                {
+                    InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) + 1).ToString();
+                }
             }
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            if (InputFRoomIndex.text == "")
+            if (!isGridMode)
             {
-                InputFRoomIndex.text = "0";
-            }
-            else
-            {
-                if (byte.Parse(InputFRoomIndex.text) > 0)
+                if (InputFRoomIndex.text == "")
                 {
-                    InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) - 1).ToString();
+                    InputFRoomIndex.text = "0";
+                }
+                else
+                {
+                    if (byte.Parse(InputFRoomIndex.text) > 0)
+                    {
+                        InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) - 1).ToString();
+                    }
                 }
             }
-        }
+        }       
     }
 
     private void RoomTypeChanger()
@@ -407,6 +454,8 @@ public class ToolManager : MonoBehaviour
                     GameObject floor = Instantiate(obFloor, new Vector3(_x, _y, 9), Quaternion.identity);
                     floor.transform.parent = emptytile.transform;
 
+                    TextMesh _roomnum = floor.transform.Find("RoomNum").GetComponent<TextMesh>();
+
                     mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = new TileInfo();
                     mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile = emptytile;
 
@@ -420,6 +469,7 @@ public class ToolManager : MonoBehaviour
                         mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex = byte.Parse(InputFRoomIndex.text);
                     }
 
+                    _roomnum.text = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex.ToString();
                     textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (_x / 18), (_y / 18), mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex, ROOMTYPE.EMPTY);
 
                     curTile = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
@@ -777,9 +827,11 @@ public class ToolManager : MonoBehaviour
         if (!isGridMode)
         {
             isGridMode = true;
-            _buttontext.text = "가구 배치중";
+            _buttontext.text = "방 설정중";
+            textMakeTile.text = "배치하기 (Q)";
+            textDelTile.text = "삭제하기 (E)";
 
-            for(int _x = -25; _x < 25; _x++)
+            for (int _x = -25; _x < 25; _x++)
             {
                 for (int _y = -25; _y < 25; _y++)
                 {
@@ -795,6 +847,8 @@ public class ToolManager : MonoBehaviour
         {
             isGridMode = false;
             _buttontext.text = "방 생성중";
+            textMakeTile.text = "타일 생성 (Q)";
+            textDelTile.text = "타일 삭제 (E)";
 
             Destroy(obPickedRoom);
             obPickedRoom = new GameObject("Grid");
@@ -805,7 +859,28 @@ public class ToolManager : MonoBehaviour
 
     #region [Calculator]
 
-    //청사진에서의 움직임을 위한 변환
+    //청사진에서의 배치를 위한 변환
+    private int BPPosParse(float _hitpoint)
+    {
+        float i = _hitpoint % 1;
+
+        int k = EditPosParse(_hitpoint);
+
+        if (k != 0 && i > 0 && i <= 1)
+        {
+            return (int)System.Math.Truncate(_hitpoint + 9) - k;
+        }
+        else if (k != 0 && i < 0 && i >= -1)
+        {
+            return (int)System.Math.Truncate(_hitpoint + 9) - k - 1;
+        }
+        else
+        {
+            return (int)System.Math.Truncate(_hitpoint + 9) - k;
+        }
+    }
+
+    //청사진을 위한 변환
     private int EditPosParse(float _pos)
     {
         float i = _pos % 18;
@@ -842,4 +917,13 @@ class TileInfo
     public ROOMTYPE roomType = ROOMTYPE.EMPTY;
 
     public WALLSTATE[] doorArr = new WALLSTATE[4];
+
+    public List<MonsterSpawnPoint> monPosList = new List<MonsterSpawnPoint>();
+}
+
+class MonsterSpawnPoint
+{
+    public Vector2 monsterPos;
+
+    public MONSTERTYPE monsterType;
 }

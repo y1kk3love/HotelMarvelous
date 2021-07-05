@@ -38,6 +38,15 @@ public enum DROPITEM
     TOTALHEALL
 }
 
+public enum MONSTERTYPE
+{
+    NULL,
+    SUPERVIA,
+    AVARITIA,
+    PORTRAIT,
+    INK
+}
+
 public enum WEAPONID
 {
     SWORD,
