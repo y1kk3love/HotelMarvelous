@@ -5,8 +5,6 @@ using UnityEngine;
 //[RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    private ResourceManager resource;
-
     #region [Status]
 
     private int damage = 3;
@@ -82,11 +80,6 @@ public class Player : MonoBehaviour
 
         hp = maxHp;
         mentality = maxMentality;
-
-        if (GameObject.Find("ResourceManager") != null)
-        {
-            resource = GameObject.Find("ResourceManager").GetComponent<ResourceManager>();
-        }
     }
 
     void Update()
@@ -162,7 +155,7 @@ public class Player : MonoBehaviour
             rewarditem.SetRewardItemcode(itemcode);
             itemcode = _itemcode;
 
-            itemMagnification = resource.GetItemMagnification(itemcode);
+            itemMagnification = ResourceManager.Instance.GetItemMagnification(itemcode);
         }
         if (other.gameObject.tag == "ConsumItem")
         {
@@ -596,7 +589,7 @@ public class Player : MonoBehaviour
             switch (itemcode)
             {
                 case 0:
-                    GameObject areaskill = Instantiate(resource.GetItemPrefeb((byte)ITEMCODE.CROWN), transform.position, Quaternion.identity);
+                    GameObject areaskill = Instantiate(ResourceManager.Instance.GetItemPrefeb((byte)ITEMCODE.CROWN), transform.position, Quaternion.identity);
                     WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
                     wide.SetSkillPreset("Monster", 3f);
                     break;

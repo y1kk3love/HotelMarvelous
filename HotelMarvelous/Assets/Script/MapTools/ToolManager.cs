@@ -6,6 +6,10 @@ using UnityEngine.EventSystems;
 
 public class ToolManager : MonoBehaviour
 {
+    private Dictionary<Vector2, MonsterSpawnPoint> monSpawnInfoDic = new Dictionary<Vector2, MonsterSpawnPoint>();
+
+    private List<Vector2> selectTilesList = new List<Vector2>();
+
     private Camera bpCamera;                                     //청사진 카메라
 
     private GameObject obRoomPick;                               //17x17 그리드 리소스
@@ -44,8 +48,6 @@ public class ToolManager : MonoBehaviour
 
     private Vector2 dragBoxStartPos;                             //드래그 박스를 위한 좌표
     private Vector2 dragBoxCurPos;
-
-    private List<Vector2> selectTilesList = new List<Vector2>();
 
     private bool isGridMode = false;                             //그리드모드인지 확인
     private bool isTileSelect = false;                           //타일이 선택되었는지 확인
@@ -174,27 +176,28 @@ public class ToolManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 Vector2 _Pos = hit.point;
-                string _index;
+                
                 ROOMTYPE _type = ROOMTYPE.EMPTY;
 
-                dragBoxStartPos = _Pos;
+                string _index;
+
                 curTileX = EditPosParse(_Pos.x);
                 curTileY = EditPosParse(_Pos.y);
 
-                if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
-                {
-                    int x = BPPosParse(hit.point.x);
-                    int y = BPPosParse(hit.point.y);
-
-                    Debug.Log(string.Format("({0}, // , {1})", x, y));
-                }
+                dragBoxStartPos = _Pos;
 
                 isWallChanging = false;
 
-                //Debug.Log(" 선택된 좌표 : " + _Pos);
-
                 if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
                 {
+                    if (isGridMode)
+                    {
+                        int x = BPPosParse(hit.point.x);
+                        int y = BPPosParse(hit.point.y);
+
+                        //Debug.Log(string.Format("({0}, // , {1})", x, y));
+                    }
+
                     _index = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
                     _type = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomType;
                 }
@@ -208,12 +211,10 @@ public class ToolManager : MonoBehaviour
                     isTileSelect = true;
 
                     textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), _index, _type);
-                    //obPickedRoom = Instantiate(obRoomPick, new Vector2(curTileX, curTileY), Quaternion.identity);
                 }
                 else
                 {
                     textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), _index, _type);
-                    //obPickedRoom.transform.position = new Vector2(curTileX, curTileY);
                     curTile = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)];
 
                     if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
@@ -256,10 +257,6 @@ public class ToolManager : MonoBehaviour
 
                 obCurDragBox.transform.position = ((dragBoxStartPos + dragBoxCurPos) / 2);
                 obCurDragBox.transform.localScale = new Vector2(Mathf.Abs(dragBoxStartPos.x - dragBoxCurPos.x), Mathf.Abs(dragBoxStartPos.y - dragBoxCurPos.y));
-            }
-            else
-            {
-                
             }
         }
 
@@ -908,7 +905,7 @@ public class ToolManager : MonoBehaviour
     #endregion
 }
 
-class TileInfo
+public class TileInfo
 {
     public GameObject obTile;
 
@@ -921,9 +918,7 @@ class TileInfo
     public List<MonsterSpawnPoint> monPosList = new List<MonsterSpawnPoint>();
 }
 
-class MonsterSpawnPoint
+public class MonsterSpawnPoint
 {
-    public Vector2 monsterPos;
-
     public MONSTERTYPE monsterType;
 }
