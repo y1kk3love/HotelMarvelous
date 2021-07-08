@@ -6,20 +6,25 @@ using UnityEngine.EventSystems;
 
 public class ToolManager : MonoBehaviour
 {
-    private Dictionary<Vector2, MonsterSpawnPoint> monSpawnInfoDic = new Dictionary<Vector2, MonsterSpawnPoint>();
-
     private List<Vector2> selectTilesList = new List<Vector2>();
 
-    private Camera bpCamera;                                     //청사진 카메라
+    private Coroutine errorcoroutine = null;
 
-    private GameObject obRoomPick;                               //17x17 그리드 리소스
-    private GameObject obPickedRoom;                             //생성된 17x17 그리드의 오브젝트
-    private GameObject obFloor;                                  //타일 바닥 리소스
-    private GameObject obBlockWall;                              //막힌 벽 리소스
-    private GameObject obDoorWall;                               //문있는 벽 리소스
-    private GameObject obDragBox;                                //드래그 박스 리소스
-    private GameObject obCurDragBox = null;                      //현재 생성된 드래그 박스
-    private GameObject obCurDragSelectBox = null;                //현재 생성된 드래스 선택 박스들을 넣은 빈오브젝트
+    private Camera bpCamera;                                             //청사진 카메라
+
+    private GameObject obRoomPick;                                    //17x17 그리드 리소스
+    private GameObject obPickedRoom;                                 //생성된 17x17 그리드의 오브젝트
+    private GameObject obFloor;                                         //타일 바닥 리소스
+    private GameObject obBlockWall;                                    //막힌 벽 리소스
+    private GameObject obDoorWall;                                    //문있는 벽 리소스
+    private GameObject obDragBox;                                     //드래그 박스 리소스
+    private GameObject obCurDragBox = null;                         //현재 생성된 드래그 박스
+    private GameObject obCurDragSelectBox = null;                  //현재 생성된 드래스 선택 박스들을 넣은 빈오브젝트
+    private GameObject obWallPanel;                                    //벽을 관리하는 인터페이스
+    private GameObject obMonsterPanel;                               //몬스터 스폰포인트를 관리하는 인터페이스
+    private GameObject obMonPosCircle;                               //몬스터 스폰포인트를 표시할 리소스
+    private GameObject curMonCircle;                                   //현재 선택된 몬스터 스폰포인트
+    private GameObject MonPosCircleSet;                               //생성된 몬스터 스폰포인트의 부모
 
     private Text textTilePos;                                    //선택된 타일의 좌표, 방인덱스등이 나오는 텍스트
     private Text textMakeTile;
@@ -62,6 +67,7 @@ public class ToolManager : MonoBehaviour
         obBlockWall = Resources.Load("MapTools/Prefab/Wall") as GameObject;
         obDoorWall = Resources.Load("MapTools/Prefab/Door") as GameObject;
         obDragBox = Resources.Load("MapTools/Prefab/BoxSelect") as GameObject;
+        obMonPosCircle = Resources.Load("MapTools/Prefab/MonsterPos") as GameObject;
 
         dbTopWall = GameObject.Find("DdTopWall").GetComponent<Dropdown>();
         dbRightWall = GameObject.Find("DdRightWall").GetComponent<Dropdown>();
@@ -72,7 +78,7 @@ public class ToolManager : MonoBehaviour
         int monTypeMax = System.Enum.GetValues(typeof(MONSTERTYPE)).Length;
         string[] _typename = new string[monTypeMax];
         
-        for (int i = 0; i < monTypeMax; i++)
+        for (int i = 1; i < monTypeMax; i++)
         {
             MONSTERTYPE _type = (MONSTERTYPE)i;
             Dropdown.OptionData newData = new Dropdown.OptionData();
@@ -80,8 +86,6 @@ public class ToolManager : MonoBehaviour
             _typename[i] = _type.ToString();
             newData.text = _typename[i];
             dbMonType.options.Add(newData);
-
-            Debug.Log(_typename[i]);
         }
 
         textTilePos = GameObject.Find("TextTilePos").GetComponent<Text>();
@@ -89,7 +93,12 @@ public class ToolManager : MonoBehaviour
         textDelTile = GameObject.Find("TextDelTile").GetComponent<Text>();
         InputFRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
 
+        obWallPanel = GameObject.Find("WallPanel");
+        obMonsterPanel = GameObject.Find("MonsterPanel");
+        obMonsterPanel.SetActive(false);
+
         obPickedRoom = new GameObject("Grids");
+        MonPosCircleSet = new GameObject("MonsterPos");
     }
 
     void Update()
@@ -192,10 +201,34 @@ public class ToolManager : MonoBehaviour
                 {
                     if (isGridMode)
                     {
-                        int x = BPPosParse(hit.point.x);
-                        int y = BPPosParse(hit.point.y);
+                        if(dbMonType.value == 0)
+                        {
+                            ErrorMessage("몬스터의 타입이 설정되지 않았습니다!!!");
+                        }
+                        else
+                        {
+                            int x = BPPosParse(hit.point.x);
+                            int y = BPPosParse(hit.point.y);
+                            float rx = BPMonPosParse(hit.point.x);
+                            float ry = BPMonPosParse(hit.point.y);
+                            
 
-                        //Debug.Log(string.Format("({0}, // , {1})", x, y));
+                            MonsterSpawnPoint _monpoint = new MonsterSpawnPoint();
+                            _monpoint.monsterType = (MONSTERTYPE)dbMonType.value;
+
+                            if(!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MonsterSpawnPoint _point))
+                            {
+                                curMonCircle = Instantiate(obMonPosCircle, new Vector2(rx, ry), Quaternion.identity);
+                                curMonCircle.transform.parent = MonPosCircleSet.transform;
+                                curMonCircle.name = string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f);
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x, y), _monpoint);
+                            }
+                            else
+                            {
+                                Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f)));
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Remove(new Vector2(x, y));
+                            }
+                        }
                     }
 
                     _index = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
@@ -316,6 +349,17 @@ public class ToolManager : MonoBehaviour
                     InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) + 1).ToString();
                 }
             }
+            else
+            {
+                if (dbMonType.value < System.Enum.GetValues(typeof(MONSTERTYPE)).Length - 1)
+                {
+                    dbMonType.value++;
+                }
+                else 
+                {
+                    dbMonType.value = 0;
+                }
+            }
         }
         else if (Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -331,6 +375,17 @@ public class ToolManager : MonoBehaviour
                     {
                         InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) - 1).ToString();
                     }
+                }
+            }
+            else
+            {
+                if (dbMonType.value > 0)
+                {
+                    dbMonType.value--;
+                }
+                else
+                {
+                    dbMonType.value = System.Enum.GetValues(typeof(MONSTERTYPE)).Length - 1;
                 }
             }
         }       
@@ -492,8 +547,16 @@ public class ToolManager : MonoBehaviour
                 //맵을 오브젝트 삭제 후 배열에서도 비우기
                 if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
                 {
+                    Dictionary<Vector2, MonsterSpawnPoint> _monspanwpos = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].monSpawnInfoDic;
+
+                    foreach(KeyValuePair<Vector2, MonsterSpawnPoint> _point in _monspanwpos)
+                    {
+                        Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", _point.Key.x - 8, _point.Key.y - 8)));
+                    }
+
                     Destroy(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile);
 
+                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].monSpawnInfoDic.Clear();
                     mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = null;
 
                     for (int i = 0; i < 4; i++)
@@ -828,6 +891,9 @@ public class ToolManager : MonoBehaviour
             textMakeTile.text = "배치하기 (Q)";
             textDelTile.text = "삭제하기 (E)";
 
+            obMonsterPanel.SetActive(true);
+            obWallPanel.SetActive(false);
+
             for (int _x = -25; _x < 25; _x++)
             {
                 for (int _y = -25; _y < 25; _y++)
@@ -847,6 +913,9 @@ public class ToolManager : MonoBehaviour
             textMakeTile.text = "타일 생성 (Q)";
             textDelTile.text = "타일 삭제 (E)";
 
+            obMonsterPanel.SetActive(false);
+            obWallPanel.SetActive(true);
+
             Destroy(obPickedRoom);
             obPickedRoom = new GameObject("Grid");
         }
@@ -855,6 +924,24 @@ public class ToolManager : MonoBehaviour
     #endregion
 
     #region [Calculator]
+
+    private float BPMonPosParse(float _hitpoint)
+    {
+        float i = _hitpoint % 1;
+
+        if (i > 0 && i <= 1)
+        {
+            return (float)System.Math.Truncate(_hitpoint) + 0.5f;
+        }
+        else if ( i < 0 && i >= -1)
+        {
+            return (float)System.Math.Truncate(_hitpoint) - 0.5f;
+        }
+        else
+        {
+            return (float)System.Math.Truncate(_hitpoint);
+        }
+    }
 
     //청사진에서의 배치를 위한 변환
     private int BPPosParse(float _hitpoint)
@@ -903,6 +990,31 @@ public class ToolManager : MonoBehaviour
     }
 
     #endregion
+
+    #region [ErrorMessage]
+
+    private void ErrorMessage(string _errorText)
+    {
+        Text errorText = GameObject.Find("ErrorInfo").GetComponent<Text>();
+
+        if(errorcoroutine != null)
+        {
+            StopCoroutine(errorcoroutine);
+        }
+
+        errorcoroutine = StartCoroutine(Error(errorText, _errorText));
+    }
+
+    static IEnumerator Error(Text _text, string _errorText)
+    {
+        _text.text = _errorText;
+
+        yield return new WaitForSeconds(3.0f);
+
+        _text.text = "";
+    }
+
+    #endregion
 }
 
 public class TileInfo
@@ -915,7 +1027,7 @@ public class TileInfo
 
     public WALLSTATE[] doorArr = new WALLSTATE[4];
 
-    public List<MonsterSpawnPoint> monPosList = new List<MonsterSpawnPoint>();
+    public Dictionary<Vector2, MonsterSpawnPoint> monSpawnInfoDic = new Dictionary<Vector2, MonsterSpawnPoint>();
 }
 
 public class MonsterSpawnPoint

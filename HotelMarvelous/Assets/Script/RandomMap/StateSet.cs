@@ -40,7 +40,7 @@ public enum DROPITEM
 
 public enum MONSTERTYPE
 {
-    NULL,
+    NONE,
     SUPERVIA,
     AVARITIA,
     PORTRAIT,
