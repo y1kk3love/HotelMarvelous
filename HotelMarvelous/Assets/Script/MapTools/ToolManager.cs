@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -32,11 +33,12 @@ public class ToolManager : MonoBehaviour
 
     private InputField InputFRoomIndex;                          //방의 인덱스를 입력받는 인풋필드
 
-    private Dropdown dbTopWall;                                  //타일 벽을 설정하기 위한 드롭다운들
-    private Dropdown dbRightWall;
-    private Dropdown dbBottomWall;
-    private Dropdown dbLeftWall;
-    private Dropdown dbMonType;                                  //몬스터 타입을 받아올 드롭다운
+    private Dropdown ddTopWall;                                  //타일 벽을 설정하기 위한 드롭다운들
+    private Dropdown ddRightWall;
+    private Dropdown ddBottomWall;
+    private Dropdown ddLeftWall;
+    private Dropdown ddMonType;                                  //몬스터 타입을 받아올 드롭다운
+    private Dropdown ddFurnType;                                 //가구 타입을 받아올 드롭다운
 
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];      //타일의 정보를 담은 클래스를 가진 배열
     private TileInfo curTile = null;                             //현재 선택된 타일의 정보
@@ -60,53 +62,18 @@ public class ToolManager : MonoBehaviour
 
     void Start()
     {
-        bpCamera = Camera.main.GetComponent<Camera>();
+        StartReset();
+        CreateEmpty();
+        ResetDropDowns();
+        UIOFF();
 
-        obRoomPick = Resources.Load("MapTools/Prefab/RoomPick") as GameObject;
-        obFloor = Resources.Load("MapTools/Prefab/Floor") as GameObject;
-        obBlockWall = Resources.Load("MapTools/Prefab/Wall") as GameObject;
-        obDoorWall = Resources.Load("MapTools/Prefab/Door") as GameObject;
-        obDragBox = Resources.Load("MapTools/Prefab/BoxSelect") as GameObject;
-        obMonPosCircle = Resources.Load("MapTools/Prefab/MonsterPos") as GameObject;
-
-        dbTopWall = GameObject.Find("DdTopWall").GetComponent<Dropdown>();
-        dbRightWall = GameObject.Find("DdRightWall").GetComponent<Dropdown>();
-        dbBottomWall = GameObject.Find("DdBottomWall").GetComponent<Dropdown>();
-        dbLeftWall = GameObject.Find("DdLeftWall").GetComponent<Dropdown>();
-        dbMonType = GameObject.Find("DropdownMonsterType").GetComponent<Dropdown>();
-
-        int monTypeMax = System.Enum.GetValues(typeof(MONSTERTYPE)).Length;
-        string[] _typename = new string[monTypeMax];
-        
-        for (int i = 1; i < monTypeMax; i++)
-        {
-            MONSTERTYPE _type = (MONSTERTYPE)i;
-            Dropdown.OptionData newData = new Dropdown.OptionData();
-
-            _typename[i] = _type.ToString();
-            newData.text = _typename[i];
-            dbMonType.options.Add(newData);
-        }
-
-        textTilePos = GameObject.Find("TextTilePos").GetComponent<Text>();
-        textMakeTile = GameObject.Find("TextMakeTile").GetComponent<Text>();
-        textDelTile = GameObject.Find("TextDelTile").GetComponent<Text>();
-        InputFRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
-
-        obWallPanel = GameObject.Find("WallPanel");
-        obMonsterPanel = GameObject.Find("MonsterPanel");
-        obMonsterPanel.SetActive(false);
-
-        obPickedRoom = new GameObject("Grids");
-        MonPosCircleSet = new GameObject("MonsterPos");
+        LoadFurnitureCSVData();
     }
 
     void Update()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
+        //UI에 마우스가 올라가 있으면 작동하지 않게함
+        StopUpdateOnUI();
 
         //카메라 이동과 줌
         CameraDragMove();
@@ -169,6 +136,15 @@ public class ToolManager : MonoBehaviour
     #endregion
 
     #region [MapSelect]
+
+    private void StopUpdateOnUI()
+    {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+    }
+
     private void FloorPick()
     {
         Ray ray = bpCamera.ScreenPointToRay(Input.mousePosition);
@@ -201,7 +177,7 @@ public class ToolManager : MonoBehaviour
                 {
                     if (isGridMode)
                     {
-                        if(dbMonType.value == 0)
+                        if(ddMonType.value == 0)
                         {
                             ErrorMessage("몬스터의 타입이 설정되지 않았습니다!!!");
                         }
@@ -213,15 +189,14 @@ public class ToolManager : MonoBehaviour
                             float ry = BPMonPosParse(hit.point.y);
                             
 
-                            MonsterSpawnPoint _monpoint = new MonsterSpawnPoint();
-                            _monpoint.monsterType = (MONSTERTYPE)dbMonType.value;
+                            MONSTERTYPE _monType = (MONSTERTYPE)ddMonType.value;
 
-                            if(!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MonsterSpawnPoint _point))
+                            if(!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MONSTERTYPE _dmtype))
                             {
                                 curMonCircle = Instantiate(obMonPosCircle, new Vector2(rx, ry), Quaternion.identity);
                                 curMonCircle.transform.parent = MonPosCircleSet.transform;
                                 curMonCircle.name = string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f);
-                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x, y), _monpoint);
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x, y), _monType);
                             }
                             else
                             {
@@ -259,16 +234,16 @@ public class ToolManager : MonoBehaviour
                             switch (i)
                             {
                                 case (int)DIRECTION.TOP:
-                                    dbTopWall.value = (byte)curTile.doorArr[i];
+                                    ddTopWall.value = (byte)curTile.doorArr[i];
                                     break;
                                 case (int)DIRECTION.RIGHT:
-                                    dbRightWall.value = (byte)curTile.doorArr[i];
+                                    ddRightWall.value = (byte)curTile.doorArr[i];
                                     break;
                                 case (int)DIRECTION.BOTTOM:
-                                    dbBottomWall.value = (byte)curTile.doorArr[i];
+                                    ddBottomWall.value = (byte)curTile.doorArr[i];
                                     break;
                                 case (int)DIRECTION.LEFT:
-                                    dbLeftWall.value = (byte)curTile.doorArr[i];
+                                    ddLeftWall.value = (byte)curTile.doorArr[i];
                                     break;
                             }
                         }
@@ -351,13 +326,13 @@ public class ToolManager : MonoBehaviour
             }
             else
             {
-                if (dbMonType.value < System.Enum.GetValues(typeof(MONSTERTYPE)).Length - 1)
+                if (ddMonType.value < System.Enum.GetValues(typeof(MONSTERTYPE)).Length - 1)
                 {
-                    dbMonType.value++;
+                    ddMonType.value++;
                 }
                 else 
                 {
-                    dbMonType.value = 0;
+                    ddMonType.value = 0;
                 }
             }
         }
@@ -379,13 +354,13 @@ public class ToolManager : MonoBehaviour
             }
             else
             {
-                if (dbMonType.value > 0)
+                if (ddMonType.value > 0)
                 {
-                    dbMonType.value--;
+                    ddMonType.value--;
                 }
                 else
                 {
-                    dbMonType.value = System.Enum.GetValues(typeof(MONSTERTYPE)).Length - 1;
+                    ddMonType.value = System.Enum.GetValues(typeof(MONSTERTYPE)).Length - 1;
                 }
             }
         }       
@@ -547,9 +522,9 @@ public class ToolManager : MonoBehaviour
                 //맵을 오브젝트 삭제 후 배열에서도 비우기
                 if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
                 {
-                    Dictionary<Vector2, MonsterSpawnPoint> _monspanwpos = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].monSpawnInfoDic;
+                    Dictionary<Vector2, MONSTERTYPE> _monspanwpos = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].monSpawnInfoDic;
 
-                    foreach(KeyValuePair<Vector2, MonsterSpawnPoint> _point in _monspanwpos)
+                    foreach(KeyValuePair<Vector2, MONSTERTYPE> _point in _monspanwpos)
                     {
                         Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", _point.Key.x - 8, _point.Key.y - 8)));
                     }
@@ -747,11 +722,11 @@ public class ToolManager : MonoBehaviour
                             topWall.transform.parent = emptywall.transform;
                         }
 
-                        dbTopWall.value = (byte)_tileinfo.doorArr[i];
+                        ddTopWall.value = (byte)_tileinfo.doorArr[i];
                     }
                     else
                     {
-                        dbTopWall.value = 1;
+                        ddTopWall.value = 1;
                     }
 
                     break;
@@ -781,11 +756,11 @@ public class ToolManager : MonoBehaviour
                             rightWall.transform.parent = emptywall.transform;
                         }
 
-                        dbRightWall.value = (byte)_tileinfo.doorArr[i];
+                        ddRightWall.value = (byte)_tileinfo.doorArr[i];
                     }
                     else
                     {
-                        dbRightWall.value = 1;
+                        ddRightWall.value = 1;
                     }
                     break;
                 case (int)DIRECTION.BOTTOM:
@@ -814,11 +789,11 @@ public class ToolManager : MonoBehaviour
                             bottomWall.transform.parent = emptywall.transform;
                         }
 
-                        dbBottomWall.value = (byte)_tileinfo.doorArr[i];
+                        ddBottomWall.value = (byte)_tileinfo.doorArr[i];
                     }
                     else
                     {
-                        dbBottomWall.value = 1;
+                        ddBottomWall.value = 1;
                     }
 
                     break;
@@ -848,11 +823,11 @@ public class ToolManager : MonoBehaviour
                             leftWall.transform.parent = emptywall.transform;
                         }
 
-                        dbLeftWall.value = (byte)_tileinfo.doorArr[i];
+                        ddLeftWall.value = (byte)_tileinfo.doorArr[i];
                     }
                     else
                     {
-                        dbLeftWall.value = 1;
+                        ddLeftWall.value = 1;
                     }
 
                     break;
@@ -864,10 +839,10 @@ public class ToolManager : MonoBehaviour
     {
         if (curTile != null && isWallChanging)
         {
-            curTile.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)dbTopWall.value;
-            curTile.doorArr[(byte)DIRECTION.RIGHT] = (WALLSTATE)dbRightWall.value;
-            curTile.doorArr[(byte)DIRECTION.BOTTOM] = (WALLSTATE)dbBottomWall.value;
-            curTile.doorArr[(byte)DIRECTION.LEFT] = (WALLSTATE)dbLeftWall.value;
+            curTile.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)ddTopWall.value;
+            curTile.doorArr[(byte)DIRECTION.RIGHT] = (WALLSTATE)ddRightWall.value;
+            curTile.doorArr[(byte)DIRECTION.BOTTOM] = (WALLSTATE)ddBottomWall.value;
+            curTile.doorArr[(byte)DIRECTION.LEFT] = (WALLSTATE)ddLeftWall.value;
 
             BuildWall(curTile);
             isWallChanging = false;
@@ -991,6 +966,88 @@ public class ToolManager : MonoBehaviour
 
     #endregion
 
+    #region [DataLoad]
+
+    private void StartReset()
+    {
+        bpCamera = Camera.main.GetComponent<Camera>();
+
+        obRoomPick = Resources.Load("MapTools/Prefab/RoomPick") as GameObject;
+        obFloor = Resources.Load("MapTools/Prefab/Floor") as GameObject;
+        obBlockWall = Resources.Load("MapTools/Prefab/Wall") as GameObject;
+        obDoorWall = Resources.Load("MapTools/Prefab/Door") as GameObject;
+        obDragBox = Resources.Load("MapTools/Prefab/BoxSelect") as GameObject;
+        obMonPosCircle = Resources.Load("MapTools/Prefab/MonsterPos") as GameObject;
+
+        textTilePos = GameObject.Find("TextTilePos").GetComponent<Text>();
+        textMakeTile = GameObject.Find("TextMakeTile").GetComponent<Text>();
+        textDelTile = GameObject.Find("TextDelTile").GetComponent<Text>();
+        InputFRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
+
+        obWallPanel = GameObject.Find("WallPanel");
+        obMonsterPanel = GameObject.Find("MonsterPanel");
+    }
+
+    private void CreateEmpty()
+    {
+        obPickedRoom = new GameObject("Grids");
+        MonPosCircleSet = new GameObject("MonsterPos");
+    }
+
+    private void UIOFF()
+    {
+        obMonsterPanel.SetActive(false);
+    }
+
+    private void ResetDropDowns()
+    {
+        ddTopWall = GameObject.Find("DdTopWall").GetComponent<Dropdown>();
+        ddRightWall = GameObject.Find("DdRightWall").GetComponent<Dropdown>();
+        ddBottomWall = GameObject.Find("DdBottomWall").GetComponent<Dropdown>();
+        ddLeftWall = GameObject.Find("DdLeftWall").GetComponent<Dropdown>();
+        ddMonType = GameObject.Find("DropdownMonsterType").GetComponent<Dropdown>();
+        ddFurnType = GameObject.Find("DropdownFurnitureType").GetComponent<Dropdown>();
+
+
+        int monTypeMax = System.Enum.GetValues(typeof(MONSTERTYPE)).Length;
+        string[] _typename = new string[monTypeMax];
+
+        for (int i = 1; i < monTypeMax; i++)
+        {
+            MONSTERTYPE _type = (MONSTERTYPE)i;
+            Dropdown.OptionData newData = new Dropdown.OptionData();
+
+            _typename[i] = _type.ToString();
+            newData.text = _typename[i];
+            ddMonType.options.Add(newData);
+        }
+    }
+
+    private void LoadFurnitureCSVData()
+    {
+        StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/FurnitureData.csv");
+        List<string[]> _datalist = new List<string[]>();
+
+        while (!streader.EndOfStream)
+        {
+            string line = streader.ReadLine();
+
+            string[] data = line.Split(',');
+
+            _datalist.Add(data);
+        }
+
+        for (int i = 1; i < _datalist.Count; i++)
+        {
+            Dropdown.OptionData newData = new Dropdown.OptionData();
+
+            newData.text = _datalist[i][1];
+            ddFurnType.options.Add(newData);
+        }
+    }
+
+    #endregion
+
     #region [ErrorMessage]
 
     private void ErrorMessage(string _errorText)
@@ -1027,10 +1084,15 @@ public class TileInfo
 
     public WALLSTATE[] doorArr = new WALLSTATE[4];
 
-    public Dictionary<Vector2, MonsterSpawnPoint> monSpawnInfoDic = new Dictionary<Vector2, MonsterSpawnPoint>();
+    public Dictionary<Vector2, MONSTERTYPE> monSpawnInfoDic = new Dictionary<Vector2, MONSTERTYPE>();
+    public Dictionary<Vector2, FurnitureInfo> FurnitureInfoDic = new Dictionary<Vector2, FurnitureInfo>();
 }
 
-public class MonsterSpawnPoint
+public class FurnitureInfo
 {
-    public MONSTERTYPE monsterType;
+    public string name;
+
+    public Vector2 pos;
+
+    public DIRECTION dir;
 }
