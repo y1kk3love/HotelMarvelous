@@ -83,3 +83,18 @@ public enum KEYSETBUTTON
     PAUSE,
     TREASURE
 }
+
+public enum TOOLEDITUI
+{
+    TILEMODE,
+    MONSTERMODE,
+    FURNITUREMODE
+}
+
+public enum FURNITUREDATA : int
+{
+    INDEX,
+    NAME,
+    HORIZONTAL,
+    VERTICAL
+}
