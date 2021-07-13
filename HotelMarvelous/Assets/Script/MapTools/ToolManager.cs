@@ -19,12 +19,14 @@ public class ToolManager : MonoBehaviour
     private GameObject obFloor;                                         //타일 바닥 리소스
     private GameObject obBlockWall;                                    //막힌 벽 리소스
     private GameObject obDoorWall;                                    //문있는 벽 리소스
-    private GameObject obDragBox;                                     //드래그 박스 리소스
+    private GameObject obDragBox;                                     //드래그 박스 리소스   
+    private GameObject obMonPosCircle;                               //몬스터 스폰포인트를 표시할 리소스   
+    private GameObject MonPosCircleSet;                               //생성된 몬스터 스폰포인트의 부모
+
     private GameObject obCurDragBox = null;                         //현재 생성된 드래그 박스
     private GameObject obCurDragSelectBox = null;                  //현재 생성된 드래스 선택 박스들을 넣은 빈오브젝트
-    private GameObject obMonPosCircle;                               //몬스터 스폰포인트를 표시할 리소스
-    private GameObject curMonCircle;                                   //현재 선택된 몬스터 스폰포인트
-    private GameObject MonPosCircleSet;                               //생성된 몬스터 스폰포인트의 부모
+    private GameObject obcurMonCircle;                                   //현재 선택된 몬스터 스폰포인트
+    private GameObject obCurFurnitureModel = null;
 
     private GameObject obFurniturePanel;
     private GameObject obWallPanel;                                    //벽을 관리하는 인터페이스
@@ -205,9 +207,9 @@ public class ToolManager : MonoBehaviour
 
                             if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MONSTERTYPE _dmtype))
                             {
-                                curMonCircle = Instantiate(obMonPosCircle, new Vector2(rx, ry), Quaternion.identity);
-                                curMonCircle.transform.parent = MonPosCircleSet.transform;
-                                curMonCircle.name = string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f);
+                                obcurMonCircle = Instantiate(obMonPosCircle, new Vector2(rx, ry), Quaternion.identity);
+                                obcurMonCircle.transform.parent = MonPosCircleSet.transform;
+                                obcurMonCircle.name = string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f);
                                 mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x, y), _monType);
                             }
                             else
@@ -238,10 +240,6 @@ public class ToolManager : MonoBehaviour
                                 _info.pos = new Vector2(rx, ry);
                                 _info.dir = furnitureDir;
 
-                                //curMonCircle = Instantiate(obMonPosCircle, new Vector2(rx, ry), Quaternion.identity);
-                                //curMonCircle.transform.parent = MonPosCircleSet.transform;
-                                //curMonCircle.name = string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f);
-                                //mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x, y), _monType);
                             }
                             else
                             {
@@ -407,10 +405,25 @@ public class ToolManager : MonoBehaviour
             {
                 if (ddFurnType.value < furnitureDataList.Count - 1)
                 {
+                    if (obCurFurnitureModel != null)
+                    {
+                        Destroy(obCurFurnitureModel);
+                    }
+
                     ddFurnType.value++;
+
+                    string _modelname = furnitureDataList[ddFurnType.value][1];
+                    GameObject _model = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
+                    obCurFurnitureModel = Instantiate(_model, new Vector2(1000, 1000), Quaternion.identity);
                 }
                 else
                 {
+                    if (obCurFurnitureModel != null)
+                    {
+                        Destroy(obCurFurnitureModel);
+                        obCurFurnitureModel = null;
+                    }
+
                     ddFurnType.value = 0;
                 }
             }
@@ -444,13 +457,34 @@ public class ToolManager : MonoBehaviour
             }
             else if (editMode == TOOLEDITUI.FURNITUREMODE)
             {
-                if (ddFurnType.value < furnitureDataList.Count - 1)
+                if (ddFurnType.value > 0)
                 {
+                    if (obCurFurnitureModel != null)
+                    {
+                        Destroy(obCurFurnitureModel);
+                    }
+
                     ddFurnType.value--;
+
+                    if(ddFurnType.value != 0)
+                    {
+                        string _modelname = furnitureDataList[ddFurnType.value][1];
+                        GameObject _model = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
+                        obCurFurnitureModel = Instantiate(_model, new Vector2(1000, 1000), Quaternion.identity);
+                    }
                 }
                 else
                 {
-                    ddFurnType.value = 0;
+                    if (obCurFurnitureModel != null)
+                    {
+                        Destroy(obCurFurnitureModel);
+                    }
+
+                    ddFurnType.value = furnitureDataList.Count - 1;
+
+                    string _modelname = furnitureDataList[ddFurnType.value][1];
+                    GameObject _model = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
+                    obCurFurnitureModel = Instantiate(_model, new Vector2(1000, 1000), Quaternion.identity);
                 }
             }
             else
@@ -1168,7 +1202,6 @@ public class ToolManager : MonoBehaviour
     {
         StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/FurnitureData.csv");
         
-
         while (!streader.EndOfStream)
         {
             string line = streader.ReadLine();
