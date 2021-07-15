@@ -14,6 +14,14 @@ public enum DIRECTION : byte
     LEFT
 }
 
+public enum ROTATION
+{
+    NORMAL,
+    PLUS90,
+    PLUS180,
+    PLUS270
+}
+
 public enum WALLSTATE : byte
 {
     BLOCK,

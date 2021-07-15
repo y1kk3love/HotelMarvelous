@@ -14,19 +14,23 @@ public class ToolManager : MonoBehaviour
 
     private Camera bpCamera;                                             //청사진 카메라
 
+    private GameObject obRoomGridParent;                                 //생성된 17x17 그리드의 부모
+    private GameObject obMonPosCircleparent;                               //생성된 몬스터 스폰포인트의 부모
+    private GameObject obFurnParent;
+
     private GameObject obRoomPick;                                    //17x17 그리드 리소스
-    private GameObject obPickedRoom;                                 //생성된 17x17 그리드의 오브젝트
     private GameObject obFloor;                                         //타일 바닥 리소스
     private GameObject obBlockWall;                                    //막힌 벽 리소스
     private GameObject obDoorWall;                                    //문있는 벽 리소스
     private GameObject obDragBox;                                     //드래그 박스 리소스   
-    private GameObject obMonPosCircle;                               //몬스터 스폰포인트를 표시할 리소스   
-    private GameObject MonPosCircleSet;                               //생성된 몬스터 스폰포인트의 부모
+    private GameObject obMonPosCircle;                               //몬스터 스폰포인트를 표시할 리소스
+    private GameObject obfurniture;
 
     private GameObject obCurDragBox = null;                         //현재 생성된 드래그 박스
     private GameObject obCurDragSelectBox = null;                  //현재 생성된 드래스 선택 박스들을 넣은 빈오브젝트
     private GameObject obcurMonCircle;                                   //현재 선택된 몬스터 스폰포인트
-    private GameObject obCurFurnitureModel = null;
+    private GameObject obCurFurnPreviewModel = null;
+    private GameObject obCurFurnMouseModel = null;
 
     private GameObject obFurniturePanel;
     private GameObject obWallPanel;                                    //벽을 관리하는 인터페이스
@@ -51,7 +55,7 @@ public class ToolManager : MonoBehaviour
     private TileInfo curTile = null;                             //현재 선택된 타일의 정보
 
     private TOOLEDITUI editMode = 0;
-    private DIRECTION furnitureDir;
+    private ROTATION furnitureDir;
 
     private Vector2? dragGridStartPos = null;                    //카메라 이동을 시작한 위치, 기준점
     private Vector2 dragBPCurPos;                                //현재 마우스의 위치
@@ -119,8 +123,8 @@ public class ToolManager : MonoBehaviour
         if (Input.GetKey(KeyCode.Mouse1) && dragGridStartPos != null)
         {
             Vector2 dir = (Vector2)dragGridStartPos - dragBPCurPos;
-
-            bpCamera.transform.position = dragBPCamPos + dir * (bpCamera.orthographicSize  / (minCamZoom + maxCamZoom) / 2);
+            Vector2 _pos = dragBPCamPos +dir * (bpCamera.orthographicSize / (minCamZoom + maxCamZoom) / 2);
+            bpCamera.transform.position = new Vector3(_pos.x, _pos.y, -6);
         }
     }
 
@@ -166,8 +170,8 @@ public class ToolManager : MonoBehaviour
             {
                 if (editMode == TOOLEDITUI.MONSTERMODE)
                 {
-                    int x = BPPosParse(hit.point.x);
-                    int y = BPPosParse(hit.point.y);
+                    float x = BPMonPosParse(hit.point.x) + 0.5f;
+                    float y = BPMonPosParse(hit.point.y) + 0.5f;
 
                     if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MONSTERTYPE _dmtype))
                     {
@@ -182,6 +186,20 @@ public class ToolManager : MonoBehaviour
                 else if (editMode == TOOLEDITUI.FURNITUREMODE)
                 {
                     //위와 같은 실시간 가구 정보 확인 기능 구현예정
+
+                    if (obCurFurnMouseModel != null)
+                    {
+                        Vector2 _pos = hit.point;
+
+                        obCurFurnMouseModel.transform.position = _pos;
+                    }
+                }
+            }
+            else
+            {
+                if (obCurFurnMouseModel != null)
+                {
+                    obCurFurnMouseModel.transform.position = new Vector2(-1000, -1000);
                 }
             }
 
@@ -197,25 +215,22 @@ public class ToolManager : MonoBehaviour
                         }
                         else
                         {
-                            int x = BPPosParse(hit.point.x);
-                            int y = BPPosParse(hit.point.y);
-                            float rx = BPMonPosParse(hit.point.x);
-                            float ry = BPMonPosParse(hit.point.y);
-
+                            float x = BPMonPosParse(hit.point.x);
+                            float y = BPMonPosParse(hit.point.y);
 
                             MONSTERTYPE _monType = (MONSTERTYPE)ddMonType.value;
 
                             if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MONSTERTYPE _dmtype))
                             {
-                                obcurMonCircle = Instantiate(obMonPosCircle, new Vector2(rx, ry), Quaternion.identity);
-                                obcurMonCircle.transform.parent = MonPosCircleSet.transform;
-                                obcurMonCircle.name = string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f);
-                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x, y), _monType);
+                                obcurMonCircle = Instantiate(obMonPosCircle, new Vector2(x, y), Quaternion.identity);
+                                obcurMonCircle.transform.parent = obMonPosCircleparent.transform;
+                                obcurMonCircle.name = string.Format("{0} // {1} MonPos", x + 0.5f, y + 0.5f);
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _monType);
                             }
                             else
                             {
-                                Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f)));
-                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Remove(new Vector2(x, y));
+                                Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", x + 0.5f, y + 0.5f)));
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Remove(new Vector2(x + 0.5f, y + 0.5f));
                             }
                         }
                     }
@@ -227,24 +242,32 @@ public class ToolManager : MonoBehaviour
                         }
                         else
                         {
-                            int x = BPPosParse(hit.point.x);
-                            int y = BPPosParse(hit.point.y);
-                            float rx = BPMonPosParse(hit.point.x);
-                            float ry = BPMonPosParse(hit.point.y);
+                            float x = BPMonPosParse(hit.point.x);
+                            float y = BPMonPosParse(hit.point.y);
 
-                            if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.TryGetValue(new Vector2(x, y), out FurnitureInfo _info))
+                            if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out FurnitureInfo _furinfo))
                             {
                                 string[] _data = furnitureDataList[ddFurnType.value];
 
+                                FurnitureInfo _info = new FurnitureInfo();
+
                                 _info.name = _data[(int)FURNITUREDATA.NAME];
-                                _info.pos = new Vector2(rx, ry);
+                                _info.pos = new Vector2(x, y);
                                 _info.dir = furnitureDir;
 
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _info);
+
+                                int _rotate = (int)furnitureDir * 90;
+                                GameObject _furniture = Instantiate(obfurniture, new Vector2(x, y), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
+                                _furniture.transform.parent = obFurnParent.transform;
+                                _furniture.name = string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _info.name);
                             }
                             else
                             {
-                                Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", rx + 0.5f, ry + 0.5f)));
-                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Remove(new Vector2(x, y));
+                                string _name = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic[new Vector2(x + 0.5f, y + 0.5f)].name;
+
+                                Destroy(GameObject.Find(string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _name)));
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Remove(new Vector2(x + 0.5f, y + 0.5f));
                             }
                         }
                     }
@@ -405,23 +428,37 @@ public class ToolManager : MonoBehaviour
             {
                 if (ddFurnType.value < furnitureDataList.Count - 1)
                 {
-                    if (obCurFurnitureModel != null)
+                    if (obCurFurnPreviewModel != null)
                     {
-                        Destroy(obCurFurnitureModel);
+                        Destroy(obCurFurnPreviewModel);
+                    }
+
+                    if (obCurFurnMouseModel != null)
+                    {
+                        Destroy(obCurFurnMouseModel);
                     }
 
                     ddFurnType.value++;
 
-                    string _modelname = furnitureDataList[ddFurnType.value][1];
-                    GameObject _model = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
-                    obCurFurnitureModel = Instantiate(_model, new Vector2(1000, 1000), Quaternion.identity);
+                    string _modelname = furnitureDataList[ddFurnType.value][(int)FURNITUREDATA.NAME];
+                    obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
+                    obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
+
+                    int _rotate = (int)furnitureDir * 90;
+                    obCurFurnMouseModel = Instantiate(obfurniture, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
                 }
                 else
                 {
-                    if (obCurFurnitureModel != null)
+                    if (obCurFurnPreviewModel != null)
                     {
-                        Destroy(obCurFurnitureModel);
-                        obCurFurnitureModel = null;
+                        Destroy(obCurFurnPreviewModel);
+                        obCurFurnPreviewModel = null;
+                    }
+
+                    if(obCurFurnMouseModel != null)
+                    {
+                        Destroy(obCurFurnMouseModel);
+                        obCurFurnMouseModel = null;
                     }
 
                     ddFurnType.value = 0;
@@ -459,32 +496,45 @@ public class ToolManager : MonoBehaviour
             {
                 if (ddFurnType.value > 0)
                 {
-                    if (obCurFurnitureModel != null)
+                    if (obCurFurnPreviewModel != null)
                     {
-                        Destroy(obCurFurnitureModel);
+                        Destroy(obCurFurnPreviewModel);
+                    }
+
+                    if (obCurFurnMouseModel != null)
+                    {
+                        Destroy(obCurFurnMouseModel);
                     }
 
                     ddFurnType.value--;
 
                     if(ddFurnType.value != 0)
                     {
-                        string _modelname = furnitureDataList[ddFurnType.value][1];
-                        GameObject _model = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
-                        obCurFurnitureModel = Instantiate(_model, new Vector2(1000, 1000), Quaternion.identity);
+                        string _modelname = furnitureDataList[ddFurnType.value][(int)FURNITUREDATA.NAME];
+                        obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
+                        obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
+
+                        int _rotate = ((int)furnitureDir + 1) * 90;
+                        obCurFurnMouseModel = Instantiate(obfurniture, new Vector3(0, 0, 0), Quaternion.Euler(-90 + _rotate, 90, -90));
                     }
                 }
                 else
                 {
-                    if (obCurFurnitureModel != null)
+                    if (obCurFurnPreviewModel != null)
                     {
-                        Destroy(obCurFurnitureModel);
+                        Destroy(obCurFurnPreviewModel);
+                    }
+
+                    if (obCurFurnMouseModel != null)
+                    {
+                        Destroy(obCurFurnMouseModel);
                     }
 
                     ddFurnType.value = furnitureDataList.Count - 1;
 
                     string _modelname = furnitureDataList[ddFurnType.value][1];
                     GameObject _model = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
-                    obCurFurnitureModel = Instantiate(_model, new Vector2(1000, 1000), Quaternion.identity);
+                    obCurFurnPreviewModel = Instantiate(_model, new Vector2(1000, 1000), Quaternion.identity);
                 }
             }
             else
@@ -595,17 +645,23 @@ public class ToolManager : MonoBehaviour
             }
             else if (editMode == TOOLEDITUI.FURNITUREMODE)
             {
-                if (furnitureDir < (DIRECTION)3)
+                if (furnitureDir > 0)
                 {
-                    furnitureDir++;
+                    furnitureDir--;
                 }
                 else
                 {
-                    furnitureDir = 0;
+                    furnitureDir = (ROTATION)3;
                 }
-
+                
                 textFurnitureDir.text = furnitureDir.ToString();
-            }
+
+                if(obCurFurnMouseModel != null)
+                {
+                    int _rotate = (int)furnitureDir * 90;
+                    obCurFurnMouseModel.transform.rotation = Quaternion.Euler(-90 + _rotate, 90, -90);
+                }
+            }  
         }
 
         //타일 삭제 단축키
@@ -617,16 +673,19 @@ public class ToolManager : MonoBehaviour
             }
             else if (editMode == TOOLEDITUI.FURNITUREMODE)
             {
-                if (furnitureDir > 0)
+                if (furnitureDir < (ROTATION)3)
                 {
-                    furnitureDir--;
+                    furnitureDir++;
                 }
                 else
                 {
-                    furnitureDir = (DIRECTION)3;
+                    furnitureDir = 0;
                 }
 
                 textFurnitureDir.text = furnitureDir.ToString();
+
+                int _rotate = (int)furnitureDir * 90;
+                obCurFurnMouseModel.transform.rotation = Quaternion.Euler(-90 + _rotate, 90, -90);
             }
         }
     }
@@ -688,7 +747,14 @@ public class ToolManager : MonoBehaviour
 
                 foreach (KeyValuePair<Vector2, MONSTERTYPE> _point in _monspanwpos)
                 {
-                    Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", _point.Key.x - 8, _point.Key.y - 8)));
+                    Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", _point.Key.x, _point.Key.y)));
+                }
+
+                Dictionary<Vector2, FurnitureInfo> _furnitureinfo = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].FurnitureInfoDic;
+
+                foreach (KeyValuePair<Vector2, FurnitureInfo> _info in _furnitureinfo)
+                {
+                    Destroy(GameObject.Find(string.Format("{0} // {1} {2}", _info.Key.x, _info.Key.y, _info.Value.name)));
                 }
 
                 Destroy(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile);
@@ -1037,7 +1103,7 @@ public class ToolManager : MonoBehaviour
                     if(mapBoardArr[BoardPosParse(_x * 18), BoardPosParse(_y * 18)] != null)
                     {
                         GameObject _grid = Instantiate(obRoomPick, new Vector2(_x * 18, _y * 18), Quaternion.identity);
-                        _grid.transform.parent = obPickedRoom.transform;
+                        _grid.transform.parent = obRoomGridParent.transform;
                     }
                 }
             }
@@ -1062,11 +1128,10 @@ public class ToolManager : MonoBehaviour
             obFurniturePanel.SetActive(false);
             obWallPanel.SetActive(true);
 
-            Destroy(obPickedRoom);
-            obPickedRoom = new GameObject("Grid");
+            Destroy(obRoomGridParent);
+            obRoomGridParent = new GameObject("Grids");
         }
     }
-
     #endregion
 
     #region [Calculator]
@@ -1086,27 +1151,6 @@ public class ToolManager : MonoBehaviour
         else
         {
             return (float)System.Math.Truncate(_hitpoint);
-        }
-    }
-
-    //청사진에서의 배치를 위한 변환
-    private int BPPosParse(float _hitpoint)
-    {
-        float i = _hitpoint % 1;
-
-        int k = EditPosParse(_hitpoint);
-
-        if (k != 0 && i > 0 && i <= 1)
-        {
-            return (int)System.Math.Truncate(_hitpoint + 9) - k;
-        }
-        else if (k != 0 && i < 0 && i >= -1)
-        {
-            return (int)System.Math.Truncate(_hitpoint + 9) - k - 1;
-        }
-        else
-        {
-            return (int)System.Math.Truncate(_hitpoint + 9) - k;
         }
     }
 
@@ -1164,8 +1208,9 @@ public class ToolManager : MonoBehaviour
 
     private void CreateEmpty()
     {
-        obPickedRoom = new GameObject("Grids");
-        MonPosCircleSet = new GameObject("MonsterPos");
+        obRoomGridParent = new GameObject("Grids");
+        obMonPosCircleparent = new GameObject("MonsterPos");
+        obFurnParent = new GameObject("Furnitures");
     }
 
     private void UIOFF()
@@ -1268,5 +1313,5 @@ public class FurnitureInfo
 
     public Vector2 pos;
 
-    public DIRECTION dir;
+    public ROTATION dir;
 }
