@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class ToolManager : MonoBehaviour
 {
@@ -15,8 +16,6 @@ public class ToolManager : MonoBehaviour
     private Camera bpCamera;                                             //청사진 카메라
 
     private GameObject obRoomGridParent;                                 //생성된 17x17 그리드의 부모
-    private GameObject obMonPosCircleparent;                               //생성된 몬스터 스폰포인트의 부모
-    private GameObject obFurnParent;
 
     private GameObject obRoomPick;                                    //17x17 그리드 리소스
     private GameObject obFloor;                                         //타일 바닥 리소스
@@ -42,14 +41,17 @@ public class ToolManager : MonoBehaviour
     private Text textFurnitureDir;
     private Text textMonsterInfo;
 
-    private InputField InputFRoomIndex;                          //방의 인덱스를 입력받는 인풋필드
+    private InputField inputFRoomIndex;                          //방의 인덱스를 입력받는 인풋필드
+    private InputField inputFDataFileName;
 
     private Dropdown ddTopWall;                                  //타일 벽을 설정하기 위한 드롭다운들
     private Dropdown ddRightWall;
     private Dropdown ddBottomWall;
     private Dropdown ddLeftWall;
+
     private Dropdown ddMonType;                                  //몬스터 타입을 받아올 드롭다운
     private Dropdown ddFurnType;                                 //가구 타입을 받아올 드롭다운
+    private Dropdown ddNewFloor;
 
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];      //타일의 정보를 담은 클래스를 가진 배열
     private TileInfo curTile = null;                             //현재 선택된 타일의 정보
@@ -65,6 +67,7 @@ public class ToolManager : MonoBehaviour
     private Vector2 dragBoxCurPos;
 
     private int curTileX, curTileY;                              //현재 선택한 타일의 실제 좌표 18/1사이즈
+    private int[] DataIndex = new int[3];
 
     private float cameraWheelSpeed = 20.0f;                      //카메라 줌 스피드
     private float minCamZoom = 5.0f;                             //카메라 줌 최소사이즈
@@ -81,6 +84,7 @@ public class ToolManager : MonoBehaviour
         UIOFF();
 
         LoadFurnitureCSVData();
+        //LoadDataIndex();
     }
 
     void Update()
@@ -223,7 +227,7 @@ public class ToolManager : MonoBehaviour
                             if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MONSTERTYPE _dmtype))
                             {
                                 obcurMonCircle = Instantiate(obMonPosCircle, new Vector2(x, y), Quaternion.identity);
-                                obcurMonCircle.transform.parent = obMonPosCircleparent.transform;
+                                obcurMonCircle.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
                                 obcurMonCircle.name = string.Format("{0} // {1} MonPos", x + 0.5f, y + 0.5f);
                                 mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _monType);
                             }
@@ -259,7 +263,7 @@ public class ToolManager : MonoBehaviour
 
                                 int _rotate = (int)furnitureDir * 90;
                                 GameObject _furniture = Instantiate(obfurniture, new Vector2(x, y), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
-                                _furniture.transform.parent = obFurnParent.transform;
+                                _furniture.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
                                 _furniture.name = string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _info.name);
                             }
                             else
@@ -325,7 +329,7 @@ public class ToolManager : MonoBehaviour
 
                     if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
                     {
-                        InputFRoomIndex.text = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
+                        inputFRoomIndex.text = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].roomIndex.ToString();
 
                         for (int i = 0; i < 4; i++)
                         {
@@ -415,13 +419,13 @@ public class ToolManager : MonoBehaviour
         {
             if (editMode == TOOLEDITUI.TILEMODE)
             {
-                if (InputFRoomIndex.text == "")
+                if (inputFRoomIndex.text == "")
                 {
-                    InputFRoomIndex.text = "1";
+                    inputFRoomIndex.text = "1";
                 }
                 else
                 {
-                    InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) + 1).ToString();
+                    inputFRoomIndex.text = (byte.Parse(inputFRoomIndex.text) + 1).ToString();
                 }
             }
             else if (editMode == TOOLEDITUI.FURNITUREMODE)
@@ -443,9 +447,11 @@ public class ToolManager : MonoBehaviour
                     string _modelname = furnitureDataList[ddFurnType.value][(int)FURNITUREDATA.NAME];
                     obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
                     obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
+                    obCurFurnPreviewModel.name = "FurniturePreview";
 
                     int _rotate = (int)furnitureDir * 90;
                     obCurFurnMouseModel = Instantiate(obfurniture, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
+                    obCurFurnMouseModel.name = "FurniturPointer";
                 }
                 else
                 {
@@ -480,15 +486,15 @@ public class ToolManager : MonoBehaviour
         {
             if (editMode == TOOLEDITUI.TILEMODE)
             {
-                if (InputFRoomIndex.text == "")
+                if (inputFRoomIndex.text == "")
                 {
-                    InputFRoomIndex.text = "0";
+                    inputFRoomIndex.text = "0";
                 }
                 else
                 {
-                    if (byte.Parse(InputFRoomIndex.text) > 0)
+                    if (byte.Parse(inputFRoomIndex.text) > 0)
                     {
-                        InputFRoomIndex.text = (byte.Parse(InputFRoomIndex.text) - 1).ToString();
+                        inputFRoomIndex.text = (byte.Parse(inputFRoomIndex.text) - 1).ToString();
                     }
                 }
             }
@@ -557,77 +563,55 @@ public class ToolManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Keypad0))
             {
-                foreach (Vector2 _pos in selectTilesList)
-                {
-                    int _x = (int)_pos.x;
-                    int _y = (int)_pos.y;
-
-                    if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
-                    {
-                        TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
-
-                        _info.roomType = ROOMTYPE.EMPTY;
-                        _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = Color.white;
-                    }
-                }
-
-                textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, ROOMTYPE.EMPTY);
+                TypeChange(ROOMTYPE.EMPTY);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad1))
             {
-                foreach (Vector2 _pos in selectTilesList)
-                {
-                    int _x = (int)_pos.x;
-                    int _y = (int)_pos.y;
-
-                    if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
-                    {
-                        TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
-
-                        _info.roomType = ROOMTYPE.HALLWAY;
-                        _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = Color.red;
-                    }
-                }
-
-                textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, ROOMTYPE.HALLWAY);
+                TypeChange(ROOMTYPE.HALLWAY);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad2))
             {
-                foreach (Vector2 _pos in selectTilesList)
-                {
-                    int _x = (int)_pos.x;
-                    int _y = (int)_pos.y;
-
-                    if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
-                    {
-                        TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
-
-                        _info.roomType = ROOMTYPE.GUEST;
-                        _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = Color.yellow;
-                    }
-                }
-
-                textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, ROOMTYPE.GUEST);
+                TypeChange(ROOMTYPE.GUEST);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad3))
             {
-                foreach (Vector2 _pos in selectTilesList)
-                {
-                    int _x = (int)_pos.x;
-                    int _y = (int)_pos.y;
-
-                    if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
-                    {
-                        TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
-
-                        _info.roomType = ROOMTYPE.NPC;
-                        _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = Color.green;
-                    }
-                }
-
-                textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, ROOMTYPE.NPC);
+                TypeChange(ROOMTYPE.NPC);
             }
         }
+    }
+
+    private void TypeChange(ROOMTYPE _type)
+    {
+        Color _color = Color.white;
+
+        switch ((int)_type)
+        {
+            case (int)ROOMTYPE.HALLWAY:
+                _color = Color.red;
+                break;
+            case (int)ROOMTYPE.GUEST:
+                _color = Color.yellow;
+                break;
+            case (int)ROOMTYPE.NPC:
+                _color = Color.green;
+                break;
+        }
+
+        foreach (Vector2 _pos in selectTilesList)
+        {
+            int _x = (int)_pos.x;
+            int _y = (int)_pos.y;
+
+            if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
+            {
+                TileInfo _info = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
+
+                _info.roomType = _type;
+                _info.obTile.transform.Find("Floor(Clone)").GetComponent<SpriteRenderer>().color = _color;
+            }
+        }
+
+        textTilePos.text = string.Format("Tile X : {0} // Y : {1}\nIndex {2} // Type {3}", (curTileX / 18), (curTileY / 18), curTile.roomIndex, _type);
     }
 
     #endregion
@@ -709,15 +693,16 @@ public class ToolManager : MonoBehaviour
 
                 mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = new TileInfo();
                 mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile = emptytile;
+                mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].position = new Vector3(_x, _y, 9);
 
-                if (InputFRoomIndex.text == "")        //최초 실행일때 인덱스값 1 설정
+                if (inputFRoomIndex.text == "")        //최초 실행일때 인덱스값 1 설정
                 {
-                    InputFRoomIndex.text = "1";
+                    inputFRoomIndex.text = "1";
                     mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex = 1;
                 }
                 else
                 {
-                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex = byte.Parse(InputFRoomIndex.text);
+                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex = byte.Parse(inputFRoomIndex.text);
                 }
 
                 _roomnum.text = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].roomIndex.ToString();
@@ -743,23 +728,8 @@ public class ToolManager : MonoBehaviour
             //맵을 오브젝트 삭제 후 배열에서도 비우기
             if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
             {
-                Dictionary<Vector2, MONSTERTYPE> _monspanwpos = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].monSpawnInfoDic;
-
-                foreach (KeyValuePair<Vector2, MONSTERTYPE> _point in _monspanwpos)
-                {
-                    Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", _point.Key.x, _point.Key.y)));
-                }
-
-                Dictionary<Vector2, FurnitureInfo> _furnitureinfo = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].FurnitureInfoDic;
-
-                foreach (KeyValuePair<Vector2, FurnitureInfo> _info in _furnitureinfo)
-                {
-                    Destroy(GameObject.Find(string.Format("{0} // {1} {2}", _info.Key.x, _info.Key.y, _info.Value.name)));
-                }
-
                 Destroy(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile);
 
-                mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].monSpawnInfoDic.Clear();
                 mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = null;
 
                 for (int i = 0; i < 4; i++)
@@ -1181,7 +1151,7 @@ public class ToolManager : MonoBehaviour
 
     #endregion
 
-    #region [DataLoad]
+    #region [DataReset]
 
     private void StartReset()
     {
@@ -1199,7 +1169,8 @@ public class ToolManager : MonoBehaviour
         textTilePos = GameObject.Find("TextTilePos").GetComponent<Text>();
         textMakeTile = GameObject.Find("TextMakeTile").GetComponent<Text>();
         textDelTile = GameObject.Find("TextDelTile").GetComponent<Text>();
-        InputFRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
+        inputFRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
+        inputFDataFileName = GameObject.Find("InputFieldFileName").GetComponent<InputField>();
 
         obFurniturePanel = GameObject.Find("FurniturePanel");
         obWallPanel = GameObject.Find("WallPanel");
@@ -1209,8 +1180,6 @@ public class ToolManager : MonoBehaviour
     private void CreateEmpty()
     {
         obRoomGridParent = new GameObject("Grids");
-        obMonPosCircleparent = new GameObject("MonsterPos");
-        obFurnParent = new GameObject("Furnitures");
     }
 
     private void UIOFF()
@@ -1227,6 +1196,7 @@ public class ToolManager : MonoBehaviour
         ddLeftWall = GameObject.Find("DdLeftWall").GetComponent<Dropdown>();
         ddMonType = GameObject.Find("DropdownMonsterType").GetComponent<Dropdown>();
         ddFurnType = GameObject.Find("DropdownFurnitureType").GetComponent<Dropdown>();
+        ddNewFloor = GameObject.Find("DropdownNewFloor").GetComponent<Dropdown>();
 
 
         int monTypeMax = System.Enum.GetValues(typeof(MONSTERTYPE)).Length;
@@ -1241,6 +1211,84 @@ public class ToolManager : MonoBehaviour
             newData.text = _typename[i];
             ddMonType.options.Add(newData);
         }
+    }
+
+    #endregion
+
+    #region [Dataload]
+
+    public void EditingStageInfo()
+    {
+        Text _savetext = GameObject.Find("TextSaveData").GetComponent<Text>();
+        Text _nowfloor = GameObject.Find("TextNumOfFloor").GetComponent<Text>();
+
+        _savetext.text = string.Format("작업 내용을 {0}층으로 저장", ddNewFloor.value + 1);
+        _nowfloor.text = string.Format("현재 층수 : {0}", ddNewFloor.value + 1);
+    }
+    
+    public void LoadData()
+    {
+        string filename = string.Format(@"{0}/Stage/{1}.map", Application.streamingAssetsPath, inputFDataFileName.text);
+
+        BinaryFormatter bf = new BinaryFormatter();
+
+        FileStream fs = File.Open(filename, FileMode.Open);
+
+        if (fs != null && fs.Length > 0)
+        {
+            mapBoardArr = (TileInfo[,])bf.Deserialize(fs);
+
+            fs.Close();
+        }
+
+        foreach(TileInfo _info in mapBoardArr)
+        {
+            Instantiate(_info.obTile, _info.position, Quaternion.identity);
+        }
+    }
+
+    public void LoadDataIndex() 
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            string filename = string.Format(@"{0}/Stage/{1}_DataIndex.idx", Application.streamingAssetsPath, i);
+
+            BinaryFormatter bf = new BinaryFormatter();
+
+            FileStream fs = File.Open(filename, FileMode.Open);
+
+            if (fs != null && fs.Length > 0)
+            {
+                DataIndex[i] = (int)bf.Deserialize(fs);
+
+                fs.Close();
+            }
+        }
+    }
+    
+    public void SaveData()
+    {
+        string filename = string.Format(@"{0}/Stage/{1}F_{2}.map", Application.streamingAssetsPath, ddNewFloor.value + 1, 0);
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
+        bf.Serialize(fs, mapBoardArr);
+        fs.Close();
+        
+        //SaveDataIndex();
+    }
+
+    public void SaveDataIndex()
+    {
+        DataIndex[ddNewFloor.value]++;
+
+        string filename = string.Format(@"{0}/Stage/{1}_DataIndex.idx", Application.streamingAssetsPath, ddNewFloor.value + 1);
+        int _index = DataIndex[ddNewFloor.value];
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
+        bf.Serialize(fs, _index);
+        fs.Close();
     }
 
     private void LoadFurnitureCSVData()
@@ -1291,27 +1339,4 @@ public class ToolManager : MonoBehaviour
     }
 
     #endregion
-}
-
-public class TileInfo
-{
-    public GameObject obTile;
-
-    public byte roomIndex;
-
-    public ROOMTYPE roomType = ROOMTYPE.EMPTY;
-
-    public WALLSTATE[] doorArr = new WALLSTATE[4];
-
-    public Dictionary<Vector2, MONSTERTYPE> monSpawnInfoDic = new Dictionary<Vector2, MONSTERTYPE>();
-    public Dictionary<Vector2, FurnitureInfo> FurnitureInfoDic = new Dictionary<Vector2, FurnitureInfo>();
-}
-
-public class FurnitureInfo
-{
-    public string name;
-
-    public Vector2 pos;
-
-    public ROTATION dir;
 }
