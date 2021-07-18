@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TileInfo
 {
-    public Vector3 position;
+    public Vector2 position;
 
     public GameObject obTile;
 

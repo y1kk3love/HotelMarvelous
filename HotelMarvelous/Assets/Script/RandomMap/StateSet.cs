@@ -1,4 +1,5 @@
-﻿public enum ROOMTYPE
+﻿[System.Serializable]
+public enum ROOMTYPE
 {
     EMPTY,
     HALLWAY,
@@ -14,6 +15,7 @@ public enum DIRECTION : byte
     LEFT
 }
 
+[System.Serializable]
 public enum ROTATION
 {
     NORMAL,
@@ -22,6 +24,7 @@ public enum ROTATION
     PLUS270
 }
 
+[System.Serializable]
 public enum WALLSTATE : byte
 {
     BLOCK,
