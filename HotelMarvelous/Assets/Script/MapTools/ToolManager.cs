@@ -41,6 +41,9 @@ public class ToolManager : MonoBehaviour
     private Text textFurnitureDir;
     private Text textMonsterInfo;
 
+    private Text textFloorPattern;
+    private Text textNowfloor;
+
     private InputField inputFRoomIndex;                          //방의 인덱스를 입력받는 인풋필드
     private InputField inputFDataFileName;
 
@@ -74,9 +77,12 @@ public class ToolManager : MonoBehaviour
     private float minCamZoom = 5.0f;                             //카메라 줌 최소사이즈
     private float maxCamZoom = 450.0f;                           //카메라 줌 최대사이즈
 
+    private string editingfilename = null;
+
     private bool isTileSelect = false;                           //타일이 선택되었는지 확인
     private bool isWallChanging = false;                         //UI를 통해 벽을 수정중인지 확인
     private bool isLoadingData = false;
+    private bool isEditData = false;
 
     void Start()
     {
@@ -1179,6 +1185,10 @@ public class ToolManager : MonoBehaviour
         textTilePos = GameObject.Find("TextTilePos").GetComponent<Text>();
         textMakeTile = GameObject.Find("TextMakeTile").GetComponent<Text>();
         textDelTile = GameObject.Find("TextDelTile").GetComponent<Text>();
+
+        textFloorPattern = GameObject.Find("TextNumOfPrefab").GetComponent<Text>();
+        textNowfloor = GameObject.Find("TextNumOfFloor").GetComponent<Text>();
+
         inputFRoomIndex = GameObject.Find("InputFieldRoomNum").GetComponent<InputField>();
         inputFDataFileName = GameObject.Find("InputFieldFileName").GetComponent<InputField>();
 
@@ -1229,16 +1239,20 @@ public class ToolManager : MonoBehaviour
 
     public void EditingStageInfo()
     {
-        Text _savetext = GameObject.Find("TextSaveData").GetComponent<Text>();
-        Text _nowfloor = GameObject.Find("TextNumOfFloor").GetComponent<Text>();
+        Text _savetext = GameObject.Find("TextSaveNewData").GetComponent<Text>();
 
         _savetext.text = string.Format("작업 내용을 {0}층으로 저장", ddNewFloor.value + 1);
-        _nowfloor.text = string.Format("현재 층수 : {0}", ddNewFloor.value + 1);
     }
     
     public void LoadData()
     {
+        string _floor = inputFDataFileName.text.Substring(0, 1);
+
+        textFloorPattern.text = string.Format("저장된 맵 패턴 : {0}", DataIndex[int.Parse(_floor) - 1]);
+        textNowfloor.text = string.Format("현재 층수 : {0}", _floor);
+
         string filename = string.Format(@"{0}/Stage/{1}.map", Application.streamingAssetsPath, inputFDataFileName.text);
+        editingfilename = inputFDataFileName.text;
 
         BinaryFormatter bf = new BinaryFormatter();
 
@@ -1294,6 +1308,7 @@ public class ToolManager : MonoBehaviour
             }
         }
 
+        isEditData = true;
         isLoadingData = false;
     }
 
@@ -1368,6 +1383,45 @@ public class ToolManager : MonoBehaviour
         }
     }    
 
+    public void PasteData()
+    {
+        if (isEditData)
+        {
+            SetDataParse();
+
+            string filename = string.Format(@"{0}/Stage/{1}.map", Application.streamingAssetsPath, editingfilename);
+
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            bf.Serialize(fs, mapDataArr);
+            fs.Close();
+        }
+        else
+        {
+            ErrorMessage("새로운 파일을 작성 중입니다.");
+        }
+    }
+
+    public void OpenNewFile()
+    {
+        textNowfloor.text = string.Format("현재 층수 : {0}", ddNewFloor.value + 1);
+
+        isEditData = false;
+
+        for (int x = -25; x < 25; x++)
+        {
+            for (int y = -25; y < 25; y++)
+            {
+                Vector2 _pos = new Vector2(x, y);
+
+                selectTilesList.Add(_pos);
+            }
+        }
+
+        DeleteMap();
+        mapBoardArr = new TileInfo[51, 51];
+    }
+
     public void SaveData()
     {
         SetDataParse();
@@ -1378,7 +1432,7 @@ public class ToolManager : MonoBehaviour
         FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
         bf.Serialize(fs, mapDataArr);
         fs.Close();
-        
+
         SaveDataIndex();
     }
 
@@ -1394,6 +1448,12 @@ public class ToolManager : MonoBehaviour
         FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
         bf.Serialize(fs, _index);
         fs.Close();
+
+        textFloorPattern.text = string.Format("저장된 맵 패턴 : {0}", DataIndex[ddNewFloor.value]);
+        editingfilename = string.Format("{0}F_{1}", ddNewFloor.value + 1, DataIndex[ddNewFloor.value]);
+        inputFDataFileName.text = editingfilename;
+        isEditData = true;
+        
     }
 
     private void SetDataParse()
