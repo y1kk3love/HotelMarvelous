@@ -45,17 +45,16 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
             if (tempobjet.name != activeitemspriteArr[i].name)
             {
-                iteminfo.SetSprite(activeitemspriteArr[i]);
-                iteminfo.SetObject(null);
+                iteminfo.itemprefab = null;
             }
             else
             {
-                iteminfo.SetSprite(activeitemspriteArr[i]);
-                iteminfo.SetObject(activeitemprefabArr[i]);
+                iteminfo.itemprefab = activeitemprefabArr[i];
                 x++;
             }
 
-            iteminfo.SetMagnification(byte.Parse(_textarr[i]));
+            iteminfo.sprite = activeitemspriteArr[i];
+            iteminfo.itemMag = byte.Parse(_textarr[i]);
             activeitemList.Add(iteminfo);
         }
     }
@@ -66,17 +65,17 @@ public class ResourceManager : MonoSingleton<ResourceManager>
     }
     public GameObject GetItemPrefeb(byte _itemcode)
     {
-        return activeitemList[_itemcode].GetObject();
+        return activeitemList[_itemcode].itemprefab;
     }
 
     public Sprite GetItemSprite(byte _itemcode)
     {
-        return activeitemList[_itemcode].GetSprite();
+        return activeitemList[_itemcode].sprite;
     }
 
     public int GetItemMagnification(byte _itemcode)
     {
-        return activeitemList[_itemcode].GetMagnification();
+        return activeitemList[_itemcode].itemMag;
     }
 
     public GameObject GetMonsterArr(byte _index)
@@ -87,37 +86,8 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
 public class ItemInfo
 {
-    private byte itemMag;
-    private GameObject itemprefab;
-    private Sprite sprite;
+    public GameObject itemprefab;
+    public Sprite sprite;
 
-    public void SetObject(GameObject _prefab)
-    {
-        itemprefab = _prefab;
-    }
-
-    public void SetSprite(Sprite _sprite)
-    {
-        sprite = _sprite;
-    }
-
-    public void SetMagnification(byte _mag)
-    {
-        itemMag = _mag;
-    }
-
-    public GameObject GetObject()
-    {
-        return itemprefab;
-    }
-
-    public Sprite GetSprite()
-    {
-        return sprite;
-    }
-
-    public int GetMagnification()
-    {
-        return itemMag;
-    }
+    public byte itemMag;
 }

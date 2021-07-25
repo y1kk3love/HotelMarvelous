@@ -287,7 +287,7 @@ public class ToolManager : MonoBehaviour
             }
         }
     }
-
+    
     private void FloorPick()
     {
         Ray ray = bpCamera.ScreenPointToRay(Input.mousePosition);
@@ -1242,6 +1242,8 @@ public class ToolManager : MonoBehaviour
         Text _savetext = GameObject.Find("TextSaveNewData").GetComponent<Text>();
 
         _savetext.text = string.Format("작업 내용을 {0}층으로 저장", ddNewFloor.value + 1);
+        textNowfloor.text = string.Format("현재 층수 : {0}", ddNewFloor.value + 1);
+        textFloorPattern.text = string.Format("저장된 맵 패턴 : {0}", DataIndex[ddNewFloor.value]);
     }
     
     public void LoadData()
@@ -1381,6 +1383,8 @@ public class ToolManager : MonoBehaviour
                 fs.Close();
             }
         }
+
+        textFloorPattern.text = string.Format("저장된 맵 패턴 : {0}", DataIndex[ddNewFloor.value]);
     }    
 
     public void PasteData()

@@ -62,7 +62,7 @@ public class WideAreaSkill : MonoBehaviour
 
     IEnumerator FireTile(Collider _other, int _damage, float _delay, string _targettag)
     {
-        if(_other != null && !isexitzone)
+        if(_other != null)
         {
             if(_targettag == "Monster")
             {
@@ -76,6 +76,9 @@ public class WideAreaSkill : MonoBehaviour
 
         yield return new WaitForSeconds(_delay);
 
-        StartCoroutine(FireTile(_other, _damage, _delay, _targettag));
+        if (!isexitzone)
+        {
+            StartCoroutine(FireTile(_other, _damage, _delay, _targettag));
+        }      
     }
 }
