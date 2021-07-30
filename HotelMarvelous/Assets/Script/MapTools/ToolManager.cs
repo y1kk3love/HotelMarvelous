@@ -1326,6 +1326,8 @@ public class ToolManager : MonoBehaviour
                 int x = int.Parse(xyPos[0]);
                 int y = int.Parse(xyPos[1]);
 
+                Debug.Log(x + " // " + y);
+
                 _info.position = new Vector2(x, y);
                 _info.roomIndex = _data.roomIndex;
                 _info.roomType = _data.roomType;
@@ -1361,7 +1363,7 @@ public class ToolManager : MonoBehaviour
                     _info.FurnitureInfoDic.Add(_finfo.pos, _finfo);
                 }
 
-                mapBoardArr[x + 25, y + 25] = _info;
+                mapBoardArr[BoardPosParse(x), BoardPosParse(y)] = _info;
             }
         }
     }
@@ -1430,7 +1432,7 @@ public class ToolManager : MonoBehaviour
     {
         SetDataParse();
 
-        string filename = string.Format(@"{0}/Stage/{1}F_{2}.map", Application.streamingAssetsPath, ddNewFloor.value + 1, DataIndex[ddNewFloor.value]);
+        string filename = string.Format(@"{0}/Stage/{1}F_{2}.map", Application.streamingAssetsPath, ddNewFloor.value + 1, DataIndex[ddNewFloor.value] + 1);
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
@@ -1470,6 +1472,8 @@ public class ToolManager : MonoBehaviour
 
                 int x = (int)_info.position.x;
                 int y = (int)_info.position.y;
+
+                Debug.Log(x +" // "+ y);
 
                 _data.pos = string.Format("{0}/{1}", x, y);
                 _data.roomIndex = _info.roomIndex;
