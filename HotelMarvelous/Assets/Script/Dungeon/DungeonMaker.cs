@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class DungeonMaker : MonoBehaviour
 {
-    private Dictionary<Vector2, int> roomIndexDic = new Dictionary<Vector2, int>();
+    private List<GameObject> curRoomTileList = new List<GameObject>();
 
     private TileData[,] mapDataArr = new TileData[51, 51];
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];
@@ -17,22 +17,22 @@ public class DungeonMaker : MonoBehaviour
 
     private Vector2? curTilePos = null;
 
-    private bool[] isroomhere = new bool[30];
-    private int floor = 1;
-    private int roomNum = -1;
+    private byte StageThemeIndex = 1;
+
+    private int curIndex = -1;
 
     void Start()
     {
-        obFloor = Resources.Load("Prefab/Stage/Floor_" + floor) as GameObject;
-        obBlockWall = Resources.Load("Prefab/Stage/Wall_" + floor) as GameObject;
-        obDoorWall = Resources.Load("Prefab/Stage/Door_" + floor) as GameObject;
+        obFloor = Resources.Load("Prefab/Stage/Floor_" + StageThemeIndex) as GameObject;
+        obBlockWall = Resources.Load("Prefab/Stage/Wall_" + StageThemeIndex) as GameObject;
+        obDoorWall = Resources.Load("Prefab/Stage/Door_" + StageThemeIndex) as GameObject;
 
         LoadData();
     }
 
     public void LoadData()
     {
-        string filename = string.Format(@"{0}/Stage/{1}F_{2}.map", Application.streamingAssetsPath, floor, Random.Range(0, 0));
+        string filename = string.Format(@"{0}/Stage/{1}F_{2}.map", Application.streamingAssetsPath, StageThemeIndex, Random.Range(0, 0));
 
         BinaryFormatter bf = new BinaryFormatter();
 
@@ -47,7 +47,7 @@ public class DungeonMaker : MonoBehaviour
 
         GetDataParse();
 
-        LoadNewMap();
+        LoadMap();
     }
 
     private void GetDataParse()
@@ -102,11 +102,11 @@ public class DungeonMaker : MonoBehaviour
         }
     }
 
-    private void LoadNewMap()
+    private void LoadMap()
     {
         foreach (TileInfo _info in mapBoardArr)
         {
-            if (_info != null && !isroomhere[_info.roomIndex])
+            if (_info != null)
             {
                 curTilePos = _info.position;
 
@@ -147,20 +147,29 @@ public class DungeonMaker : MonoBehaviour
                 */
             }
         }
-
-        if(roomNum != -1)
-        {
-            isroomhere[roomNum] = true;
-        }
     }
 
-    private void LoadOldMap(Vector2 _nextPos)
+    public void MoveNextRoom(Vector2 _nextPos)
     {
-        GameObject nextroom = GameObject.Find(string.Format("Room {0}", roomIndexDic[_nextPos]));
+        Debug.Log(_nextPos);
+
+        GameObject _player = GameObject.Find("Player");
+        _player.transform.position = new Vector3(_nextPos.x, 0, _nextPos.y);
+
+        GameObject curroom = GameObject.Find(string.Format("Room {0}", curIndex));
+
+        for (int i = 0; i < curroom.transform.childCount; i++)
+        {
+            curroom.transform.GetChild(i).gameObject.SetActive(false);
+        }
+
+        int _index = mapBoardArr[BoardPosParse((int)_nextPos.x), BoardPosParse((int)_nextPos.y)].roomIndex;
+
+        GameObject nextroom = GameObject.Find(string.Format("Room {0}", _index));
 
         for(int i = 0; i < nextroom.transform.childCount; i++)
         {
-            nextroom.transform.GetChild(i).gameObject.SetActive(transform);
+            nextroom.transform.GetChild(i).gameObject.SetActive(true);
         }
     }
 
@@ -170,14 +179,8 @@ public class DungeonMaker : MonoBehaviour
         int _y = (int)curTilePos.Value.y;
 
         TileInfo _GetInfo = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
-        roomIndexDic.Add(new Vector2(_x, _y), _GetInfo.roomIndex);
 
-        if (roomNum == -1)
-        {
-            roomNum = _GetInfo.roomIndex;
-        }
-
-        if (_GetInfo != null && _GetInfo.roomIndex == roomNum)
+        if (_GetInfo != null)
         {
             GameObject emptyRoom = GameObject.Find(string.Format("Room {0}", _GetInfo.roomIndex));
 
@@ -188,11 +191,9 @@ public class DungeonMaker : MonoBehaviour
 
             GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (_x / 18), (_y / 18)));
 
-            //위치 수정 필요
             emptytile.transform.position = new Vector3(_x, _y);
             emptytile.transform.parent = emptyRoom.transform;
 
-            //위치 수정 필요
             GameObject floor = Instantiate(obFloor, new Vector3(_x, _y), Quaternion.identity);
             floor.transform.parent = emptytile.transform;
 
@@ -200,6 +201,12 @@ public class DungeonMaker : MonoBehaviour
             mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].position = new Vector3(_x, _y);
 
             BuildWall(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)]);
+
+            if(_GetInfo.roomIndex != 1)
+            {
+                emptytile.SetActive(false);
+                curIndex = 1;
+            }
         }
     }
 
