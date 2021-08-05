@@ -14,6 +14,8 @@ public class DungeonMover : MonoBehaviour
             string[] name = tilename.Split('/');
             string[] posname = name[1].Split(',');
 
+            int x = int.Parse(posname[0]) * 18;
+            int y = int.Parse(posname[1]) * 18;
             Vector2 pos;
 
             DungeonMaker manager = GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>();
@@ -23,25 +25,25 @@ public class DungeonMover : MonoBehaviour
                 case "Top":
                     Debug.Log(doorname[0]);
 
-                    pos = new Vector2(int.Parse(posname[0]), int.Parse(posname[1]) + 18);
+                    pos = new Vector2(x, y + 18);
                     manager.MoveNextRoom(pos);
                     break;
                 case "Right":
                     Debug.Log(doorname[0]);
 
-                    pos = new Vector2(int.Parse(posname[0]) + 18, int.Parse(posname[1]));
+                    pos = new Vector2(x + 18, y);
                     manager.MoveNextRoom(pos);
                     break;
                 case "Bottom":
                     Debug.Log(doorname[0]);
 
-                    pos = new Vector2(int.Parse(posname[0]), int.Parse(posname[1]) - 18);
+                    pos = new Vector2(x, y - 18);
                     manager.MoveNextRoom(pos);
                     break;
                 case "Left":
                     Debug.Log(doorname[0]);
 
-                    pos = new Vector2(int.Parse(posname[0]) - 18, int.Parse(posname[1]));
+                    pos = new Vector2(x - 18, y);
                     manager.MoveNextRoom(pos);
                     break;
             }

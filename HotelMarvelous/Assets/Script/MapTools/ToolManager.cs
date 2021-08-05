@@ -734,6 +734,26 @@ public class ToolManager : MonoBehaviour
         }
     }
 
+    public void DeleteALLMap()
+    {
+        foreach (TileInfo _info in mapBoardArr)
+        {
+            if(_info != null)
+            {
+                int _x = (int)_info.position.x;
+                int _y = (int)_info.position.y;
+
+                //맵을 오브젝트 삭제 후 배열에서도 비우기
+                if (mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] != null)
+                {
+                    Destroy(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile);
+
+                    mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)] = null;
+                }
+            } 
+        }
+    }
+
     public void DeleteMap()
     {
         foreach (Vector2 _pos in selectTilesList)
@@ -1248,6 +1268,8 @@ public class ToolManager : MonoBehaviour
     
     public void LoadData()
     {
+        DeleteALLMap();
+
         string _floor = inputFDataFileName.text.Substring(0, 1);
 
         textFloorPattern.text = string.Format("저장된 맵 패턴 : {0}", DataIndex[int.Parse(_floor) - 1]);
@@ -1368,6 +1390,20 @@ public class ToolManager : MonoBehaviour
         }
     }
 
+    private void ReSetDataIndex()
+    {
+        for (int i = 1; i < 4; i++)
+        {
+            string filename = string.Format(@"{0}/Stage/{1}_DataIndex.idx", Application.streamingAssetsPath, i);
+            int _index = 0;
+
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            bf.Serialize(fs, _index);
+            fs.Close();
+        }
+    }
+
     public void LoadDataIndex() 
     {
         for (int i = 0; i < 3; i++)
@@ -1459,11 +1495,12 @@ public class ToolManager : MonoBehaviour
         editingfilename = string.Format("{0}F_{1}", ddNewFloor.value + 1, DataIndex[ddNewFloor.value]);
         inputFDataFileName.text = editingfilename;
         isEditData = true;
-        
     }
 
     private void SetDataParse()
     {
+        mapDataArr = new TileData[51, 51];
+
         foreach (TileInfo _info in mapBoardArr)
         {
             if (_info != null)

@@ -32,7 +32,7 @@ public class DungeonMaker : MonoBehaviour
 
     public void LoadData()
     {
-        string filename = string.Format(@"{0}/Stage/{1}F_{2}.map", Application.streamingAssetsPath, StageThemeIndex, Random.Range(0, 0));
+        string filename = string.Format(@"{0}/Stage/{1}F_{2}.map", Application.streamingAssetsPath, StageThemeIndex, Random.Range(1, 1));
 
         BinaryFormatter bf = new BinaryFormatter();
 
@@ -191,14 +191,14 @@ public class DungeonMaker : MonoBehaviour
 
             GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (_x / 18), (_y / 18)));
 
-            emptytile.transform.position = new Vector3(_x, _y);
+            emptytile.transform.position = new Vector3(_x, 0, _y);
             emptytile.transform.parent = emptyRoom.transform;
 
-            GameObject floor = Instantiate(obFloor, new Vector3(_x, _y), Quaternion.identity);
+            GameObject floor = Instantiate(obFloor, new Vector3(_x, 0, _y), Quaternion.identity);
             floor.transform.parent = emptytile.transform;
 
             mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile = emptytile;
-            mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].position = new Vector3(_x, _y);
+            mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].position = new Vector2(_x, _y);
 
             BuildWall(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)]);
 
@@ -226,7 +226,7 @@ public class DungeonMaker : MonoBehaviour
         {
             GameObject _wall = null;
 
-            Vector2 _pos = _tileinfo.obTile.transform.position;
+            Vector2 _pos = _tileinfo.position;
             int _x = (int)_pos.x;
             int _y = (int)_pos.y;
 
@@ -248,28 +248,28 @@ public class DungeonMaker : MonoBehaviour
                 {
                     case (int)DIRECTION.TOP:
 
-                        GameObject topWall = Instantiate(_wall, new Vector3(_x, _y + 4, 8.5f), Quaternion.Euler(0, 90, 90));
+                        GameObject topWall = Instantiate(_wall, new Vector3(_x, 4, 8.5f + _y), Quaternion.Euler(0, 90, 90));
                         topWall.name = "Top Wall";
                         topWall.transform.parent = emptywall.transform;
 
                         break;
                     case (int)DIRECTION.RIGHT:
 
-                        GameObject rightWall = Instantiate(_wall, new Vector2(_x + 8.5f, _y + 4), Quaternion.Euler(0, -180, 90));
+                        GameObject rightWall = Instantiate(_wall, new Vector3(_x + 8.5f, 4, _y), Quaternion.Euler(0, -180, 90));
                         rightWall.name = "Right Wall";
                         rightWall.transform.parent = emptywall.transform;
 
                         break;
                     case (int)DIRECTION.BOTTOM:
 
-                        GameObject bottomWall = Instantiate(_wall, new Vector3(_x, _y + 4, -8.5f), Quaternion.Euler(0, -90, 90));
+                        GameObject bottomWall = Instantiate(_wall, new Vector3(_x, 4, _y - 8.5f), Quaternion.Euler(0, -90, 90));
                         bottomWall.name = "Bottom Wall";
                         bottomWall.transform.parent = emptywall.transform;
 
                         break;
                     case (int)DIRECTION.LEFT:
 
-                        GameObject leftWall = Instantiate(_wall, new Vector2(_x - 8.5f, _y + 4), Quaternion.Euler(0, 0, 90));
+                        GameObject leftWall = Instantiate(_wall, new Vector3(_x - 8.5f, 4, _y), Quaternion.Euler(0, 0, 90));
                         leftWall.name = "Left Wall";
                         leftWall.transform.parent = emptywall.transform;
 
