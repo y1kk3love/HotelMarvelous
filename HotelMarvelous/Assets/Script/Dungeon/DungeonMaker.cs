@@ -6,10 +6,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class DungeonMaker : MonoBehaviour
 {
-    private List<GameObject> curRoomTileList = new List<GameObject>();
-
     private TileData[,] mapDataArr = new TileData[51, 51];
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];
+    private byte[] monMaxArr = new byte[50];
 
     private GameObject obFloor;
     private GameObject obBlockWall;
@@ -114,7 +113,8 @@ public class DungeonMaker : MonoBehaviour
                 int y = (int)curTilePos.Value.y;
 
                 CreateMap();
-                /*
+
+                
                 foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
                 {
                     Vector2 _pos = _dicionary.Key;
@@ -128,6 +128,7 @@ public class DungeonMaker : MonoBehaviour
                     _monster.transform.parent = mapBoardArr[x + 25, y + 25].obTile.transform;
                 }
 
+                /*
                 foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
                 {
                     Vector2 _pos = _dicionary.Key;

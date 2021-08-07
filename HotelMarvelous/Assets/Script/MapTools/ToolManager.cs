@@ -93,6 +93,8 @@ public class ToolManager : MonoBehaviour
 
         LoadFurnitureCSVData();
         LoadDataIndex();
+
+        ReSetDataIndex();
     }
 
     void Update()
@@ -1542,7 +1544,7 @@ public class ToolManager : MonoBehaviour
                     _data.FurnitureInfoDic.Add(string.Format("{0}/{1}", _x, _y), _fdata);
                 }
 
-                mapDataArr[x + 25, y + 25] = _data;
+                mapDataArr[BoardPosParse(x), BoardPosParse(y)] = _data;
             }
         }
     }
