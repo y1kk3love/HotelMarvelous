@@ -114,18 +114,17 @@ public class DungeonMaker : MonoBehaviour
 
                 CreateMap();
 
-                
                 foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
                 {
                     Vector2 _pos = _dicionary.Key;
                     
-                    GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/" + (int)_dicionary.Value) as GameObject;
+                    GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/Monster" + (int)_dicionary.Value) as GameObject;
 
                     //위치 수정 필요!!
-                    GameObject _monster = Instantiate(_monPrefab, new Vector2(_pos.x - 0.5f, _pos.y - 0.5f), Quaternion.identity);
+                    GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x,1 , _pos.y), Quaternion.identity);
                     //이름 수정 필요!!
                     _monster.name = string.Format("{0} // {1} MonPos", _pos.x, _pos.y);
-                    _monster.transform.parent = mapBoardArr[x + 25, y + 25].obTile.transform;
+                    _monster.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
                 }
 
                 /*
@@ -143,7 +142,7 @@ public class DungeonMaker : MonoBehaviour
                     GameObject _furniture = Instantiate(obfurniture, new Vector2(_pos.x - 0.5f, _pos.y - 0.5f), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
                     //이름 수정 필요!!
                     _furniture.name = string.Format("{0} // {1} {2}", _pos.x, _pos.y, _name);
-                    _furniture.transform.parent = mapBoardArr[x + 25, y + 25].obTile.transform;
+                    _furniture.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
                 }
                 */
             }
@@ -164,9 +163,9 @@ public class DungeonMaker : MonoBehaviour
             curroom.transform.GetChild(i).gameObject.SetActive(false);
         }
 
-        int _index = mapBoardArr[BoardPosParse((int)_nextPos.x), BoardPosParse((int)_nextPos.y)].roomIndex;
+        curIndex = mapBoardArr[BoardPosParse((int)_nextPos.x), BoardPosParse((int)_nextPos.y)].roomIndex;
 
-        GameObject nextroom = GameObject.Find(string.Format("Room {0}", _index));
+        GameObject nextroom = GameObject.Find(string.Format("Room {0}", curIndex));
 
         for(int i = 0; i < nextroom.transform.childCount; i++)
         {

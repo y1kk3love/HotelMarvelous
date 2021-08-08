@@ -1314,7 +1314,7 @@ public class ToolManager : MonoBehaviour
 
                     GameObject _monster = Instantiate(obMonPosCircle, new Vector2(_pos.x - 0.5f, _pos.y - 0.5f), Quaternion.identity);
                     _monster.name = string.Format("{0} // {1} MonPos", _pos.x, _pos.y);
-                    _monster.transform.parent = mapBoardArr[x + 25, y + 25].obTile.transform;
+                    _monster.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
                 }
 
                 foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
@@ -1328,7 +1328,7 @@ public class ToolManager : MonoBehaviour
                     obfurniture = Resources.Load("MapTools/Furniture/" + _name) as GameObject;
 
                     GameObject _furniture = Instantiate(obfurniture, new Vector2(_pos.x - 0.5f, _pos.y - 0.5f), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
-                    _furniture.transform.parent = mapBoardArr[x + 25, y + 25].obTile.transform;
+                    _furniture.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
                     _furniture.name = string.Format("{0} // {1} {2}", _pos.x, _pos.y, _name);
                 }
             }

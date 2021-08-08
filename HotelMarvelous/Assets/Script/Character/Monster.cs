@@ -16,7 +16,6 @@ public class Monster : MonoBehaviour
     private GameObject obHealHp;
     private GameObject obHealMental;
     private GameObject obHealAll;
-
     #endregion
 
     private GameObject player;
@@ -61,7 +60,10 @@ public class Monster : MonoBehaviour
                 break;
         }
 
-        navi.speed = monspeed * 5;
+        if(navi != null)
+        {
+            navi.speed = monspeed * 5;
+        }
     }
 
     void Update()
