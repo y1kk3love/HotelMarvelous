@@ -26,6 +26,7 @@ public class Monster : MonoBehaviour
 
     public int monsterid;
 
+    private bool isdead = false;
     private bool isattacking = false;
     private bool isinstantiate = false;
 
@@ -103,8 +104,10 @@ public class Monster : MonoBehaviour
 
     private void MonsterDeath()
     {
-        if (monsterhp <= 0)
+        if (monsterhp <= 0 && !isdead)
         {
+            isdead = true;
+            GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>().MonsterDead();
             navi = null;
             SpawnItem();
             Destroy(gameObject);

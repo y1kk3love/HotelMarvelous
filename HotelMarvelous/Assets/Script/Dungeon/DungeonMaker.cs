@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -112,19 +113,23 @@ public class DungeonMaker : MonoBehaviour
                 int x = (int)curTilePos.Value.x;
                 int y = (int)curTilePos.Value.y;
 
-                CreateMap();
+                TileInfo info = mapBoardArr[BoardPosParse(x), BoardPosParse(y)];
 
+                CreateMap();
+                
                 foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
                 {
                     Vector2 _pos = _dicionary.Key;
                     
                     GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/Monster" + (int)_dicionary.Value) as GameObject;
 
-                    //위치 수정 필요!!
+                    
                     GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x,1 , _pos.y), Quaternion.identity);
-                    //이름 수정 필요!!
-                    _monster.name = string.Format("{0} // {1} MonPos", _pos.x, _pos.y);
+                    
+                    _monster.name = string.Format("({0}, {1}){2}", _pos.x, _pos.y, _dicionary.Value);
                     _monster.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
+
+                    monMaxArr[info.roomIndex]++;
                 }
 
                 /*
@@ -149,27 +154,41 @@ public class DungeonMaker : MonoBehaviour
         }
     }
 
+    public void MonsterDead()
+    {
+        monMaxArr[curIndex]--;
+
+        Debug.Log(monMaxArr[curIndex]);
+    }
+
     public void MoveNextRoom(Vector2 _nextPos)
     {
         Debug.Log(_nextPos);
 
-        GameObject _player = GameObject.Find("Player");
-        _player.transform.position = new Vector3(_nextPos.x, 0, _nextPos.y);
-
-        GameObject curroom = GameObject.Find(string.Format("Room {0}", curIndex));
-
-        for (int i = 0; i < curroom.transform.childCount; i++)
+        if (monMaxArr[curIndex] == 0)
         {
-            curroom.transform.GetChild(i).gameObject.SetActive(false);
+            GameObject _player = GameObject.Find("Player");
+            _player.transform.position = new Vector3(_nextPos.x, 0, _nextPos.y);
+
+            GameObject curroom = GameObject.Find(string.Format("Room {0}", curIndex));
+
+            for (int i = 0; i < curroom.transform.childCount; i++)
+            {
+                curroom.transform.GetChild(i).gameObject.SetActive(false);
+            }
+
+            curIndex = mapBoardArr[BoardPosParse((int)_nextPos.x), BoardPosParse((int)_nextPos.y)].roomIndex;
+
+            GameObject nextroom = GameObject.Find(string.Format("Room {0}", curIndex));
+
+            for (int i = 0; i < nextroom.transform.childCount; i++)
+            {
+                nextroom.transform.GetChild(i).gameObject.SetActive(true);
+            }
         }
-
-        curIndex = mapBoardArr[BoardPosParse((int)_nextPos.x), BoardPosParse((int)_nextPos.y)].roomIndex;
-
-        GameObject nextroom = GameObject.Find(string.Format("Room {0}", curIndex));
-
-        for(int i = 0; i < nextroom.transform.childCount; i++)
+        else
         {
-            nextroom.transform.GetChild(i).gameObject.SetActive(true);
+            Debug.Log("해치우지 못한 몬스터가 남아있습니다.");
         }
     }
 
@@ -202,7 +221,9 @@ public class DungeonMaker : MonoBehaviour
 
             BuildWall(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)]);
 
-            if(_GetInfo.roomIndex != 1)
+            floor.GetComponent<NavMeshSurface>().BuildNavMesh();
+
+            if (_GetInfo.roomIndex != 1)
             {
                 emptytile.SetActive(false);
                 curIndex = 1;

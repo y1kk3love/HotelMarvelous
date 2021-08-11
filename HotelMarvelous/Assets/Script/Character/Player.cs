@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     #region [Status]
 
-    private int damage = 3;
+    private int damage = 30;
     private int damperm2, damperm1, dampern, damperp1;
     private float hp = 0;
     private float maxHp = 30;
