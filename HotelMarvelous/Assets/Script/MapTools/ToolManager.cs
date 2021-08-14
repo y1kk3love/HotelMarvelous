@@ -265,7 +265,7 @@ public class ToolManager : MonoBehaviour
 
                                 FurnitureInfo _info = new FurnitureInfo();
 
-                                _info.name = _data[(int)FURNITUREDATA.NAME];
+                                _info.name = _data[(int)OBJECTDATA.FURNITURENAME];
                                 _info.pos = new Vector2(x, y);
                                 _info.dir = furnitureDir;
 
@@ -454,7 +454,7 @@ public class ToolManager : MonoBehaviour
 
                     ddFurnType.value++;
 
-                    string _modelname = furnitureDataList[ddFurnType.value][(int)FURNITUREDATA.NAME];
+                    string _modelname = furnitureDataList[ddFurnType.value][(int)OBJECTDATA.FURNITURENAME];
                     obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
                     obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
                     obCurFurnPreviewModel.name = "FurniturePreview";
@@ -526,7 +526,7 @@ public class ToolManager : MonoBehaviour
 
                     if(ddFurnType.value != 0)
                     {
-                        string _modelname = furnitureDataList[ddFurnType.value][(int)FURNITUREDATA.NAME];
+                        string _modelname = furnitureDataList[ddFurnType.value][(int)OBJECTDATA.FURNITURENAME];
                         obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
                         obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
 
@@ -1551,7 +1551,7 @@ public class ToolManager : MonoBehaviour
 
     private void LoadFurnitureCSVData()
     {
-        StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/FurnitureData.csv");
+        StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/ObjectData.csv");
         
         while (!streader.EndOfStream)
         {
@@ -1566,7 +1566,7 @@ public class ToolManager : MonoBehaviour
         {
             Dropdown.OptionData newData = new Dropdown.OptionData();
 
-            newData.text = furnitureDataList[i][(int)FURNITUREDATA.NAME];
+            newData.text = furnitureDataList[i][(int)OBJECTDATA.FURNITURENAME];
             ddFurnType.options.Add(newData);
         }
     }

@@ -2,31 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//[RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    #region [Status]
+    private PlayerStatus stat = new PlayerStatus();
 
-    private int damage = 30;
-    private int damperm2, damperm1, dampern, damperp1;
-    private float hp = 0;
-    private float maxHp = 30;
-    private float criticalPercent = 3.0f;
-    private float stamina = 20.0f;
-    private float runspeed = 1.5f;
-    private float speed = 1f;
-    private float mentality = 0.0f;
-    private float maxMentality = 20.0f;
-    private byte extraLife = 1;
-    private int defense = 5;
-
-    #endregion
+    private bool isInvincible = false;
 
     #region [Item]
 
-    private byte coin = 0;
-    private byte roomKeys = 0;
-    private byte beans = 0;
+    private GameObject curItemSkill = null;
+
 
     private float itemMagnification = 6;
     private float itemcount = 1;
@@ -71,71 +56,32 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        anim = gameObject.GetComponent<Animator>();
-
-        damperm2 = 15;
-        damperm1 = 15;
-        dampern = 40;
-        damperp1 = 15;
-
-        hp = maxHp;
-        mentality = maxMentality;
+        anim = transform.GetComponent<Animator>();
     }
 
     void Update()
     {
-        if (isMasterKey)
-        {
-            roomKeys = 100;
-        }
-
-        if(hp <= 0) 
-        {
-            if(extraLife == 1)
-            {
-                //사망처리
-            }
-            else if(extraLife > 1)
-            {
-                extraLife--;
-
-                if(maxHp/2 <= 5)
-                {
-                    maxHp = 5;
-                }
-                else
-                {
-                    maxHp /= 2;
-                }
-            }
-        }
-
-        if (isconv)
+        if (isconv || !isattack || !ScenesManager.Instance.onOption)
         {
             anim.SetBool("Run", false);
             return;
         }
 
-        if (!isattack && !ScenesManager.Instance.onOption)
-        {
-            GetMovementInput();
-            GetSkillInput();
+        GetMovementInput();
+        GetSkillInput();
 
-            if (Mathf.Abs(input.x) < 1 && Mathf.Abs(input.y) < 1)
-            {
-                anim.SetBool("Run", false);
-                return;
-            }
-
-            CalculateDirection();
-            Rotate();
-            Move();
-        }
-        else
+        if (Mathf.Abs(input.x) < 1 && Mathf.Abs(input.y) < 1)
         {
+            anim.SetBool("Run", false);
             return;
         }
+
+        CalculateDirection();
+        Rotate();
+        Move();
     }
+
+    #region ----------------------------[Trigger]----------------------------
 
     void OnTriggerEnter(Collider other)
     {
@@ -143,20 +89,14 @@ public class Player : MonoBehaviour
         {
             ontextzone = true;
             obzone = other.gameObject;
-            Debug.Log("들어왔어요~");
+            Debug.Log("대화 장소에 입장");
         }
+
         if (other.GetComponent<RewardItem>())
         {
-            byte _itemcode;
-
-            RewardItem rewarditem = other.GetComponent<RewardItem>();
-
-            _itemcode = rewarditem.GetRewardItemcode();
-            rewarditem.SetRewardItemcode(itemcode);
-            itemcode = _itemcode;
-
-            itemMagnification = ResourceManager.Instance.GetItemMagnification(itemcode);
+            ResourceManager.Instance.GetItemResource(stat.curItemIndex);
         }
+
         if (other.gameObject.tag == "ConsumItem")
         {
             ConsumItem _consumitem = other.GetComponent<ConsumItem>();
@@ -164,16 +104,16 @@ public class Player : MonoBehaviour
             switch (_consumitem.consumitem)
             {
                 case DROPITEM.COIN:
-                    if (coin < 100)
+                    if (stat.coin < 100)
                     {
-                        coin++;
+                        stat.coin++;
                         Destroy(other.gameObject);
                     }
                     break;
                 case DROPITEM.KEYS:
-                    if (roomKeys < 100)
+                    if (stat.roomKeys < 100)
                     {
-                        roomKeys++;
+                        stat.roomKeys++;
                         Destroy(other.gameObject);
                     }
                     break;
@@ -182,152 +122,154 @@ public class Player : MonoBehaviour
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.BEANS:
-                    if (beans < 100)
+                    if (stat.beans < 100)
                     {
-                        beans++;
+                        stat.beans++;
                         Destroy(other.gameObject);
                     }
                     break;
                 case DROPITEM.HPS:
-                    if(hp + 3 <= maxHp)
+                    if(stat.hp + 3 <= stat.maxHp)
                     {
-                        hp += 3;
+                        stat.hp += 3;
                     }
                     else
                     {
-                        hp = maxHp;
+                        stat.hp = stat.maxHp;
                     }
 
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.HPM:
-                    if (hp + 5 <= maxHp)
+                    if (stat.hp + 5 <= stat.maxHp)
                     {
-                        hp += 5;
+                        stat.hp += 5;
                     }
                     else
                     {
-                        hp = maxHp;
+                        stat.hp = stat.maxHp;
                     }
 
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.HPL:
-                    if (hp + 10 <= maxHp)
+                    if (stat.hp + 10 <= stat.maxHp)
                     {
-                        hp += 10;
+                        stat.hp += 10;
                     }
                     else
                     {
-                        hp = maxHp;
+                        stat.hp = stat.maxHp;
                     }
 
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.MENTALS:
-                    if (mentality + 0.5f <= maxMentality)
+                    if (stat.mentality + 0.5f <= stat.maxMentality)
                     {
-                        mentality += 0.5f;
+                        stat.mentality += 0.5f;
                     }
                     else
                     {
-                        mentality = maxMentality;
+                        stat.mentality = stat.maxMentality;
                     }
 
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.MENTALM:
-                    if (mentality + 1.0f <= maxMentality)
+                    if (stat.mentality + 1.0f <= stat.maxMentality)
                     {
-                        mentality += 1.0f;
+                        stat.mentality += 1.0f;
                     }
                     else
                     {
-                        mentality = maxMentality;
+                        stat.mentality = stat.maxMentality;
                     }
 
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.MENTALL:
-                    if (mentality + 5.0f <= maxMentality)
+                    if (stat.mentality + 5.0f <= stat.maxMentality)
                     {
-                        mentality += 5.0f;
+                        stat.mentality += 5.0f;
                     }
                     else
                     {
-                        mentality = maxMentality;
+                        stat.mentality = stat.maxMentality;
                     }
 
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.TOTALHEALS:
-                    if (hp + 3 <= maxHp)
+                    if (stat.hp + 3 <= stat.maxHp)
                     {
-                        hp += 3;
+                        stat.hp += 3;
                     }
                     else
                     {
-                        hp = maxHp;
+                        stat.hp = stat.maxHp;
                     }
 
-                    if (mentality + 1.0f <= maxMentality)
+                    if (stat.mentality + 1.0f <= stat.maxMentality)
                     {
-                        mentality += 1.0f;
+                        stat.mentality += 1.0f;
                     }
                     else
                     {
-                        mentality = maxMentality;
+                        stat.mentality = stat.maxMentality;
                     }
 
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.TOTALHEALM:
-                    if (hp + 5 <= maxHp)
+                    if (stat.hp + 5 <= stat.maxHp)
                     {
-                        hp += 5;
+                        stat.hp += 5;
                     }
                     else
                     {
-                        hp = maxHp;
+                        stat.hp = stat.maxHp;
                     }
 
-                    if (mentality + 3.0f <= maxMentality)
+                    if (stat.mentality + 3.0f <= stat.maxMentality)
                     {
-                        mentality += 3.0f;
+                        stat.mentality += 3.0f;
                     }
                     else
                     {
-                        mentality = maxMentality;
+                        stat.mentality = stat.maxMentality;
                     }
 
                     Destroy(other.gameObject);
                     break;
                 case DROPITEM.TOTALHEALL:
-                    if (hp + 20 <= maxHp)
+                    if (stat.hp + 20 <= stat.maxHp)
                     {
-                        hp += 20;
+                        stat.hp += 20;
                     }
                     else
                     {
-                        hp = maxHp;
+                        stat.hp = stat.maxHp;
                     }
 
-                    if (mentality + 10.0f <= maxMentality)
+                    if (stat.mentality + 10.0f <= stat.maxMentality)
                     {
-                        mentality += 10.0f;
+                        stat.mentality += 10.0f;
                     }
                     else
                     {
-                        mentality = maxMentality;
+                        stat.mentality = stat.maxMentality;
                     }
 
                     Destroy(other.gameObject);
                     break;
             }
         }
+
         if(other.gameObject.name == "MoveLift")
         {
-            DungeonUI du = GameObject.Find("UI").GetComponent<DungeonUI>();
+            //다음 층으로 이동
+            Debug.Log("다음층으로 이동");
         }
     }
 
@@ -339,6 +281,8 @@ public class Player : MonoBehaviour
             Debug.Log("나가요~");
         }
     }
+
+    #endregion
 
     #region ----------------------------[Public]----------------------------
 
@@ -365,140 +309,74 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void ExitTextZone()
+    public void SetKey(bool _add)
     {
-        ontextzone = false;
+        if (_add)
+        {
+            if (isMasterKey)
+            {
+                stat.roomKeys = 100;
+            }
+            else
+            {
+                stat.roomKeys++;
+            }
+        }
+        else
+        {
+            stat.roomKeys--;
+        }
     }
 
     public void SetCoin(byte _coin, bool _add)
     {
         if (_add)
         {
-            coin += _coin;
+            stat.coin += _coin;
         }
         else
         {
-            coin -= _coin;
+            stat.coin -= _coin;
         }
-    }
-
-    public float GetMaxMentality()
-    {
-        return maxMentality;
-    }
-
-    public float GetMaxHp()
-    {
-        return maxHp;
-    }
-
-    public byte GetBeans()
-    {
-        return beans;
-    }
-
-    public byte GetKeys()
-    {
-        return roomKeys;
-    }
-
-    public byte GetCoin()
-    {
-        return coin;
-    }
-
-    public float GetMentality()
-    {
-        return mentality;
-    }
-
-    public byte GetItemCode()
-    {
-        return itemcode;
-    }   
-
-    public float GetItemCount()
-    {
-        return itemcount / itemMagnification;
-    }
-    public float GetHp()
-    {
-        return hp;
-    }
-
-    public byte GetDispoItemCode()
-    {
-        if (isdispoitemon)
-        {
-            return dispoitemcode;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    public float GetStamina()
-    {
-        return stamina;
-    }
-
-    public bool GetOnTextZone()
-    {
-        return ontextzone;
-    }
-
-    public GameObject GetObZone()
-    {
-        if(obzone != null)
-        {
-            return obzone;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    public void SetIsConversation(bool _bool)
-    {
-        isconv = _bool;
-    }
-
-    public void SetMentality(float _mentality)
-    {
-        mentality -= _mentality;
-    }
-
-    public void SetAtkRangList(GameObject _atkrang)
-    {
-        atkrangeList.Add(_atkrang);
-    }
-
-    public void SetItemMagnification(int _magnification)
-    {
-        itemMagnification = _magnification;
     }
 
     public void SetDamage(int _damage)
     {
-        hp -= _damage * (1 + defense / 100);
-
-        if(hp <= 0)
+        if (isInvincible)
         {
-            if(extraLife > 0)
+            return;
+        }
+
+        stat.hp -= _damage * (1 + stat.defense / 100);
+
+        if(stat.hp <= 0)
+        {
+            if(stat.extraLife > 0)
             {
-                extraLife--;
-                hp = maxHp / 2;
-                maxHp = maxHp / 2;
+                stat.extraLife--;
+                stat.hp = stat.maxHp / 2;
+                stat.maxHp = stat.maxHp / 2;
+
+                StartCoroutine(RebirthProcess());
             }
             else
             {
-                hp = 0;
+                stat.hp = 0;
 
                 StartCoroutine(DeathProcess());
             }
         }
+    }
+
+    IEnumerator RebirthProcess()
+    {
+        isInvincible = true;
+
+        //무적 모션 시작자리
+
+        yield return new WaitForSeconds(1.0f);
+
+        isInvincible = false;
     }
 
     IEnumerator DeathProcess()
@@ -557,28 +435,28 @@ public class Player : MonoBehaviour
 
         if (Input.GetKey(ScenesManager.Instance.optionInfo.run))
         {
-            if(stamina > 0)
+            if(stat.stamina > 0)
             {
-                stamina -= Time.deltaTime;
-                speed = runspeed;
+                stat.stamina -= Time.deltaTime;
+                stat.speed = stat.runspeed;
             }
             else
             {
-                stamina = 0;
-                speed = 1;
+                stat.stamina = 0;
+                stat.speed = 1;
             }
         }
         else
         {
-            speed = 1;
+            stat.speed = 1;
 
-            if(stamina <= 20)
+            if(stat.stamina <= 20)
             {
-                stamina += Time.deltaTime / 3;
+                stat.stamina += Time.deltaTime / 3;
             }
             else
             {
-                stamina = 20;
+                stat.stamina = 20;
             }
         }
 
@@ -589,7 +467,7 @@ public class Player : MonoBehaviour
             switch (itemcode)
             {
                 case 0:
-                    GameObject areaskill = Instantiate(ResourceManager.Instance.GetItemPrefeb((byte)ITEMCODE.CROWN), transform.position, Quaternion.identity);
+                    GameObject areaskill = Instantiate(ResourceManager.Instance.GetSkillPrefeb((byte)ITEMCODE.CROWN), transform.position, Quaternion.identity);
                     WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
                     wide.SetSkillPreset("Monster", 3f);
                     break;
@@ -624,8 +502,22 @@ public class Player : MonoBehaviour
     private void Move()
     {
         anim.SetBool("Run", true);
-        transform.position += transform.forward * velocity * Time.deltaTime * speed;
+        transform.position += transform.forward * velocity * Time.deltaTime * stat.speed;
     }
+
+    IEnumerator Attack_00()
+    {
+        anim.SetBool("Attack_00", true);
+        isattack = true;
+
+        yield return new WaitForSeconds(1.02f);
+
+        anim.SetBool("Attack_00", false);
+        isattack = false;
+    }
+    #endregion
+
+    #region ----------------------------[Calculate]----------------------------
 
     private void CalculateDirection()
     {
@@ -637,23 +529,23 @@ public class Player : MonoBehaviour
     private float CalculateDamagePercent()
     {
         int _percent = Random.Range(0, 100);
-        float _damage = damage;
+        float _damage = stat.damage;
 
-        if(_percent < damperm2)
+        if (_percent < stat.missdam)
         {
             _damage -= 2;
         }
-        else if(_percent < damperm2 + damperm1)
+        else if (_percent < stat.missdam + stat.lightdam)
         {
             _damage--;
         }
-        else if(_percent < damperm2 + damperm1 + dampern)
+        else if (_percent < stat.missdam + stat.lightdam + stat.normaldam)
         {
             return _damage;
         }
-        else if(_percent < damperm2 + damperm1 + dampern + damperp1)
+        else if (_percent < stat.missdam + stat.lightdam + stat.normaldam + stat.harddam)
         {
-            _damage++; 
+            _damage++;
         }
         else
         {
@@ -673,7 +565,7 @@ public class Player : MonoBehaviour
     {
         int curpercent = Random.Range(0, 1000);
 
-        if(curpercent < criticalPercent * 10)
+        if (curpercent < stat.criticalPercent * 10)
         {
             return true;
         }
@@ -681,17 +573,6 @@ public class Player : MonoBehaviour
         {
             return false;
         }
-    }
-
-    IEnumerator Attack_00()
-    {
-        anim.SetBool("Attack_00", true);
-        isattack = true;
-
-        yield return new WaitForSeconds(1.02f);
-
-        anim.SetBool("Attack_00", false);
-        isattack = false;
     }
 
     #endregion

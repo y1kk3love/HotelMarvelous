@@ -102,10 +102,10 @@ public enum TOOLEDITUI
     FURNITUREMODE
 }
 
-public enum FURNITUREDATA : int
+public enum OBJECTDATA : int
 {
     INDEX,
-    NAME,
-    HORIZONTAL,
-    VERTICAL
+    FURNITURENAME,
+    ITEMNAME = 3,
+    MAXSTACK
 }

@@ -7,87 +7,35 @@ using game;
 
 public class ResourceManager : MonoSingleton<ResourceManager>
 {
-    private GameObject[] monsterArr;
+    private List<string[]> objectDataList = new List<string[]>();
 
-    private GameObject[] activeitemprefabArr;    
-    private Sprite[] activeitemspriteArr;
-    private List<ItemInfo> activeitemList = new List<ItemInfo>();
-
-    void Start()
+    public void LoadItemResources()
     {
-        monsterArr = Resources.LoadAll<GameObject>("Prefab/Characters/Monsters");
-    }
+        StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/ObjectData.csv");
 
-    public void GetItemReSources()
-    {
-        string _path = Application.dataPath + "/StreamingAssets/itemMagnification.txt";
-        string[] textArr = File.ReadAllLines(_path);
-        string[] _textarr = new string[1];
-        GameObject tempobjet = null;
-        int x = 0;
-
-        activeitemspriteArr = Resources.LoadAll<Sprite>("Prefab/ActiveItem/Image");
-        activeitemprefabArr = Resources.LoadAll<GameObject>("Prefab/ActiveItem/Object");
-
-        foreach (string _text in textArr)
+        while (!streader.EndOfStream)
         {
-            _textarr = _text.Split(' ');
-        }
+            string line = streader.ReadLine();
 
-        for (int i = 0; i < activeitemprefabArr.Length + 1; i++)
-        {
-            ItemInfo iteminfo = new ItemInfo();
+            string[] data = line.Split(',');
 
-            if (x < activeitemspriteArr.Length - 1)
-            {
-                tempobjet = activeitemprefabArr[x];
-            }
-
-            if (tempobjet.name != activeitemspriteArr[i].name)
-            {
-                iteminfo.itemprefab = null;
-            }
-            else
-            {
-                iteminfo.itemprefab = activeitemprefabArr[i];
-                x++;
-            }
-
-            iteminfo.sprite = activeitemspriteArr[i];
-            iteminfo.itemMag = byte.Parse(_textarr[i]);
-            activeitemList.Add(iteminfo);
+            objectDataList.Add(data);
         }
     }
 
-    public GameObject LoadGameObject(string _path)
+    public void GetItemResource(byte _itemindex)
     {
-        return Resources.Load<GameObject>(_path);
-    }
-    public GameObject GetItemPrefeb(byte _itemcode)
-    {
-        return activeitemList[_itemcode].itemprefab;
-    }
+        string _path = objectDataList[_itemindex][(int)OBJECTDATA.ITEMNAME];
 
-    public Sprite GetItemSprite(byte _itemcode)
-    {
-        return activeitemList[_itemcode].sprite;
+        Sprite _sprite = Resources.Load("Prefab/ActiveItem/Image/" + _path) as Sprite;
+        GameObject _object = Resources.Load("Prefab/ActiveItem/Image/" + _path) as GameObject;
+        byte _max = byte.Parse(objectDataList[_itemindex][(int)OBJECTDATA.MAXSTACK]);
+
+        GameObject _player = GameObject.Find("Player");
+
+        if(_player != null)
+        {
+            _player.GetComponent<Player>()
+        }
     }
-
-    public int GetItemMagnification(byte _itemcode)
-    {
-        return activeitemList[_itemcode].itemMag;
-    }
-
-    public GameObject GetMonsterArr(byte _index)
-    {
-        return monsterArr[_index];
-    }
-}
-
-public class ItemInfo
-{
-    public GameObject itemprefab;
-    public Sprite sprite;
-
-    public byte itemMag;
 }
