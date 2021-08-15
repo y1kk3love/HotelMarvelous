@@ -16,6 +16,7 @@ public class Monster : MonoBehaviour
     private GameObject obHealHp;
     private GameObject obHealMental;
     private GameObject obHealAll;
+
     #endregion
 
     private GameObject player;
@@ -84,8 +85,6 @@ public class Monster : MonoBehaviour
 
             player.SetDamage(touchdamage);
             player.SetMentality(mentaldamage);
-            Debug.Log("PlayerHP : " + player.GetHp());
-            Debug.Log("PlayerMental : " + player.GetMentality());
         }
     }
 

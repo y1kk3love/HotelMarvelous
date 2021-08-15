@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
-using game;
+using Singleton;
 
 public class ResourceManager : MonoSingleton<ResourceManager>
 {
@@ -23,19 +23,23 @@ public class ResourceManager : MonoSingleton<ResourceManager>
         }
     }
 
-    public void GetItemResource(byte _itemindex)
+    public ItemResource GetItemResource(byte _itemindex)
     {
+        ItemResource item = new ItemResource();
+
         string _path = objectDataList[_itemindex][(int)OBJECTDATA.ITEMNAME];
 
-        Sprite _sprite = Resources.Load("Prefab/ActiveItem/Image/" + _path) as Sprite;
-        GameObject _object = Resources.Load("Prefab/ActiveItem/Image/" + _path) as GameObject;
-        byte _max = byte.Parse(objectDataList[_itemindex][(int)OBJECTDATA.MAXSTACK]);
+        item.sprite = Resources.Load("Prefab/ActiveItem/Image/" + _path) as Sprite;
+        item.skillprefab = Resources.Load("Prefab/ActiveItem/Object/" + _path) as GameObject;
+        item.max = byte.Parse(objectDataList[_itemindex][(int)OBJECTDATA.MAXSTACK]);
 
-        GameObject _player = GameObject.Find("Player");
-
-        if(_player != null)
-        {
-            _player.GetComponent<Player>()
-        }
+        return item;
     }
+}
+
+public class ItemResource
+{
+    public Sprite sprite;
+    public GameObject skillprefab;
+    public byte max;
 }

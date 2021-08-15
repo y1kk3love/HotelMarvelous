@@ -4,18 +4,13 @@ using UnityEngine;
 
 public class AttackTrigger : MonoBehaviour
 {
-    private float damage;
-
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Monster"))
         {
+            float damage = DataManager.Instance.CalculateDamage();
+
             other.GetComponent<Monster>().MonGetDamage(damage);
         }
-    }
-
-    public void SetDamage(float _damage)
-    {
-        damage = _damage;
     }
 }

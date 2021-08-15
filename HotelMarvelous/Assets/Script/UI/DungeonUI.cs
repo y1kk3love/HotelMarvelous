@@ -80,4 +80,9 @@ public class DungeonUI : MonoBehaviour
         staminabar.value = player.GetStamina();
         itemCounter.fillAmount = player.GetItemCount();
     }
+
+    public void ItemChanged(Sprite _newitem)
+    {
+        itemimage.sprite = _newitem;
+    }
 }

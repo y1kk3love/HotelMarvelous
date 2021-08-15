@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using UnityEngine.SceneManagement;
-using game;
+using Singleton;
 
 public class ScenesManager : MonoSingleton<ScenesManager>
 {
