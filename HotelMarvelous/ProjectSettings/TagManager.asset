@@ -4,12 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - SpawnPoint
-  - Rooms
-  - Lobby
   - Monster
   - Attack
   - ConsumItem
+  - Dialoguezone
+  - RewardItem
+  - MoveLift
   layers:
   - Default
   - TransparentFX

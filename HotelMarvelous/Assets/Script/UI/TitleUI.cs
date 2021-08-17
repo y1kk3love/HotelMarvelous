@@ -25,7 +25,7 @@ public class TitleUI : MonoBehaviour
 
     void Awake()
     {
-        ResourceManager.Instance.LoadItemResources();        //리소스 매니저 생성
+        ResourceManager.Instance.LoadResources();        //리소스 매니저 생성
 
         ResetProcess();
         

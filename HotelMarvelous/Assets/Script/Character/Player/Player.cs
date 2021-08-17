@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private PlayerStatus stat = DataManager.Instance.GetPlayerStatus();
+    private PlayerStatus stat;
 
     private GameObject[] attackRangeArr = new GameObject[3];
 
@@ -31,15 +31,16 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        stat = DataManager.Instance.GetPlayerStatus();
         anim = transform.GetComponent<Animator>();
-        attackRangeArr[0] = transform.Find("Sword").GetChild(0).gameObject;
+        attackRangeArr[0] = GameObject.Find("Sword").transform.GetChild(0).gameObject;
 
         GetItemInfo();
     }
 
     void Update()
     {
-        if (isconv || !isattack || !ScenesManager.Instance.onOption)
+        if (isconv || isattack || ScenesManager.Instance.onOption)
         {
             anim.SetBool("Run", false);
             return;
@@ -63,24 +64,24 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Dialoguezone>())
+        if (other.CompareTag("Dialoguezone"))
         {
-            //ontextzone = true;
-            //obzone = other.gameObject;
+            Interactionzone textinfo = other.GetComponent<Interactionzone>();
+
             Debug.Log("대화 장소에 입장");
         }
 
-        if (other.GetComponent<RewardItem>())
+        if (other.CompareTag("RewardItem"))
         {
             ResourceManager.Instance.GetItemResource(stat.curItemIndex);
         }
 
-        if (other.gameObject.tag == "ConsumItem")
+        if (other.CompareTag("ConsumItem"))
         {
             CheckDropItem(other);
         }
 
-        if(other.gameObject.name == "MoveLift")
+        if(other.CompareTag("MoveLift"))
         {
             //다음 층으로 이동
             Debug.Log("다음층으로 이동");
@@ -89,10 +90,11 @@ public class Player : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<Dialoguezone>())
+        if (other.CompareTag("Dialoguezone"))
         {
-            //ontextzone = false;
-            Debug.Log("나가요~");
+            Interactionzone textinfo = other.GetComponent<Interactionzone>();
+
+            Debug.Log("대화 장소에 퇴장");
         }
     }
 

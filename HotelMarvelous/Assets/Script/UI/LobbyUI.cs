@@ -19,14 +19,15 @@ public class LobbyUI : MonoBehaviour
 
     void Start()
     {
-        ResetUI();
+        //ResetUI();
     }
 
     void Update()
     {
-        TextZoneCheck();
+        //TextZoneCheck();
     }
 
+    /*
     private void TextZoneCheck()
     {
         GameObject obtextzone = player.GetObZone();
@@ -98,5 +99,6 @@ public class LobbyUI : MonoBehaviour
 
         ScenesManager.Instance.ShowPauseButton();
     }
+    */
 }
 

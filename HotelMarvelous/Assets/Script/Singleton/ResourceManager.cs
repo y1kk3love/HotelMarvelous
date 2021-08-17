@@ -7,9 +7,52 @@ using Singleton;
 
 public class ResourceManager : MonoSingleton<ResourceManager>
 {
-    private List<string[]> objectDataList = new List<string[]>();
+    private Dictionary<DIALOGZONE, List<string[]>> dialogData = new Dictionary<DIALOGZONE, List<string[]>>();
 
-    public void LoadItemResources()
+    private List<string[]> objectDataList = new List<string[]>();
+    private List<string[]> dialogDataList = new List<string[]>();
+
+    public void LoadResources()
+    {
+        LoadDialogData();
+        LoadItemResources();
+    }
+
+    private void LoadDialogData()
+    {
+        StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/DialogData.csv");
+
+        int counter = 0;
+
+        while (!streader.EndOfStream)
+        {
+            string line = streader.ReadLine();
+
+            string[] data = line.Split(',');
+            string[] text = data[(int)DIALOGDATA.TEXT].Split('&');
+
+            if(counter != 0)
+            {
+                DIALOGZONE pointindex = (DIALOGZONE)int.Parse(data[(int)DIALOGDATA.POINTINDEX]);
+
+                if(dialogData.TryGetValue(pointindex, out List<string[]> _value))
+                {
+                    dialogData[pointindex].Add(text);
+                }
+                else
+                {
+                    dialogDataList = new List<string[]>();
+                    dialogDataList.Add(text);
+
+                    dialogData.Add(pointindex, dialogDataList);
+                }
+            }
+            
+            counter++;
+        }
+    }
+
+    private void LoadItemResources()
     {
         StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/ObjectData.csv");
 

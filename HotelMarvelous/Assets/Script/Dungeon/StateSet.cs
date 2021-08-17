@@ -7,6 +7,28 @@ public enum ROOMTYPE
     NPC
 }
 
+public enum INTERACTION 
+{
+    NONE,
+    LOBBY,
+    DUNGEON
+}
+
+
+public enum DIALOGDATA
+{
+    POINTNAME,
+    POINTINDEX,
+    TEXTINDEX,
+    TEXT
+}
+
+public enum DIALOGZONE
+{
+    COUNTER,
+    ELEVATOR
+}
+
 public enum DIRECTION : byte
 {
     TOP,
@@ -56,12 +78,6 @@ public enum MONSTERTYPE
     AVARITIA,
     PORTRAIT,
     INK
-}
-
-public enum WEAPONID
-{
-    SWORD,
-    SPEAR
 }
 
 public enum ITEMCODE : byte
