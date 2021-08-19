@@ -5,8 +5,8 @@ using UnityEngine;
 public class Interactionzone : MonoBehaviour
 {
     public INTERACTION zoneType;
-    public byte dialogPoint;
-    public byte dialogIndex;
+    public int dialogPoint;
+    public int dialogIndex;
 
     void OnTriggerEnter(Collider other)
     {

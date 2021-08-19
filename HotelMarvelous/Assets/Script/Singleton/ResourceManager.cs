@@ -52,6 +52,11 @@ public class ResourceManager : MonoSingleton<ResourceManager>
         }
     }
 
+    public string[] GetDialog(int _point, int _index)
+    {
+        return dialogData[(DIALOGZONE)_point][_index];
+    }
+
     private void LoadItemResources()
     {
         StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/ObjectData.csv");

@@ -10,12 +10,15 @@ public class Player : MonoBehaviour
 
     private GameObject curItemSkill = null;
 
+    private int curDialogPoint = -1;
+    private int curDialogIndex = -1;
+
     private bool isInvincible = false;
 
     #region [Movement]
 
     private bool isattack = false;
-    private bool isconv = false;
+    public bool isconv = false;
 
     private Animator anim;
 
@@ -40,8 +43,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (isconv || isattack || ScenesManager.Instance.onOption)
+        if (isconv || isattack || ScenesManager.Instance.isOption)
         {
+            DialogChecker();
             anim.SetBool("Run", false);
             return;
         }
@@ -68,6 +72,12 @@ public class Player : MonoBehaviour
         {
             Interactionzone textinfo = other.GetComponent<Interactionzone>();
 
+            curDialogPoint = textinfo.dialogPoint;
+            curDialogIndex = textinfo.dialogIndex;
+            isconv = true;
+
+            ScenesManager.Instance.DialogEnter(curDialogPoint);
+
             Debug.Log("대화 장소에 입장");
         }
 
@@ -92,7 +102,8 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("Dialoguezone"))
         {
-            Interactionzone textinfo = other.GetComponent<Interactionzone>();
+            curDialogPoint = -1;
+            curDialogIndex = -1;
 
             Debug.Log("대화 장소에 퇴장");
         }
@@ -424,6 +435,21 @@ public class Player : MonoBehaviour
                 Vector3 targetPos = hit.point;
                 Vector3 dir = targetPos - transform.position;
                 transform.forward = new Vector3(dir.x, 0, dir.z).normalized;
+            }
+        }
+    }
+
+    private void DialogChecker()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && isconv)
+        {
+            if(curDialogIndex == 0)
+            {
+                ScenesManager.Instance.DialogStart(curDialogPoint, curDialogIndex);
+            }
+            else
+            {
+
             }
         }
     }

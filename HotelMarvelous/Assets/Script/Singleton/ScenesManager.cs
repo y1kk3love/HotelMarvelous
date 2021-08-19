@@ -1,33 +1,84 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
 using UnityEngine.SceneManagement;
 using Singleton;
 
 public class ScenesManager : MonoSingleton<ScenesManager>
 {
     public GameObject pauseUI;
+    public DialogUI dialogUI;
     public OptionInfo optionInfo = new OptionInfo();
 
-    public bool onOption = false;
+    byte curDialogIndex = 0;
 
-    void Start()
+    string[] curDialogarr;
+
+    private bool isDialog = false;
+    public bool isOption = false;
+
+    #region [Dialog]
+
+    public void DialogEnter(int _point)
     {
-        pauseUI = Resources.Load<GameObject>("Prefab/UI/UI_Pause");
+        GameObject _ui = GameObject.Find("DialogUI");
+
+        if (_ui == null)
+        {
+            GameObject _uiprefab = Resources.Load("Prefab/UI/DialogUI") as GameObject;
+
+            _ui = Instantiate(_uiprefab, transform.position, Quaternion.identity);
+            dialogUI = _ui.GetComponent<DialogUI>();
+        }
+
+        Debug.Log("Image/DialogProfile/" + _point.ToString());
+
+        Sprite _sprite = Resources.Load<Sprite>("Image/DialogProfile/Profile_" + _point.ToString());
+        dialogUI.SetProfile(_sprite);
     }
+
+    public void DialogStart(int _point, int _index)
+    {
+        if (!isDialog)
+        {
+            curDialogarr = ResourceManager.instance.GetDialog(_point, _index);
+
+            curDialogIndex = 0; 
+        }
+
+        if(curDialogIndex++ <= curDialogarr.Length)
+        {
+            dialogUI.SetDialog(curDialogarr[curDialogIndex]);
+
+            curDialogIndex++;
+        }
+        else
+        {
+            dialogUI.DialogFinish();
+        }
+    }
+
+    #endregion
+
+    #region [SceneMove]
 
     public void MoveToScene(string _scenename)
     {
         SceneManager.LoadScene(_scenename);
     }
 
+    #endregion
+
+    #region [Option]
+
     public void ShowPauseButton()
     {
+        pauseUI = Resources.Load<GameObject>("Prefab/UI/UI_Pause");
+
         GameObject option = Instantiate(pauseUI, new Vector3(0, 0, 0), Quaternion.identity);
         option.transform.parent = GameObject.Find("UI").transform;
+
         Debug.Log("설정버튼 생성완료");
+
         SetStartScreenOption();
     }
 
@@ -53,6 +104,8 @@ public class ScenesManager : MonoSingleton<ScenesManager>
             return FullScreenMode.Windowed;
         }
     }
+
+    #endregion
 }
 
 public class OptionInfo

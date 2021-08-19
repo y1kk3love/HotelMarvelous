@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3975048496671403828}
   - component: {fileID: 3975048496671403831}
   m_Layer: 5
-  m_Name: TalkText
+  m_Name: DialogText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,12 +108,12 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3975048496903494907}
-  m_Father: {fileID: 3975048496755154925}
-  m_RootOrder: 2
+  m_Father: {fileID: 3975048498509117885}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 855.9, y: -134.89996}
+  m_AnchoredPosition: {x: 850.9, y: -443.89996}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3975048496750567755
@@ -184,7 +184,6 @@ RectTransform:
   m_Children:
   - {fileID: 3975048496945403181}
   - {fileID: 3975048496671403830}
-  - {fileID: 3975048496750567733}
   m_Father: {fileID: 3975048498509117885}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -320,7 +319,7 @@ GameObject:
   - component: {fileID: 3975048496945403171}
   - component: {fileID: 3975048496945403170}
   m_Layer: 5
-  m_Name: Image
+  m_Name: DialogProfile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -394,8 +393,9 @@ GameObject:
   - component: {fileID: 3975048498509117884}
   - component: {fileID: 3975048498509117887}
   - component: {fileID: 3975048498509117886}
+  - component: {fileID: 3521820483800759867}
   m_Layer: 5
-  m_Name: UI
+  m_Name: DialogUI
   m_TagString: Lobby
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -413,6 +413,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 3975048496755154925}
+  - {fileID: 3975048496750567733}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -481,3 +482,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &3521820483800759867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3975048498509117881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 317913d53d9a73f4787aba8cac4d6e38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textBar: {fileID: 0}
+  pressimage: {fileID: 0}
+  profile: {fileID: 0}
+  text: {fileID: 0}

@@ -111,7 +111,7 @@ public class PauseUI : MonoBehaviour
         panelPause.SetActive(true);
         panelButtons.SetActive(true);
 
-        ScenesManager.Instance.onOption = true;
+        ScenesManager.Instance.isOption = true;
         Time.timeScale = 0;
     }
 
@@ -119,7 +119,7 @@ public class PauseUI : MonoBehaviour
     {
         panelPause.SetActive(false);
 
-        ScenesManager.Instance.onOption = false;
+        ScenesManager.Instance.isOption = false;
         Time.timeScale = 1;
     }
 
@@ -127,7 +127,7 @@ public class PauseUI : MonoBehaviour
     {
         Time.timeScale = 1;
 
-        ScenesManager.Instance.onOption = false;
+        ScenesManager.Instance.isOption = false;
         ScenesManager.Instance.MoveToScene("Dungeon");
     }
     public void OnclickbuttonSaveAndQuit()
@@ -145,7 +145,7 @@ public class PauseUI : MonoBehaviour
     {
         Time.timeScale = 1;
 
-        ScenesManager.Instance.onOption = false;
+        ScenesManager.Instance.isOption = false;
         ScenesManager.Instance.MoveToScene("Menu");
     }
     public void OnclickbuttonQuit()
@@ -190,7 +190,7 @@ public class PauseUI : MonoBehaviour
         scrollviewControl.SetActive(false);
         panelSound.SetActive(false);
 
-        ScenesManager.Instance.onOption = false;
+        ScenesManager.Instance.isOption = false;
         ScenesManager.Instance.SetStartScreenOption();
 
         Time.timeScale = 1;
@@ -215,7 +215,7 @@ public class PauseUI : MonoBehaviour
 
         ScenesManager.Instance.optionInfo = optionInfo;
 
-        ScenesManager.Instance.onOption = false;
+        ScenesManager.Instance.isOption = false;
 
         Time.timeScale = 1;
     }

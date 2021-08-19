@@ -79,7 +79,7 @@ public class TitleUI : MonoBehaviour
 
     public void TestSkip()
     {
-        ScenesManager.Instance.MoveToScene("Dungeon");
+        ScenesManager.Instance.MoveToScene("Lobby");
     }
 
     public void CheckIn()
