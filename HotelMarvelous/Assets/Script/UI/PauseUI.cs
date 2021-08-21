@@ -8,7 +8,7 @@ public class PauseUI : MonoBehaviour
     private OptionInfo optionInfo = new OptionInfo();
     protected KEYSETBUTTON ketsetbutton;
 
-    private  GameObject panelPause;
+    private GameObject panelPause;
     private GameObject panelButtons;
     private GameObject panelOption;
     private GameObject panelDisplay;

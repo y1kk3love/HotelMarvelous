@@ -494,7 +494,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317913d53d9a73f4787aba8cac4d6e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textBar: {fileID: 0}
-  pressimage: {fileID: 0}
-  profile: {fileID: 0}
-  text: {fileID: 0}
+  textBar: {fileID: 3975048496755154924}
+  pressimage: {fileID: 3975048496750567732}
+  profile: {fileID: 3975048496945403170}
+  text: {fileID: 3975048496671403831}
+  dialogSpeed: 20

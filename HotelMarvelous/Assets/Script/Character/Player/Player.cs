@@ -445,7 +445,7 @@ public class Player : MonoBehaviour
         {
             if(curDialogIndex == 0)
             {
-                ScenesManager.Instance.DialogStart(curDialogPoint, curDialogIndex);
+                ScenesManager.Instance.DialogProcess(curDialogPoint, curDialogIndex);
             }
             else
             {

@@ -14,6 +14,7 @@ public class ScenesManager : MonoSingleton<ScenesManager>
     string[] curDialogarr;
 
     private bool isDialog = false;
+    public bool isDialogAnim = false;
     public bool isOption = false;
 
     #region [Dialog]
@@ -36,24 +37,31 @@ public class ScenesManager : MonoSingleton<ScenesManager>
         dialogUI.SetProfile(_sprite);
     }
 
-    public void DialogStart(int _point, int _index)
+    public void DialogProcess(int _point, int _index)
     {
         if (!isDialog)
         {
             curDialogarr = ResourceManager.instance.GetDialog(_point, _index);
 
+            isDialog = true;
+
             curDialogIndex = 0; 
         }
 
-        if(curDialogIndex++ <= curDialogarr.Length)
+        if(curDialogIndex + 1 <= curDialogarr.Length)
         {
             dialogUI.SetDialog(curDialogarr[curDialogIndex]);
 
-            curDialogIndex++;
+            if (!isDialogAnim)
+            {
+                curDialogIndex++;
+            }
         }
         else
         {
             dialogUI.DialogFinish();
+
+            isDialog = false;
         }
     }
 
@@ -115,7 +123,7 @@ public class OptionInfo
 
     public KeyCode recharge = KeyCode.Space;
     public KeyCode disposable = KeyCode.LeftControl;
-    public KeyCode run = KeyCode.LeftControl;
+    public KeyCode run = KeyCode.LeftShift;
     public KeyCode minimap = KeyCode.Tab;
     public KeyCode pause = KeyCode.Escape;
     public KeyCode treasure = KeyCode.T;
