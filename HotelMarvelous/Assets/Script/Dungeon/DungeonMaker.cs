@@ -132,7 +132,6 @@ public class DungeonMaker : MonoBehaviour
                     monMaxArr[info.roomIndex]++;
                 }
 
-                /*
                 foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
                 {
                     Vector2 _pos = _dicionary.Key;
@@ -143,13 +142,10 @@ public class DungeonMaker : MonoBehaviour
 
                     GameObject obfurniture = Resources.Load("Prefab/Furniture/" + _name) as GameObject;
 
-                    //위치 수정 필요!!
-                    GameObject _furniture = Instantiate(obfurniture, new Vector2(_pos.x - 0.5f, _pos.y - 0.5f), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
-                    //이름 수정 필요!!
+                    GameObject _furniture = Instantiate(obfurniture, new Vector3(_pos.x - 0.5f, 1, _pos.y - 0.5f), Quaternion.Euler(new Vector3(0, _rotate, 0)));
                     _furniture.name = string.Format("{0} // {1} {2}", _pos.x, _pos.y, _name);
                     _furniture.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
                 }
-                */
             }
         }
     }

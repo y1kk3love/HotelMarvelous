@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
         stat = DataManager.Instance.GetPlayerStatus();
         anim = transform.GetComponent<Animator>();
         attackRangeArr[0] = GameObject.Find("Sword").transform.GetChild(0).gameObject;
+        attackRangeArr[0].SetActive(false);
 
         GetItemInfo();
     }
