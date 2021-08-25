@@ -20,20 +20,26 @@ public class DialogUI : MonoBehaviour
     void Awake()
     {
         textBar.SetActive(false);
-        pressimage.SetActive(false);
+        ButtonOnAndOff(false);
+    }
+
+    public void ButtonOnAndOff(bool _onoff)
+    {
+        if (_onoff)
+        {
+            pressimage.SetActive(true);
+        }
+        else
+        {
+            pressimage.SetActive(false);
+        }
     }
 
     public void SetProfile(Sprite _profile)
     {
-        pressimage.SetActive(true);
+        ButtonOnAndOff(true);
 
         profile.sprite = _profile;
-    }
-
-    public void SetDialog(string _text)
-    {
-        DialogAnimProcess(_text);
-        textBar.SetActive(true);
     }
 
     public void DialogFinish()
@@ -41,17 +47,20 @@ public class DialogUI : MonoBehaviour
         GameObject.Find("Player").GetComponent<Player>().isconv = false;
 
         textBar.SetActive(false);
-        pressimage.SetActive(false);
+        ButtonOnAndOff(false);
     }
 
-    private void DialogAnimProcess(string _dialog)
+    public void DialogAnimProcess(string _dialog)
     {
+        textBar.SetActive(true);
+
         if (ScenesManager.Instance.isDialogAnim)
         {
             text.text = _dialog;
 
             CancelInvoke();
 
+            ScenesManager.Instance.curDialogIndex++;
             ScenesManager.Instance.isDialogAnim = false;
         }
         else
@@ -67,6 +76,7 @@ public class DialogUI : MonoBehaviour
         curTextIndex = 0;
 
         interval = 1.0f / dialogSpeed;
+
         ScenesManager.Instance.isDialogAnim = true;
 
         Invoke("DialogAimation", interval);
@@ -76,6 +86,7 @@ public class DialogUI : MonoBehaviour
     {
         if(text.text == targetDialog)
         {
+            ScenesManager.Instance.curDialogIndex++;
             ScenesManager.Instance.isDialogAnim = false;
             return;
         }

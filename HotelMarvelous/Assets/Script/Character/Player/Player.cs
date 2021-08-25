@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     #region [Movement]
 
     private bool isattack = false;
+    private bool isconvzone = false;
     public bool isconv = false;
 
     private Animator anim;
@@ -44,9 +45,10 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        DialogChecker();
+
         if (isconv || isattack || ScenesManager.Instance.isOption)
         {
-            DialogChecker();
             anim.SetBool("Run", false);
             return;
         }
@@ -75,7 +77,7 @@ public class Player : MonoBehaviour
 
             curDialogPoint = textinfo.dialogPoint;
             curDialogIndex = textinfo.dialogIndex;
-            isconv = true;
+            isconvzone = true;
 
             ScenesManager.Instance.DialogEnter(curDialogPoint);
 
@@ -105,34 +107,10 @@ public class Player : MonoBehaviour
         {
             curDialogPoint = -1;
             curDialogIndex = -1;
+            isconvzone = false;
+            ScenesManager.Instance.EntranceDecision(false);
 
             Debug.Log("대화 장소에 퇴장");
-        }
-    }
-
-    #endregion
-
-    #region ----------------------------[Test]----------------------------
-
-    public void Test_AddItemCount()
-    {
-        stat.curItemStack++;
-    }
-
-    public void Test_AddDisoItem()
-    {
-        stat.curDispoItemIndex = 1;
-    }
-
-    public void Test_GamePause()
-    {
-        if (Time.timeScale == 1)
-        {
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Time.timeScale = 1;
         }
     }
 
@@ -403,6 +381,11 @@ public class Player : MonoBehaviour
         ScenesManager.Instance.MoveToScene("Lobby");
     }
 
+    public PlayerStatus GetStatus()
+    {
+        return stat;
+    }
+
     #endregion
 
     #region ----------------------------[Animation]----------------------------
@@ -442,8 +425,10 @@ public class Player : MonoBehaviour
 
     private void DialogChecker()
     {
-        if (Input.GetKeyDown(KeyCode.E) && isconv)
+        if (Input.GetKeyDown(KeyCode.E) && isconvzone)
         {
+            isconv = true;
+
             if(curDialogIndex == 0)
             {
                 ScenesManager.Instance.DialogProcess(curDialogPoint, curDialogIndex);

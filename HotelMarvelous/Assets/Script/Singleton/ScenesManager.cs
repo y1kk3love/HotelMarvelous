@@ -9,7 +9,7 @@ public class ScenesManager : MonoSingleton<ScenesManager>
     public DialogUI dialogUI;
     public OptionInfo optionInfo = new OptionInfo();
 
-    byte curDialogIndex = 0;
+    public byte curDialogIndex = 0;
 
     string[] curDialogarr;
 
@@ -44,18 +44,13 @@ public class ScenesManager : MonoSingleton<ScenesManager>
             curDialogarr = ResourceManager.instance.GetDialog(_point, _index);
 
             isDialog = true;
-
+            
             curDialogIndex = 0; 
         }
 
         if(curDialogIndex + 1 <= curDialogarr.Length)
         {
-            dialogUI.SetDialog(curDialogarr[curDialogIndex]);
-
-            if (!isDialogAnim)
-            {
-                curDialogIndex++;
-            }
+            dialogUI.DialogAnimProcess(curDialogarr[curDialogIndex]);
         }
         else
         {
@@ -63,6 +58,11 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
             isDialog = false;
         }
+    }
+
+    public void EntranceDecision(bool _inout)
+    {
+        dialogUI.ButtonOnAndOff(_inout);
     }
 
     #endregion
