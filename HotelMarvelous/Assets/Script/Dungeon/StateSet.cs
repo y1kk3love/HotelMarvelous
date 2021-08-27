@@ -123,5 +123,8 @@ public enum OBJECTDATA : int
     INDEX,
     FURNITURENAME,
     ITEMNAME = 3,
-    MAXSTACK
+    MAXSTACK,
+    MONSTERNAME = 6,
+    DISPOITEM = 8,
+    DISPOINDEX
 }

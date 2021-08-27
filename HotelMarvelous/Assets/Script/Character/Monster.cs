@@ -108,7 +108,7 @@ public class Monster : MonoBehaviour
             isdead = true;
             GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>().MonsterDead();
             navi = null;
-            SpawnItem();
+            //SpawnItem();
             Destroy(gameObject);
         }
     }

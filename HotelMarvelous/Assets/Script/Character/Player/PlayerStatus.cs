@@ -30,5 +30,5 @@ public class PlayerStatus
     public byte curItemMax = 0;
     public byte curItemStack = 1;
 
-    public byte curDispoItemIndex = 255;
+    public byte curDispoItemIndex = 1;
 }

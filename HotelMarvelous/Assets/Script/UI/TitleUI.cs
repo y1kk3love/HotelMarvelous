@@ -77,9 +77,14 @@ public class TitleUI : MonoBehaviour
     //버튼관리
     #region ------------------------------[OnClick]------------------------------
 
-    public void TestSkip()
+    public void Test_SkipToLobby()
     {
         ScenesManager.Instance.MoveToScene("Lobby");
+    }
+
+    public void Test_SkipToDungeon()
+    {
+        ScenesManager.Instance.MoveToScene("Dungeon");
     }
 
     public void CheckIn()

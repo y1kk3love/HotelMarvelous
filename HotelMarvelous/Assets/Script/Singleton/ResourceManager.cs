@@ -70,13 +70,22 @@ public class ResourceManager : MonoSingleton<ResourceManager>
         }
     }
 
+    public Sprite GetDispoItemResource(byte _itemindex)
+    {
+        string _path = objectDataList[_itemindex][(int)OBJECTDATA.DISPOITEM];
+
+        Sprite sprite = Resources.Load<Sprite>("Prefab/DispoItem/" + _path);
+
+        return sprite;
+    }
+
     public ItemResource GetItemResource(byte _itemindex)
     {
         ItemResource item = new ItemResource();
 
         string _path = objectDataList[_itemindex][(int)OBJECTDATA.ITEMNAME];
 
-        item.sprite = Resources.Load("Prefab/ActiveItem/Image/" + _path) as Sprite;
+        item.sprite = Resources.Load<Sprite>("Prefab/ActiveItem/Image/" + _path);
         item.skillprefab = Resources.Load("Prefab/ActiveItem/Object/" + _path) as GameObject;
         item.max = byte.Parse(objectDataList[_itemindex][(int)OBJECTDATA.MAXSTACK]);
 

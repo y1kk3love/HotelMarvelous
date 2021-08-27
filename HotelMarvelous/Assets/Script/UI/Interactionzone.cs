@@ -10,6 +10,8 @@ public class Interactionzone : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log(other.name);
+
         if (other.CompareTag("Player") && zoneType == INTERACTION.DUNGEON)
         {
             ScenesManager.Instance.MoveToScene("Dungeon");

@@ -31,9 +31,9 @@ public class ScenesManager : MonoSingleton<ScenesManager>
             dialogUI = _ui.GetComponent<DialogUI>();
         }
 
-        Debug.Log("Image/DialogProfile/" + _point.ToString());
+        Debug.Log("Image/DialogProfile/" + _point);
 
-        Sprite _sprite = Resources.Load<Sprite>("Image/DialogProfile/Profile_" + _point.ToString());
+        Sprite _sprite = Resources.Load<Sprite>("Image/DialogProfile/Profile_" + _point);
         dialogUI.SetProfile(_sprite);
     }
 

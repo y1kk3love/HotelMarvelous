@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private PlayerStatus stat;
+    private PlayerStatus stat = new PlayerStatus();
 
     private GameObject[] attackRangeArr = new GameObject[3];
 
@@ -86,7 +86,7 @@ public class Player : MonoBehaviour
 
         if (other.CompareTag("RewardItem"))
         {
-            ResourceManager.Instance.GetItemResource(stat.curItemIndex);
+            GetItemInfo();
         }
 
         if (other.CompareTag("ConsumItem"))
@@ -386,6 +386,16 @@ public class Player : MonoBehaviour
         return stat;
     }
 
+    public void Test_ItemCounerAdd()
+    {
+        stat.curItemStack++;
+    }
+
+    public void Test_ChangeDispoItem(byte _index)
+    {
+        stat.curDispoItemIndex = _index;
+    }
+
     #endregion
 
     #region ----------------------------[Animation]----------------------------
@@ -433,10 +443,6 @@ public class Player : MonoBehaviour
             {
                 ScenesManager.Instance.DialogProcess(curDialogPoint, curDialogIndex);
             }
-            else
-            {
-
-            }
         }
     }
 
@@ -474,14 +480,18 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.recharge) && stat.curItemStack / stat.curItemMax >= 1)
+        float _itemrecharge = (float)stat.curItemStack / (float)stat.curItemMax;
+
+        if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.recharge) && _itemrecharge >= 1)
         {
+            Debug.Log("재사용 아이템 사용!");
+
             stat.curItemStack = 0;
 
             switch (stat.curItemIndex)
             {
                 case 1:
-                    GameObject areaskill = Instantiate(curItemSkill, transform.position, Quaternion.identity);
+                    GameObject areaskill = Instantiate(curItemSkill, new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z), Quaternion.identity);
                     WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
                     wide.SetSkillPreset("Monster", 3f);
                     break;
@@ -493,7 +503,9 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.disposable) && stat.curDispoItemIndex != 255)
         {
-            if (stat.curItemStack / stat.curItemMax != 1)
+            Debug.Log("일회용 아이템 사용!");
+
+            if (_itemrecharge != 1)
             {
                 switch (stat.curDispoItemIndex)
                 {
