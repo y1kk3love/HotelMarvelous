@@ -11,9 +11,16 @@ public class DungeonMaker : MonoBehaviour
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];
     private byte[] monMaxArr = new byte[50];
 
+    private GameObject curEmptyRoom;
+    private GameObject curMiniMap;
+
     private GameObject obFloor;
     private GameObject obBlockWall;
     private GameObject obDoorWall;
+
+    private GameObject mapFloor;
+    private GameObject mapBlockWall;
+    private GameObject mapDoorWall;
 
     private Vector2? curTilePos = null;
 
@@ -26,6 +33,10 @@ public class DungeonMaker : MonoBehaviour
         obFloor = Resources.Load("Prefab/Stage/Floor_" + StageThemeIndex) as GameObject;
         obBlockWall = Resources.Load("Prefab/Stage/Wall_" + StageThemeIndex) as GameObject;
         obDoorWall = Resources.Load("Prefab/Stage/Door_" + StageThemeIndex) as GameObject;
+
+        mapFloor = Resources.Load("Prefab/Stage/MiniMap/Floor") as GameObject;
+        mapBlockWall = Resources.Load("Prefab/Stage/MiniMap/Wall") as GameObject;
+        mapDoorWall = Resources.Load("Prefab/Stage/MiniMap/Door") as GameObject;
 
         LoadData();
     }
@@ -123,7 +134,6 @@ public class DungeonMaker : MonoBehaviour
                     
                     GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/Monster" + (int)_dicionary.Value) as GameObject;
 
-                    
                     GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x,1 , _pos.y), Quaternion.identity);
                     
                     _monster.name = string.Format("({0}, {1}){2}", _pos.x, _pos.y, _dicionary.Value);
@@ -197,20 +207,36 @@ public class DungeonMaker : MonoBehaviour
 
         if (_GetInfo != null)
         {
-            GameObject emptyRoom = GameObject.Find(string.Format("Room {0}", _GetInfo.roomIndex));
+            curEmptyRoom = GameObject.Find(string.Format("Room {0}", _GetInfo.roomIndex));
 
-            if (emptyRoom == null)
+            if (curEmptyRoom == null)
             {
-                emptyRoom = new GameObject(string.Format("Room {0}", _GetInfo.roomIndex));
+                curEmptyRoom = new GameObject(string.Format("Room {0}", _GetInfo.roomIndex));
             }
+
+            #region[TileObject]
 
             GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (_x / 18), (_y / 18)));
 
             emptytile.transform.position = new Vector3(_x, 0, _y);
-            emptytile.transform.parent = emptyRoom.transform;
+            emptytile.transform.parent = curEmptyRoom.transform;
 
             GameObject floor = Instantiate(obFloor, new Vector3(_x, 0, _y), Quaternion.identity);
             floor.transform.parent = emptytile.transform;
+
+            #endregion
+
+            #region[MiniMapTile]
+
+            curMiniMap = new GameObject(string.Format("MiniMap/{0},{1}", (_x / 18), (_y / 18)));
+
+            curMiniMap.transform.position = new Vector3(_x, 0, _y);
+            curMiniMap.transform.parent = curEmptyRoom.transform;
+
+            GameObject mapfloor = Instantiate(mapFloor, new Vector3(_x, 0, _y), Quaternion.identity);       
+            mapfloor.transform.parent = curMiniMap.transform;
+
+            #endregion
 
             mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile = emptytile;
             mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].position = new Vector2(_x, _y);
@@ -242,6 +268,7 @@ public class DungeonMaker : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             GameObject _wall = null;
+            GameObject _map = null;
 
             Vector2 _pos = _tileinfo.position;
             int _x = (int)_pos.x;
@@ -251,11 +278,13 @@ public class DungeonMaker : MonoBehaviour
             {
                 case WALLSTATE.BLOCK:
                     _wall = obBlockWall;
+                    _map = mapBlockWall;
                     break;
                 case WALLSTATE.EMPTY:
                     break;
                 case WALLSTATE.DOOR:
                     _wall = obDoorWall;
+                    _map = mapDoorWall;
                     break;
             }
 
@@ -269,12 +298,20 @@ public class DungeonMaker : MonoBehaviour
                         topWall.name = "Top Wall";
                         topWall.transform.parent = emptywall.transform;
 
+                        GameObject topWallMap = Instantiate(_map, new Vector3(_x, 4, 8.5f + _y), Quaternion.Euler(0, 90, 90));
+                        topWallMap.name = "Top Wall Map";
+                        topWallMap.transform.parent = curMiniMap.transform;
+
                         break;
                     case (int)DIRECTION.RIGHT:
 
                         GameObject rightWall = Instantiate(_wall, new Vector3(_x + 8.5f, 4, _y), Quaternion.Euler(0, -180, 90));
                         rightWall.name = "Right Wall";
                         rightWall.transform.parent = emptywall.transform;
+
+                        GameObject rightWallMap = Instantiate(_map, new Vector3(_x + 8.5f, 4, _y), Quaternion.Euler(0, -180, 90));
+                        rightWallMap.name = "Right Wall Map";
+                        rightWallMap.transform.parent = curMiniMap.transform;
 
                         break;
                     case (int)DIRECTION.BOTTOM:
@@ -283,12 +320,20 @@ public class DungeonMaker : MonoBehaviour
                         bottomWall.name = "Bottom Wall";
                         bottomWall.transform.parent = emptywall.transform;
 
+                        GameObject bottomWallMap = Instantiate(_map, new Vector3(_x, 4, _y - 8.5f), Quaternion.Euler(0, -90, 90));
+                        bottomWallMap.name = "Bottom Wall Map";
+                        bottomWallMap.transform.parent = curMiniMap.transform;
+
                         break;
                     case (int)DIRECTION.LEFT:
 
                         GameObject leftWall = Instantiate(_wall, new Vector3(_x - 8.5f, 4, _y), Quaternion.Euler(0, 0, 90));
                         leftWall.name = "Left Wall";
                         leftWall.transform.parent = emptywall.transform;
+
+                        GameObject leftWallMap = Instantiate(_map, new Vector3(_x - 8.5f, 4, _y), Quaternion.Euler(0, 0, 90));
+                        leftWallMap.name = "Left Wall Map";
+                        leftWallMap.transform.parent = curMiniMap.transform;
 
                         break;
                 }

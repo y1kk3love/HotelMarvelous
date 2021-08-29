@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 501235251}
   - component: {fileID: 501235250}
   m_Layer: 5
-  m_Name: SkipScenes
+  m_Name: SkipScenesToLobby
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -706,7 +706,7 @@ GameObject:
   - component: {fileID: 1062676244}
   - component: {fileID: 1062676243}
   m_Layer: 5
-  m_Name: SkipScenes (1)
+  m_Name: SkipScenesToDungeon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
