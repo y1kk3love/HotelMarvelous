@@ -13,6 +13,7 @@ public class DungeonMaker : MonoBehaviour
 
     private GameObject curEmptyRoom;
     private GameObject curMiniMap;
+    private GameObject miniMapGroup;
 
     private GameObject obFloor;
     private GameObject obBlockWall;
@@ -37,6 +38,8 @@ public class DungeonMaker : MonoBehaviour
         mapFloor = Resources.Load("Prefab/Stage/MiniMap/Floor") as GameObject;
         mapBlockWall = Resources.Load("Prefab/Stage/MiniMap/Wall") as GameObject;
         mapDoorWall = Resources.Load("Prefab/Stage/MiniMap/Door") as GameObject;
+
+        miniMapGroup = new GameObject("MiniMaps");
 
         LoadData();
     }
@@ -231,7 +234,7 @@ public class DungeonMaker : MonoBehaviour
             curMiniMap = new GameObject(string.Format("MiniMap/{0},{1}", (_x / 18), (_y / 18)));
 
             curMiniMap.transform.position = new Vector3(_x, 0, _y);
-            curMiniMap.transform.parent = curEmptyRoom.transform;
+            curMiniMap.transform.parent = miniMapGroup.transform;
 
             GameObject mapfloor = Instantiate(mapFloor, new Vector3(_x, 0, _y), Quaternion.identity);       
             mapfloor.transform.parent = curMiniMap.transform;

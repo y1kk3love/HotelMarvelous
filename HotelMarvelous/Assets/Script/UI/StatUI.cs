@@ -24,16 +24,29 @@ public class StatUI : MonoBehaviour
     public Image itemImage;
     public Image dispoitem;
 
+    public GameObject miniMap;
+
+    public Camera miniMapCamera;
+
+    public Texture wideMapTexture;
+    public Texture miniMapTexture;
+
+    private bool isWideMap = false;
+
     void Start()
     {
         GameObject prefab = Resources.Load("Prefab/Characters/Player") as GameObject;
         player = Instantiate(prefab, new Vector3(3, 1, 3), Quaternion.identity).GetComponent<Player>();
         player.gameObject.name = "Player";
         stat = player.GetStatus();
+
+        miniMapCamera = GameObject.Find("MiniMap Camera").GetComponent<Camera>();
     }
 
     private void Update()
     {
+        ChangeMiniMapSize();
+
         UIUpdate();
     }
 
@@ -75,6 +88,44 @@ public class StatUI : MonoBehaviour
         }
         
     }
+
+    #region [MiniMapControl]
+    
+    private void ChangeMiniMapSize()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            RectTransform minimap = miniMap.GetComponent<RectTransform>();
+            RawImage maptexture = miniMap.GetComponent<RawImage>();
+
+            if (isWideMap)
+            {
+                minimap.transform.position = new Vector3(960, 540, 0);
+
+                minimap.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1800);
+                minimap.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1000);
+
+                miniMapCamera.targetTexture = wideMapTexture as RenderTexture;
+                maptexture.texture = wideMapTexture;
+
+                isWideMap = false;
+            }
+            else
+            {
+                minimap.transform.position = new Vector3(1760, 920, 0);
+
+                minimap.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 280);
+                minimap.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 280);
+
+                miniMapCamera.targetTexture = miniMapTexture as RenderTexture;
+                maptexture.texture = miniMapTexture;
+
+                isWideMap = true;
+            }
+        }
+    }
+
+    #endregion
 
     #region ----------------------------[Test]----------------------------
 

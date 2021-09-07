@@ -737,8 +737,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 800.52, y: 384.52}
-  m_SizeDelta: {x: 272.96948, y: 272.96948}
+  m_AnchoredPosition: {x: 800, y: 380}
+  m_SizeDelta: {x: 280, y: 280}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7130566505150508465
 CanvasRenderer:
@@ -761,13 +761,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 2ebd34b52d7b4184e9b09ae5a193d896, type: 2}
+  m_Texture: {fileID: 8400000, guid: bddfc66737d9707438f284d1c631d175, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -2947,6 +2947,10 @@ MonoBehaviour:
   itemcounter: {fileID: 1015557829135402808}
   itemImage: {fileID: 2350047602130189442}
   dispoitem: {fileID: 4546593163596482333}
+  miniMap: {fileID: 1271310263803191928}
+  miniMapCamera: {fileID: 0}
+  wideMapTexture: {fileID: 8400000, guid: 2ebd34b52d7b4184e9b09ae5a193d896, type: 2}
+  miniMapTexture: {fileID: 8400000, guid: bddfc66737d9707438f284d1c631d175, type: 2}
 --- !u!1 &7708375916757483365
 GameObject:
   m_ObjectHideFlags: 0
