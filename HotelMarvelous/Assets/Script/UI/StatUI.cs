@@ -33,6 +33,14 @@ public class StatUI : MonoBehaviour
 
     private bool isWideMap = false;
 
+    private Vector3 cameraStartPos;                                //카메라 이동을 시작했을때 카메라의 위치
+    private Vector2? mouseStartPos = null;                    //카메라 이동을 시작한 위치, 기준점
+    private Vector2 curMousePos;                                //현재 마우스의 위치
+
+    private float cameraWheelSpeed = 20.0f;                      //카메라 줌 스피드
+    private float minCamZoom = 5.0f;                             //카메라 줌 최소사이즈
+    private float maxCamZoom = 450.0f;                           //카메라 줌 최대사이즈
+
     void Start()
     {
         GameObject prefab = Resources.Load("Prefab/Characters/Player") as GameObject;
@@ -46,6 +54,8 @@ public class StatUI : MonoBehaviour
     private void Update()
     {
         ChangeMiniMapSize();
+        CameraDragMove();
+        CameraWheelZoom();
 
         UIUpdate();
     }
@@ -122,6 +132,47 @@ public class StatUI : MonoBehaviour
 
                 isWideMap = true;
             }
+        }
+    }
+    private void CameraWheelZoom()
+    {
+        float scroll = Input.GetAxis("Mouse ScrollWheel") * cameraWheelSpeed * (miniMapCamera.orthographicSize / -15.0f);
+        float camscale = miniMapCamera.orthographicSize;
+
+        if (camscale <= minCamZoom && scroll < 0)
+        {
+            miniMapCamera.orthographicSize = minCamZoom;
+        }
+        else if (camscale >= maxCamZoom && scroll > 0)
+        {
+            miniMapCamera.orthographicSize = maxCamZoom;
+        }
+        else
+        {
+            miniMapCamera.orthographicSize += scroll;
+        }
+    }
+
+    private void CameraDragMove()
+    {
+        curMousePos = Input.mousePosition;
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            mouseStartPos = Input.mousePosition;
+            cameraStartPos = miniMapCamera.transform.position;
+        }
+        
+        if (Input.GetKeyUp(KeyCode.Mouse1))
+        {
+            mouseStartPos = null;
+        }
+
+        if (Input.GetKey(KeyCode.Mouse1) && mouseStartPos != null)
+        {
+            Vector2 dir = (Vector2)mouseStartPos - curMousePos;
+            Vector3 _pos = cameraStartPos + new Vector3(dir.x, 0, dir.y) * (miniMapCamera.orthographicSize / (minCamZoom + maxCamZoom) / 2);
+            miniMapCamera.transform.position = _pos;
         }
     }
 
