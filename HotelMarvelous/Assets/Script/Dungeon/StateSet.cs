@@ -17,16 +17,18 @@ public enum INTERACTION
 
 public enum DIALOGDATA
 {
-    POINTNAME,
     POINTINDEX,
+    POINTNAME,
     TEXTINDEX,
+    TEXTEVENT,
     TEXT
 }
 
 public enum DIALOGZONE
 {
     COUNTER,
-    ELEVATOR
+    ELEVATOR,
+    TEST,
 }
 
 public enum DIRECTION : byte

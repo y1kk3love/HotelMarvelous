@@ -75,7 +75,7 @@ public class Player : MonoBehaviour
         {
             Interactionzone textinfo = other.GetComponent<Interactionzone>();
 
-            curDialogPoint = textinfo.dialogPoint;
+            curDialogPoint = (int)textinfo.dialogPoint;
             curDialogIndex = textinfo.dialogIndex;
             isconvzone = true;
 
@@ -441,7 +441,7 @@ public class Player : MonoBehaviour
 
             if(curDialogIndex == 0)
             {
-                ScenesManager.Instance.DialogProcess(curDialogPoint, curDialogIndex);
+                ScenesManager.Instance.DialogProcess((DIALOGZONE)curDialogPoint, curDialogIndex);
             }
         }
     }

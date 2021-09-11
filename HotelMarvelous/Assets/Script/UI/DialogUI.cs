@@ -42,12 +42,19 @@ public class DialogUI : MonoBehaviour
         profile.sprite = _profile;
     }
 
-    public void DialogFinish()
+    public void DialogFinish(int _eventnum)
     {
-        GameObject.Find("Player").GetComponent<Player>().isconv = false;
+        if(_eventnum == -1)
+        {
+            GameObject.Find("Player").GetComponent<Player>().isconv = false;
 
-        textBar.SetActive(false);
-        ButtonOnAndOff(false);
+            textBar.SetActive(false);
+            ButtonOnAndOff(false);
+        }
+        else
+        {
+
+        }
     }
 
     public void DialogAnimProcess(string _dialog)

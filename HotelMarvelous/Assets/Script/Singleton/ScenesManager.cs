@@ -37,7 +37,7 @@ public class ScenesManager : MonoSingleton<ScenesManager>
         dialogUI.SetProfile(_sprite);
     }
 
-    public void DialogProcess(int _point, int _index)
+    public void DialogProcess(DIALOGZONE _point, int _index)
     {
         if (!isDialog)
         {
@@ -54,7 +54,9 @@ public class ScenesManager : MonoSingleton<ScenesManager>
         }
         else
         {
-            dialogUI.DialogFinish();
+            int eventnum = ResourceManager.instance.GetDialogEvent(_point, _index);
+
+            dialogUI.DialogFinish(eventnum);
 
             isDialog = false;
         }
