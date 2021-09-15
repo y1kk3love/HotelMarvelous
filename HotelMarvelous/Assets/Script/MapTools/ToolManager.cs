@@ -250,39 +250,39 @@ public class ToolManager : MonoBehaviour
                     }
                     else if (editMode == TOOLEDITUI.FURNITUREMODE)
                     {
-                        if (ddFurnType.value == 0)
+                        float x = BPMonPosParse(hit.point.x);
+                        float y = BPMonPosParse(hit.point.y);
+
+                        if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out FurnitureInfo _furinfo))
                         {
-                            ErrorMessage("가구의 타입이 설정되지 않았습니다!!!");
+                            if (ddFurnType.value == 0)
+                            {
+                                ErrorMessage("가구를 선택하지 않았거나 현재 위치에 가구가 존재하지 않습니다.");
+
+                                return;
+                            }
+
+                            string[] _data = furnitureDataList[ddFurnType.value];
+
+                            FurnitureInfo _info = new FurnitureInfo();
+
+                            _info.name = _data[(int)OBJECTDATA.FURNITURENAME];
+                            _info.pos = new Vector2(x, y);
+                            _info.dir = furnitureDir;
+
+                            mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _info);
+
+                            int _rotate = (int)furnitureDir * 90;
+                            GameObject _furniture = Instantiate(obfurniture, new Vector2(x, y), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
+                            _furniture.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
+                            _furniture.name = string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _info.name);
                         }
                         else
                         {
-                            float x = BPMonPosParse(hit.point.x);
-                            float y = BPMonPosParse(hit.point.y);
+                            string _name = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic[new Vector2(x + 0.5f, y + 0.5f)].name;
 
-                            if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out FurnitureInfo _furinfo))
-                            {
-                                string[] _data = furnitureDataList[ddFurnType.value];
-
-                                FurnitureInfo _info = new FurnitureInfo();
-
-                                _info.name = _data[(int)OBJECTDATA.FURNITURENAME];
-                                _info.pos = new Vector2(x, y);
-                                _info.dir = furnitureDir;
-
-                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _info);
-
-                                int _rotate = (int)furnitureDir * 90;
-                                GameObject _furniture = Instantiate(obfurniture, new Vector2(x, y), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
-                                _furniture.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
-                                _furniture.name = string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _info.name);
-                            }
-                            else
-                            {
-                                string _name = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic[new Vector2(x + 0.5f, y + 0.5f)].name;
-
-                                Destroy(GameObject.Find(string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _name)));
-                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Remove(new Vector2(x + 0.5f, y + 0.5f));
-                            }
+                            Destroy(GameObject.Find(string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _name)));
+                            mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Remove(new Vector2(x + 0.5f, y + 0.5f));
                         }
                     }
                 }
@@ -440,45 +440,7 @@ public class ToolManager : MonoBehaviour
             }
             else if (editMode == TOOLEDITUI.FURNITUREMODE)
             {
-                if (ddFurnType.value < furnitureDataList.Count - 1)
-                {
-                    if (obCurFurnPreviewModel != null)
-                    {
-                        Destroy(obCurFurnPreviewModel);
-                    }
-
-                    if (obCurFurnMouseModel != null)
-                    {
-                        Destroy(obCurFurnMouseModel);
-                    }
-
-                    ddFurnType.value++;
-
-                    string _modelname = furnitureDataList[ddFurnType.value][(int)OBJECTDATA.FURNITURENAME];
-                    obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
-                    obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
-                    obCurFurnPreviewModel.name = "FurniturePreview";
-
-                    int _rotate = (int)furnitureDir * 90;
-                    obCurFurnMouseModel = Instantiate(obfurniture, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
-                    obCurFurnMouseModel.name = "FurniturPointer";
-                }
-                else
-                {
-                    if (obCurFurnPreviewModel != null)
-                    {
-                        Destroy(obCurFurnPreviewModel);
-                        obCurFurnPreviewModel = null;
-                    }
-
-                    if(obCurFurnMouseModel != null)
-                    {
-                        Destroy(obCurFurnMouseModel);
-                        obCurFurnMouseModel = null;
-                    }
-
-                    ddFurnType.value = 0;
-                }
+                ddFurnType.value++;
             }
             else
             {
@@ -512,45 +474,11 @@ public class ToolManager : MonoBehaviour
             {
                 if (ddFurnType.value > 0)
                 {
-                    if (obCurFurnPreviewModel != null)
-                    {
-                        Destroy(obCurFurnPreviewModel);
-                    }
-
-                    if (obCurFurnMouseModel != null)
-                    {
-                        Destroy(obCurFurnMouseModel);
-                    }
-
                     ddFurnType.value--;
-
-                    if(ddFurnType.value != 0)
-                    {
-                        string _modelname = furnitureDataList[ddFurnType.value][(int)OBJECTDATA.FURNITURENAME];
-                        obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
-                        obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
-
-                        int _rotate = ((int)furnitureDir + 1) * 90;
-                        obCurFurnMouseModel = Instantiate(obfurniture, new Vector3(0, 0, 0), Quaternion.Euler(-90 + _rotate, 90, -90));
-                    }
                 }
                 else
                 {
-                    if (obCurFurnPreviewModel != null)
-                    {
-                        Destroy(obCurFurnPreviewModel);
-                    }
-
-                    if (obCurFurnMouseModel != null)
-                    {
-                        Destroy(obCurFurnMouseModel);
-                    }
-
                     ddFurnType.value = furnitureDataList.Count - 1;
-
-                    string _modelname = furnitureDataList[ddFurnType.value][1];
-                    GameObject _model = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
-                    obCurFurnPreviewModel = Instantiate(_model, new Vector2(1000, 1000), Quaternion.identity);
                 }
             }
             else
@@ -565,6 +493,31 @@ public class ToolManager : MonoBehaviour
                 }
             }
         }       
+    }
+
+    public void FurniturePreviewChanger()
+    {
+        if (obCurFurnPreviewModel != null)
+        {
+            Destroy(obCurFurnPreviewModel);
+        }
+
+        if (obCurFurnMouseModel != null)
+        {
+            Destroy(obCurFurnMouseModel);
+        }
+
+        if (ddFurnType.value != 0)
+        {
+            string _modelname = furnitureDataList[ddFurnType.value][(int)OBJECTDATA.FURNITURENAME];
+            obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
+            obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
+            obCurFurnPreviewModel.name = "FurniturePreview";
+
+            int _rotate = (int)furnitureDir * 90;
+            obCurFurnMouseModel = Instantiate(obfurniture, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
+            obCurFurnMouseModel.name = "FurniturPointer";
+        }
     }
 
     private void RoomTypeChanger()

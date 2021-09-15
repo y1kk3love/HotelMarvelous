@@ -12,10 +12,11 @@ public class Interactionzone : MonoBehaviour
     {
         Debug.Log(other.name);
 
-        if (other.CompareTag("Player") && zoneType == INTERACTION.DUNGEON)
+        if (other.CompareTag("Player") && zoneType != INTERACTION.NONE)
         {
-            ScenesManager.Instance.MoveToScene("Dungeon");
+            string scenes = zoneType.ToString();
+
+            ScenesManager.Instance.MoveToScene(scenes);
         }
     }
 }
-
