@@ -361,6 +361,12 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void SetNextDialog(int point, int index)
+    {
+        curDialogPoint = point;
+        curDialogIndex = index;
+    }
+
     IEnumerator RebirthProcess()
     {
         isInvincible = true;
@@ -439,7 +445,7 @@ public class Player : MonoBehaviour
         {
             isconv = true;
 
-            if(curDialogIndex == 0)
+            if(curDialogIndex != -1)
             {
                 ScenesManager.Instance.DialogProcess((DIALOGZONE)curDialogPoint, curDialogIndex);
             }

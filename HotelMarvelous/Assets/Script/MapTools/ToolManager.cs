@@ -550,13 +550,16 @@ public class ToolManager : MonoBehaviour
         switch ((int)_type)
         {
             case (int)ROOMTYPE.HALLWAY:
-                _color = Color.red;
+                _color = Color.blue;
                 break;
             case (int)ROOMTYPE.GUEST:
                 _color = Color.yellow;
                 break;
             case (int)ROOMTYPE.NPC:
                 _color = Color.green;
+                break;
+            case (int)ROOMTYPE.BOSS:
+                _color = Color.red;
                 break;
         }
 

@@ -11,9 +11,14 @@ public class ResourceManager : MonoSingleton<ResourceManager>
     private List<string[]> objectDataList = new List<string[]>();
     private List<DialogData> dialogDataList = new List<DialogData>();
 
+    private Dictionary<int, List<DialogEventData>> dialogEventData = new Dictionary<int, List<DialogEventData>>();
+
+    private List<DialogEventData> dialogEventList = new List<DialogEventData>();
+
     public void LoadResources()
     {
         LoadDialogData();
+        LoadDialogEventData();
         LoadItemResources();
     }
 
@@ -62,6 +67,64 @@ public class ResourceManager : MonoSingleton<ResourceManager>
             
             counter++;
         }
+    }
+
+    private void LoadDialogEventData()
+    {
+        StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/DialogEventData.csv");
+
+        int counter = 0;
+        int eventindex = 0;
+
+        while (!streader.EndOfStream)
+        {
+            DialogEventData dialog = new DialogEventData();
+
+            string line = streader.ReadLine();
+
+            string[] data = line.Split(',');
+
+            string[] pointdata = data[(int)DIALOGEVENTDATA.EVENTMOVETO].Split('_');
+            string[] text = data[(int)DIALOGEVENTDATA.EVENTDIALOG].Split('&');
+
+            if (counter != 0)
+            {
+                dialog.nextPoint = int.Parse(pointdata[0]);
+                dialog.nextDialogIndex = int.Parse(pointdata[1]);
+                dialog.nextDialog = text;
+
+                dialog.chice = data[(int)DIALOGEVENTDATA.EVENTCHICE];
+
+                if (data[(int)DIALOGEVENTDATA.EVENTREWARD] != "")
+                {
+                    dialog.reward = int.Parse(data[(int)DIALOGEVENTDATA.EVENTREWARD]);
+                }
+
+                if (data[(int)DIALOGEVENTDATA.EVENTINDEX] != "")
+                {
+                    eventindex = int.Parse(data[(int)DIALOGDATA.POINTINDEX]);
+                }
+
+                if (dialogEventData.TryGetValue(eventindex, out List<DialogEventData> _value))
+                {
+                    dialogEventData[eventindex].Add(dialog);
+                }
+                else
+                {
+                    dialogEventList = new List<DialogEventData>();
+                    dialogEventList.Add(dialog);
+
+                    dialogEventData.Add(eventindex, dialogEventList);
+                }
+            }
+
+            counter++;
+        }
+    }
+
+    public List<DialogEventData> GetDialogEvent(int index)
+    {
+        return dialogEventData[index];
     }
 
     public string[] GetDialog(DIALOGZONE _point, int _index)
@@ -122,4 +185,14 @@ public class DialogData
 {
     public string[] dialogTextArr;
     public int dialogEvent = -1;
+}
+
+public class DialogEventData
+{
+    public int nextPoint = -1;
+    public int nextDialogIndex = -1;
+    public string[] nextDialog;
+
+    public string chice = "";
+    public int reward = 0;
 }

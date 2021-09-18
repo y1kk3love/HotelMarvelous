@@ -7,6 +7,7 @@ public class DialogUI : MonoBehaviour
 {
     public GameObject textBar;
     public GameObject pressimage;
+    public GameObject buttonContent;
     public Image profile;
     public Text text;
 
@@ -53,7 +54,28 @@ public class DialogUI : MonoBehaviour
         }
         else
         {
+            if (!ScenesManager.Instance.isOnChoice)
+            {
+                ScenesManager.Instance.isOnChoice = true;
 
+                List<DialogEventData> eventDataList = ResourceManager.Instance.GetDialogEvent(_eventnum);
+
+                GameObject prefab = Resources.Load("Prefab/UI/OptionButton") as GameObject;
+
+                foreach (DialogEventData data in eventDataList)
+                {
+                    GameObject button = Instantiate(prefab, transform.position, Quaternion.identity);
+                    button.transform.parent = buttonContent.transform;
+
+                    button.transform.Find("Text").GetComponent<Text>().text = data.chice;
+
+                    DialogButton nextdialog = button.GetComponent<DialogButton>();
+                    nextdialog.dialogPoint = data.nextPoint;
+                    nextdialog.dialogIndex = data.nextDialogIndex;
+                }
+
+                Debug.Log("이벤트 가능");
+            }
         }
     }
 

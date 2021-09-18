@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Interactionzone : MonoBehaviour
 {
-    public INTERACTION zoneType;
+    public INTERACTION portalType;
     public DIALOGZONE dialogPoint;
     public int dialogIndex;
 
@@ -12,9 +12,9 @@ public class Interactionzone : MonoBehaviour
     {
         Debug.Log(other.name);
 
-        if (other.CompareTag("Player") && zoneType != INTERACTION.NONE)
+        if (other.CompareTag("Player") && portalType != INTERACTION.NONE)
         {
-            string scenes = zoneType.ToString();
+            string scenes = portalType.ToString();
 
             ScenesManager.Instance.MoveToScene(scenes);
         }

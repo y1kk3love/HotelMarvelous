@@ -4,7 +4,8 @@ public enum ROOMTYPE
     EMPTY,
     HALLWAY,
     GUEST,
-    NPC
+    NPC,
+    BOSS
 }
 
 public enum INTERACTION 
@@ -24,11 +25,22 @@ public enum DIALOGDATA
     TEXT
 }
 
+public enum DIALOGEVENTDATA
+{ 
+    EVENTINDEX,
+    EVENTMOVETO,
+    EVENTREWARD,
+    EVENTCHICE,
+    EVENTDIALOG
+}
+
+
 public enum DIALOGZONE
 {
     COUNTER,
     ELEVATOR,
     TEST,
+    KENNIS,
 }
 
 public enum DIRECTION : byte

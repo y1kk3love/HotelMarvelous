@@ -16,12 +16,13 @@ public class ScenesManager : MonoSingleton<ScenesManager>
     private bool isDialog = false;
     public bool isDialogAnim = false;
     public bool isOption = false;
+    public bool isOnChoice = false;
 
     #region [Dialog]
 
     public void DialogEnter(int _point)
     {
-        GameObject _ui = GameObject.Find("DialogUI");
+        GameObject _ui = GameObject.Find("DialogUI(Clone)");
 
         if (_ui == null)
         {
