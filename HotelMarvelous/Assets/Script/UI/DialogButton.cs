@@ -7,18 +7,28 @@ public class DialogButton : MonoBehaviour
     public int dialogPoint;
     public int dialogIndex;
 
+    public string[] myDialog;
+
     public void OnClickChoiceButton()
     {
         ScenesManager.Instance.isOnChoice = false;
 
-        ScenesManager.Instance.DialogProcess((DIALOGZONE)dialogPoint, dialogIndex);
+        ScenesManager.Instance.SetDialogPointInfo(dialogPoint, dialogIndex);
 
-        Player player = GameObject.Find("Player").GetComponent<Player>();
-        player.SetNextDialog(dialogPoint, dialogIndex);
+        if (myDialog[0] != "")
+        {
+            ScenesManager.Instance.isimtalking = true;
+            ScenesManager.Instance.curMyDialogArr = myDialog;
+            ScenesManager.Instance.MonologueProcess();
+        }
+        else
+        {
+            ScenesManager.Instance.DialogProcess();
+        }
 
         GameObject content = GameObject.Find("DialogContent");
 
-        for(int i = 0; i < content.transform.childCount; i++)
+        for (int i = 0; i < content.transform.childCount; i++)
         {
             Destroy(content.transform.GetChild(i).gameObject);
         }

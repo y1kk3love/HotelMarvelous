@@ -52,7 +52,7 @@ public class DialogUI : MonoBehaviour
             textBar.SetActive(false);
             ButtonOnAndOff(false);
         }
-        else
+        else if(_eventnum > -1)
         {
             if (!ScenesManager.Instance.isOnChoice)
             {
@@ -62,20 +62,25 @@ public class DialogUI : MonoBehaviour
 
                 GameObject prefab = Resources.Load("Prefab/UI/OptionButton") as GameObject;
 
-                foreach (DialogEventData data in eventDataList)
+                foreach (DialogEventData _data in eventDataList)
                 {
-                    GameObject button = Instantiate(prefab, transform.position, Quaternion.identity);
-                    button.transform.parent = buttonContent.transform;
+                    GameObject _button = Instantiate(prefab, transform.position, Quaternion.identity);
+                    _button.transform.parent = buttonContent.transform;
 
-                    button.transform.Find("Text").GetComponent<Text>().text = data.chice;
+                    _button.transform.Find("Text").GetComponent<Text>().text = _data.chice;
 
-                    DialogButton nextdialog = button.GetComponent<DialogButton>();
-                    nextdialog.dialogPoint = data.nextPoint;
-                    nextdialog.dialogIndex = data.nextDialogIndex;
+                    DialogButton _nextdialog = _button.GetComponent<DialogButton>();
+                    _nextdialog.dialogPoint = _data.nextPoint;
+                    _nextdialog.dialogIndex = _data.nextDialogIndex;
+                    _nextdialog.myDialog = _data.nextDialog;
                 }
 
                 Debug.Log("이벤트 가능");
             }
+        }
+        else
+        {
+            ScenesManager.Instance.isimtalking = false;
         }
     }
 
@@ -89,7 +94,7 @@ public class DialogUI : MonoBehaviour
 
             CancelInvoke();
 
-            ScenesManager.Instance.curDialogIndex++;
+            ScenesManager.Instance.curDialogCount++;
             ScenesManager.Instance.isDialogAnim = false;
         }
         else
@@ -115,7 +120,7 @@ public class DialogUI : MonoBehaviour
     {
         if(text.text == targetDialog)
         {
-            ScenesManager.Instance.curDialogIndex++;
+            ScenesManager.Instance.curDialogCount++;
             ScenesManager.Instance.isDialogAnim = false;
             return;
         }

@@ -10,9 +10,6 @@ public class Player : MonoBehaviour
 
     private GameObject curItemSkill = null;
 
-    private int curDialogPoint = -1;
-    private int curDialogIndex = -1;
-
     private bool isInvincible = false;
 
     #region [Movement]
@@ -75,11 +72,14 @@ public class Player : MonoBehaviour
         {
             Interactionzone textinfo = other.GetComponent<Interactionzone>();
 
-            curDialogPoint = (int)textinfo.dialogPoint;
-            curDialogIndex = textinfo.dialogIndex;
+            int point = (int)textinfo.dialogPoint;
+            int index = textinfo.dialogIndex;
+
+            ScenesManager.Instance.SetDialogPointInfo(point, index);
+
             isconvzone = true;
 
-            ScenesManager.Instance.DialogEnter(curDialogPoint);
+            ScenesManager.Instance.DialogEnter(point);
 
             Debug.Log("대화 장소에 입장");
         }
@@ -105,8 +105,7 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("Dialoguezone"))
         {
-            curDialogPoint = -1;
-            curDialogIndex = -1;
+            ScenesManager.Instance.SetDialogPointInfo(-1, -1);
             isconvzone = false;
             ScenesManager.Instance.EntranceDecision(false);
 
@@ -361,12 +360,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetNextDialog(int point, int index)
-    {
-        curDialogPoint = point;
-        curDialogIndex = index;
-    }
-
     IEnumerator RebirthProcess()
     {
         isInvincible = true;
@@ -445,10 +438,15 @@ public class Player : MonoBehaviour
         {
             isconv = true;
 
-            if(curDialogIndex != -1)
+            if (!ScenesManager.Instance.isOnChoice && !ScenesManager.Instance.isimtalking)
             {
-                ScenesManager.Instance.DialogProcess((DIALOGZONE)curDialogPoint, curDialogIndex);
+                ScenesManager.Instance.DialogProcess();
             }
+            else if(ScenesManager.Instance.isimtalking)
+            {
+                ScenesManager.Instance.MonologueProcess();
+            }
+            
         }
     }
 

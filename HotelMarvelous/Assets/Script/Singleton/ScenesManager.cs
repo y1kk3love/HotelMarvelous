@@ -9,16 +9,27 @@ public class ScenesManager : MonoSingleton<ScenesManager>
     public DialogUI dialogUI;
     public OptionInfo optionInfo = new OptionInfo();
 
-    public byte curDialogIndex = 0;
+    public byte curDialogCount = 0;
 
-    string[] curDialogarr;
+    private int curDialogPoint = -1;
+    private int curDialogIndex = -1;
+
+    private string[] curDialogArr;
+    public string[] curMyDialogArr;
 
     private bool isDialog = false;
     public bool isDialogAnim = false;
     public bool isOption = false;
     public bool isOnChoice = false;
+    public bool isimtalking = false;
 
     #region [Dialog]
+
+    public void SetDialogPointInfo(int _point, int _index)
+    {
+        curDialogPoint = _point;
+        curDialogIndex = _index;
+    }
 
     public void DialogEnter(int _point)
     {
@@ -32,34 +43,75 @@ public class ScenesManager : MonoSingleton<ScenesManager>
             dialogUI = _ui.GetComponent<DialogUI>();
         }
 
-        Debug.Log("Image/DialogProfile/" + _point);
+        DialogProfileChanger(curDialogPoint);
+    }
 
-        Sprite _sprite = Resources.Load<Sprite>("Image/DialogProfile/Profile_" + _point);
+    public void DialogProfileChanger(int _point)
+    {
+        int npcindex = _point;
+
+        if (isimtalking)
+        {
+            npcindex = -1;
+        }
+
+        Debug.Log("Image/DialogProfile/" + npcindex);
+
+        Sprite _sprite = Resources.Load<Sprite>("Image/DialogProfile/Profile_" + npcindex);
         dialogUI.SetProfile(_sprite);
     }
 
-    public void DialogProcess(DIALOGZONE _point, int _index)
+    public void DialogProcess()
     {
+        if (curDialogPoint != -1)
+        {
+            if (!isDialog)
+            {
+                curDialogArr = ResourceManager.instance.GetDialog(curDialogPoint, curDialogIndex);
+
+                isDialog = true;
+
+                curDialogCount = 0;
+            }
+
+            if (curDialogCount + 1 <= curDialogArr.Length)
+            {
+                dialogUI.DialogAnimProcess(curDialogArr[curDialogCount]);
+            }
+            else
+            {
+                int eventnum = ResourceManager.instance.GetDialogEvent(curDialogPoint, curDialogIndex);
+
+                dialogUI.DialogFinish(eventnum);
+
+                isDialog = false;
+            }
+        }
+    }
+
+    public void MonologueProcess()
+    {
+        DialogProfileChanger(-1);
+
         if (!isDialog)
         {
-            curDialogarr = ResourceManager.instance.GetDialog(_point, _index);
-
             isDialog = true;
-            
-            curDialogIndex = 0; 
+
+            curDialogCount = 0;
         }
 
-        if(curDialogIndex + 1 <= curDialogarr.Length)
+        if (curDialogCount + 1 <= curMyDialogArr.Length)
         {
-            dialogUI.DialogAnimProcess(curDialogarr[curDialogIndex]);
+            dialogUI.DialogAnimProcess(curMyDialogArr[curDialogCount]);
         }
         else
         {
-            int eventnum = ResourceManager.instance.GetDialogEvent(_point, _index);
-
-            dialogUI.DialogFinish(eventnum);
+            dialogUI.DialogFinish(-2);
 
             isDialog = false;
+
+            DialogProfileChanger(curDialogPoint);
+            DialogProcess();
         }
     }
 

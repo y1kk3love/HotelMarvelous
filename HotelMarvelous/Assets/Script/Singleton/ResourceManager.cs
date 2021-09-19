@@ -6,7 +6,7 @@ using Singleton;
 
 public class ResourceManager : MonoSingleton<ResourceManager>
 {
-    private Dictionary<DIALOGZONE, List<DialogData>> dialogData = new Dictionary<DIALOGZONE, List<DialogData>>();
+    private Dictionary<int, List<DialogData>> dialogData = new Dictionary<int, List<DialogData>>();
 
     private List<string[]> objectDataList = new List<string[]>();
     private List<DialogData> dialogDataList = new List<DialogData>();
@@ -27,7 +27,7 @@ public class ResourceManager : MonoSingleton<ResourceManager>
         StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/DialogData.csv");
 
         int counter = 0;
-        DIALOGZONE pointindex = 0;
+        int pointindex = 0;
 
         while (!streader.EndOfStream)
         {
@@ -44,7 +44,7 @@ public class ResourceManager : MonoSingleton<ResourceManager>
             {
                 if(data[(int)DIALOGDATA.POINTINDEX] != "")
                 {
-                    pointindex = (DIALOGZONE)int.Parse(data[(int)DIALOGDATA.POINTINDEX]);
+                    pointindex = int.Parse(data[(int)DIALOGDATA.POINTINDEX]);
                 }
 
                 if(data[(int)DIALOGDATA.TEXTEVENT] != "")
@@ -127,12 +127,12 @@ public class ResourceManager : MonoSingleton<ResourceManager>
         return dialogEventData[index];
     }
 
-    public string[] GetDialog(DIALOGZONE _point, int _index)
+    public string[] GetDialog(int _point, int _index)
     {
         return dialogData[_point][_index].dialogTextArr;
     }
 
-    public int GetDialogEvent(DIALOGZONE _point, int _index)
+    public int GetDialogEvent(int _point, int _index)
     {
         return dialogData[_point][_index].dialogEvent;
     }
