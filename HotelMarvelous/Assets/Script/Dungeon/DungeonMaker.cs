@@ -142,7 +142,10 @@ public class DungeonMaker : MonoBehaviour
                     _monster.name = string.Format("({0}, {1}){2}", _pos.x, _pos.y, _dicionary.Value);
                     _monster.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
 
-                    monMaxArr[info.roomIndex]++;
+                    if((int)_dicionary.Value == 1)
+                    {
+                        monMaxArr[info.roomIndex]++;
+                    }
                 }
 
                 foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
@@ -248,7 +251,7 @@ public class DungeonMaker : MonoBehaviour
 
             floor.GetComponent<NavMeshSurface>().BuildNavMesh();
 
-            if (_GetInfo.roomIndex != 1)
+            if (_GetInfo.roomIndex != 1)        //임시
             {
                 emptytile.SetActive(false);
                 curIndex = 1;

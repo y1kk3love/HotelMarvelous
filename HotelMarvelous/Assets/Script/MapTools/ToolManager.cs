@@ -107,6 +107,7 @@ public class ToolManager : MonoBehaviour
         CameraWheelZoom();
 
         //타일 선택과 인덱스 단축키
+        ShortcutKeysGrideMode();
         FloorPick();
         ObjectPick();
         IndexUpper();
@@ -221,7 +222,7 @@ public class ToolManager : MonoBehaviour
             {
                 if (mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)] != null)
                 {
-                    if (editMode == TOOLEDITUI.MONSTERMODE)
+                    if (editMode == TOOLEDITUI.MONSTERMODE)             //몬스터 배치
                     {
                         if (ddMonType.value == 0)
                         {
@@ -232,58 +233,64 @@ public class ToolManager : MonoBehaviour
                             float x = BPMonPosParse(hit.point.x);
                             float y = BPMonPosParse(hit.point.y);
 
-                            MONSTERTYPE _monType = (MONSTERTYPE)ddMonType.value;
+                            if(curTileX == EditPosParse(hit.point.x) && curTileY == EditPosParse(hit.point.y))
+                            {
+                                MONSTERTYPE _monType = (MONSTERTYPE)ddMonType.value;
 
-                            if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out MONSTERTYPE _dmtype))
-                            {
-                                obcurMonCircle = Instantiate(obMonPosCircle, new Vector2(x, y), Quaternion.identity);
-                                obcurMonCircle.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
-                                obcurMonCircle.name = string.Format("{0} // {1} MonPos", x + 0.5f, y + 0.5f);
-                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _monType);
-                            }
-                            else
-                            {
-                                Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", x + 0.5f, y + 0.5f)));
-                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Remove(new Vector2(x + 0.5f, y + 0.5f));
+                                if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out MONSTERTYPE _dmtype))
+                                {
+                                    obcurMonCircle = Instantiate(obMonPosCircle, new Vector2(x, y), Quaternion.identity);
+                                    obcurMonCircle.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
+                                    obcurMonCircle.name = string.Format("{0} // {1} MonPos", x + 0.5f, y + 0.5f);
+                                    mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _monType);
+                                }
+                                else
+                                {
+                                    Destroy(GameObject.Find(string.Format("{0} // {1} MonPos", x + 0.5f, y + 0.5f)));
+                                    mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Remove(new Vector2(x + 0.5f, y + 0.5f));
+                                }
                             }
                         }
                     }
-                    else if (editMode == TOOLEDITUI.FURNITUREMODE)
+                    else if (editMode == TOOLEDITUI.FURNITUREMODE)          //가구 배치
                     {
                         float x = BPMonPosParse(hit.point.x);
                         float y = BPMonPosParse(hit.point.y);
 
-                        if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out FurnitureInfo _furinfo))
+                        if (curTileX == EditPosParse(hit.point.x) && curTileY == EditPosParse(hit.point.y))
                         {
-                            if (ddFurnType.value == 0)
+                            if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out FurnitureInfo _furinfo))
                             {
-                                ErrorMessage("가구를 선택하지 않았거나 현재 위치에 가구가 존재하지 않습니다.");
+                                if (ddFurnType.value == 0)
+                                {
+                                    ErrorMessage("가구를 선택하지 않았거나 현재 위치에 가구가 존재하지 않습니다.");
 
-                                return;
+                                    return;
+                                }
+
+                                string[] _data = furnitureDataList[ddFurnType.value];
+
+                                FurnitureInfo _info = new FurnitureInfo();
+
+                                _info.name = _data[(int)OBJECTDATA.FURNITURENAME];
+                                _info.pos = new Vector2(x, y);
+                                _info.dir = furnitureDir;
+
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _info);
+
+                                int _rotate = (int)furnitureDir * 90;
+                                GameObject _furniture = Instantiate(obfurniture, new Vector2(x, y), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
+                                _furniture.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
+                                _furniture.name = string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _info.name);
                             }
+                            else
+                            {
+                                string _name = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic[new Vector2(x + 0.5f, y + 0.5f)].name;
 
-                            string[] _data = furnitureDataList[ddFurnType.value];
-
-                            FurnitureInfo _info = new FurnitureInfo();
-
-                            _info.name = _data[(int)OBJECTDATA.FURNITURENAME];
-                            _info.pos = new Vector2(x, y);
-                            _info.dir = furnitureDir;
-
-                            mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _info);
-
-                            int _rotate = (int)furnitureDir * 90;
-                            GameObject _furniture = Instantiate(obfurniture, new Vector2(x, y), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
-                            _furniture.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
-                            _furniture.name = string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _info.name);
-                        }
-                        else
-                        {
-                            string _name = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic[new Vector2(x + 0.5f, y + 0.5f)].name;
-
-                            Destroy(GameObject.Find(string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _name)));
-                            mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Remove(new Vector2(x + 0.5f, y + 0.5f));
-                        }
+                                Destroy(GameObject.Find(string.Format("{0} // {1} {2}", x + 0.5f, y + 0.5f, _name)));
+                                mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].FurnitureInfoDic.Remove(new Vector2(x + 0.5f, y + 0.5f));
+                            }
+                        }   
                     }
                 }
             }
@@ -303,11 +310,11 @@ public class ToolManager : MonoBehaviour
                 return;
             }
 
-            curTileX = EditPosParse(hit.point.x);
-            curTileY = EditPosParse(hit.point.y);
-
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
+                curTileX = EditPosParse(hit.point.x);
+                curTileY = EditPosParse(hit.point.y);
+
                 ROOMTYPE _type = ROOMTYPE.EMPTY;
 
                 string _index;
@@ -539,6 +546,10 @@ public class ToolManager : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.Keypad3))
             {
                 TypeChange(ROOMTYPE.NPC);
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad4))
+            {
+                TypeChange(ROOMTYPE.BOSS);
             }
         }
     }
@@ -778,10 +789,12 @@ public class ToolManager : MonoBehaviour
 
     private void ControlTileWall(TileInfo _tileinfo)
     {
-        if(_tileinfo != null)
+        if(_tileinfo != null && selectTilesList.Count == 1)
         {
             if (Input.GetKeyDown(KeyCode.W))
             {
+                TileInfo neartile = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY) + 1];
+
                 byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.TOP];
 
                 if (_dir > 1)
@@ -793,12 +806,19 @@ public class ToolManager : MonoBehaviour
                     _dir++;
                 }
 
-                _tileinfo.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)_dir;
-                //dbTopWall.value = (byte)_tileinfo.doorArr[(byte)DIRECTION.TOP];               
+                _tileinfo.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)_dir;           
                 BuildWall(_tileinfo);
+
+                if (neartile != null)
+                {
+                    neartile.doorArr[(byte)DIRECTION.BOTTOM] = (WALLSTATE)_dir;
+                    BuildWall(neartile);
+                }
             }
             else if (Input.GetKeyDown(KeyCode.D))
             {
+                TileInfo neartile = mapBoardArr[BoardPosParse(curTileX) + 1, BoardPosParse(curTileY)];
+
                 byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.RIGHT];
 
                 if (_dir > 1)
@@ -811,11 +831,18 @@ public class ToolManager : MonoBehaviour
                 }
 
                 _tileinfo.doorArr[(byte)DIRECTION.RIGHT] = (WALLSTATE)_dir;
-                //dbRightWall.value = (byte)_tileinfo.doorArr[(byte)DIRECTION.RIGHT];
                 BuildWall(_tileinfo);
+
+                if (neartile != null)
+                {
+                    neartile.doorArr[(byte)DIRECTION.LEFT] = (WALLSTATE)_dir;
+                    BuildWall(neartile);
+                }
             }
             else if (Input.GetKeyDown(KeyCode.S))
             {
+                TileInfo neartile = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY) - 1];
+
                 byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.BOTTOM];
 
                 if (_dir > 1)
@@ -828,11 +855,18 @@ public class ToolManager : MonoBehaviour
                 }
 
                 _tileinfo.doorArr[(byte)DIRECTION.BOTTOM] = (WALLSTATE)_dir;
-                //dbBottomWall.value = (byte)_tileinfo.doorArr[(byte)DIRECTION.BOTTOM];
                 BuildWall(_tileinfo);
+
+                if (neartile != null)
+                {
+                    neartile.doorArr[(byte)DIRECTION.TOP] = (WALLSTATE)_dir;
+                    BuildWall(neartile);
+                }
             }
             else if (Input.GetKeyDown(KeyCode.A))
             {
+                TileInfo neartile = mapBoardArr[BoardPosParse(curTileX) - 1, BoardPosParse(curTileY)];
+
                 byte _dir = (byte)_tileinfo.doorArr[(byte)DIRECTION.LEFT];
 
                 if (_dir > 1)
@@ -845,8 +879,13 @@ public class ToolManager : MonoBehaviour
                 }
 
                 _tileinfo.doorArr[(byte)DIRECTION.LEFT] = (WALLSTATE)_dir;
-                //dbLeftWall.value = (byte)_tileinfo.doorArr[(byte)DIRECTION.LEFT];
                 BuildWall(_tileinfo);
+
+                if (neartile != null)
+                {
+                    neartile.doorArr[(byte)DIRECTION.RIGHT] = (WALLSTATE)_dir;
+                    BuildWall(neartile);
+                }
             }
         }
     }
@@ -1036,6 +1075,7 @@ public class ToolManager : MonoBehaviour
             curTile.doorArr[(byte)DIRECTION.LEFT] = (WALLSTATE)ddLeftWall.value;
 
             BuildWall(curTile);
+
             isWallChanging = false;
         }
     }
@@ -1045,26 +1085,70 @@ public class ToolManager : MonoBehaviour
         isWallChanging = true;
     }
 
+    private void ShortcutKeysGrideMode()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            editMode = TOOLEDITUI.TILEMODE;
+
+            GrideModeChanger();
+        }
+        else if (Input.GetKeyDown(KeyCode.F2))
+        {
+            editMode = TOOLEDITUI.MONSTERMODE;
+
+            GrideModeChanger();
+        }
+        else if (Input.GetKeyDown(KeyCode.F3))
+        {
+            editMode = TOOLEDITUI.FURNITUREMODE;
+
+            GrideModeChanger();
+        }
+    }
 
     public void OnClickButtonGridMode()
+    {
+        if(editMode < (TOOLEDITUI)System.Enum.GetValues(typeof(TOOLEDITUI)).Length - 1)
+        {
+            editMode++;
+        }
+        else
+        {
+            editMode = 0;
+        }
+
+        GrideModeChanger();
+    }
+
+    private void GrideModeChanger()
     {
         Text _buttontext = GameObject.Find("TextGridMode").GetComponent<Text>();
 
         if (editMode == TOOLEDITUI.TILEMODE)
         {
-            editMode = TOOLEDITUI.MONSTERMODE;
-            _buttontext.text = "몬스터 설치중";
-            textMakeTile.text = "배치하기 (Q)";
-            textDelTile.text = "삭제하기 (E)";
+            editMode = TOOLEDITUI.TILEMODE;
+            _buttontext.text = "방 생성중 (F1)";
+            textMakeTile.text = "타일 생성 (Q)";
+            textDelTile.text = "타일 삭제 (E)";
 
-            obMonsterPanel.SetActive(true);
-            obWallPanel.SetActive(false);
+            obWallPanel.SetActive(true);
+            obMonsterPanel.SetActive(false);
+            obFurniturePanel.SetActive(false);
+
+            Destroy(obRoomGridParent);
+            obRoomGridParent = new GameObject("Grids");
+        }
+        else
+        {
+            Destroy(obRoomGridParent);
+            obRoomGridParent = new GameObject("Grids");
 
             for (int _x = -25; _x < 25; _x++)
             {
                 for (int _y = -25; _y < 25; _y++)
                 {
-                    if(mapBoardArr[BoardPosParse(_x * 18), BoardPosParse(_y * 18)] != null)
+                    if (mapBoardArr[BoardPosParse(_x * 18), BoardPosParse(_y * 18)] != null)
                     {
                         GameObject _grid = Instantiate(obRoomPick, new Vector2(_x * 18, _y * 18), Quaternion.identity);
                         _grid.transform.parent = obRoomGridParent.transform;
@@ -1072,28 +1156,28 @@ public class ToolManager : MonoBehaviour
                 }
             }
         }
-        else if (editMode == TOOLEDITUI.MONSTERMODE)
+        
+        if (editMode == TOOLEDITUI.MONSTERMODE)
+        {
+            editMode = TOOLEDITUI.MONSTERMODE;
+            _buttontext.text = "몬스터 설치중 (F2)";
+            textMakeTile.text = "배치하기 (Q)";
+            textDelTile.text = "삭제하기 (E)";
+
+            obWallPanel.SetActive(false);
+            obMonsterPanel.SetActive(true);
+            obFurniturePanel.SetActive(false);
+        }
+        else if (editMode == TOOLEDITUI.FURNITUREMODE)
         {
             editMode = TOOLEDITUI.FURNITUREMODE;
-            _buttontext.text = "가구 설치중";
+            _buttontext.text = "가구 설치중 (F3)";
             textMakeTile.text = "좌로 회전 (Q)";
             textDelTile.text = "우로 회전 (E)";
 
+            obWallPanel.SetActive(false);
             obMonsterPanel.SetActive(false);
             obFurniturePanel.SetActive(true);
-        }
-        else
-        {
-            editMode = TOOLEDITUI.TILEMODE;
-            _buttontext.text = "방 생성중";
-            textMakeTile.text = "타일 생성 (Q)";
-            textDelTile.text = "타일 삭제 (E)";
-
-            obFurniturePanel.SetActive(false);
-            obWallPanel.SetActive(true);
-
-            Destroy(obRoomGridParent);
-            obRoomGridParent = new GameObject("Grids");
         }
     }
     #endregion
@@ -1263,6 +1347,8 @@ public class ToolManager : MonoBehaviour
                 selectTilesList.Add(pos);
 
                 CreateMap();
+
+                TypeChange(_info.roomType);
 
                 foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
                 {

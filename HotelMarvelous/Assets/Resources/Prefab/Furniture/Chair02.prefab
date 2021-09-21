@@ -527,6 +527,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74645c760086c3f41bfd4e76fb89d4fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zoneType: 1
+  portalType: 1
   dialogPoint: 0
   dialogIndex: 0
