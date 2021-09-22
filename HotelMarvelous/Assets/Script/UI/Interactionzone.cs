@@ -16,7 +16,6 @@ public class Interactionzone : MonoBehaviour
         {
             string scenes = portalType.ToString();
 
-            ScenesManager.Instance.MoveToScene(scenes);
         }
     }
 }

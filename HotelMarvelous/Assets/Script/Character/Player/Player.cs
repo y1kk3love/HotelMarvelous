@@ -72,16 +72,19 @@ public class Player : MonoBehaviour
         {
             Interactionzone textinfo = other.GetComponent<Interactionzone>();
 
-            int point = (int)textinfo.dialogPoint;
-            int index = textinfo.dialogIndex;
+            if(textinfo.portalType == INTERACTION.NONE)
+            {
+                int point = (int)textinfo.dialogPoint;
+                int index = textinfo.dialogIndex;
 
-            ScenesManager.Instance.SetDialogPointInfo(point, index);
+                ScenesManager.Instance.SetDialogPointInfo(point, index);
 
-            isconvzone = true;
+                isconvzone = true;
 
-            ScenesManager.Instance.DialogEnter(point);
+                ScenesManager.Instance.DialogEnter(point);
 
-            Debug.Log("대화 장소에 입장");
+                Debug.Log("대화 장소에 입장");
+            }
         }
 
         if (other.CompareTag("RewardItem"))

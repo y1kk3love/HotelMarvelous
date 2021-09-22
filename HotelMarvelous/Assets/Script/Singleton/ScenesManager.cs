@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using Singleton;
 
 public class ScenesManager : MonoSingleton<ScenesManager>
@@ -126,7 +124,7 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
     public void MoveToScene(string _scenename)
     {
-        SceneManager.LoadScene(_scenename);
+        LoadingSceneController.LoadScene(_scenename);
     }
 
     #endregion

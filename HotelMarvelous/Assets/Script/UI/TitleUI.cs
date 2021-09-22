@@ -22,6 +22,7 @@ public class TitleUI : MonoBehaviour
 
     private bool isVideoPlaying = false;
     private bool isSkip = false;
+    private bool isCircleFade = false;
 
     void Awake()
     {
@@ -30,6 +31,14 @@ public class TitleUI : MonoBehaviour
         ResetProcess();
         
         StartCoroutine(IntroProcess(imTitle));
+    }
+
+    void FixedUpdate()
+    {
+        if (isCircleFade)
+        {
+            CircleOut();
+        }
     }
 
     //인트로 순서 관리
@@ -89,7 +98,7 @@ public class TitleUI : MonoBehaviour
 
     public void CheckIn()
     {
-        StartCoroutine(CircleOut(0.1f));
+        isCircleFade = true;
     }
 
     #endregion
@@ -119,16 +128,16 @@ public class TitleUI : MonoBehaviour
     #region ------------------------------[UIEffect]------------------------------
 
     //원형 페이드 아웃
-    IEnumerator CircleOut(float _speed)
+    private void CircleOut()
     {
-        while (circleFadeout.transform.localScale.x < 35f)
+        if (circleFadeout.transform.localScale.x < 35f)
         {
-            circleFadeout.transform.localScale += new Vector3(_speed, _speed, 0);
-
-            yield return null;
+            circleFadeout.transform.localScale += new Vector3(1, 1, 0);
         }
-
-        ScenesManager.Instance.MoveToScene("Menu");
+        else
+        {
+            ScenesManager.Instance.MoveToScene("Menu");
+        }
     }
 
     //비디오 스킵

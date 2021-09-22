@@ -6,25 +6,35 @@ public class MenuUI : MonoBehaviour
 {
     private GameObject circleFadeout;
 
+    private bool isCircleFade = false;
+
     void Start()
     {
         circleFadeout = GameObject.Find("CircleOut");
     }
 
-    public void OnClickNewGame()
+    void FixedUpdate()
     {
-        StartCoroutine(CircleOut(0.2f));
+        if (isCircleFade)
+        {
+            CircleOut();
+        }
     }
 
-    IEnumerator CircleOut(float _speed)
+    public void OnClickNewGame()
     {
-        while (circleFadeout.transform.localScale.x < 35f)
+        isCircleFade = true;
+    }
+
+    private void CircleOut()
+    {
+        if (circleFadeout.transform.localScale.x < 35f)
         {
-            circleFadeout.transform.localScale += new Vector3(_speed, _speed, 0);
-
-            yield return null;
+            circleFadeout.transform.localScale += new Vector3(1, 1, 0);
         }
-
-        ScenesManager.Instance.MoveToScene("Lobby");
+        else
+        {
+            ScenesManager.Instance.MoveToScene("Lobby");
+        }
     }
 }

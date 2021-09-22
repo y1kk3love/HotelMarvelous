@@ -10,6 +10,7 @@ public class DungeonMaker : MonoBehaviour
     private TileData[,] mapDataArr = new TileData[51, 51];
     private TileInfo[,] mapBoardArr = new TileInfo[51, 51];
     private byte[] monMaxArr = new byte[50];
+    private bool[] isRoomLoadArr = new bool[50];
 
     private GameObject curEmptyRoom;
     private GameObject curMiniMap;
@@ -27,7 +28,7 @@ public class DungeonMaker : MonoBehaviour
 
     private byte StageThemeIndex = 1;
 
-    private int curIndex = -1;
+    private int curIndex = 1;
 
     void Start()
     {
@@ -129,38 +130,41 @@ public class DungeonMaker : MonoBehaviour
 
                 TileInfo info = mapBoardArr[BoardPosParse(x), BoardPosParse(y)];
 
-                CreateMap();
-                
-                foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
+                if(info.roomIndex == curIndex)
                 {
-                    Vector2 _pos = _dicionary.Key;
-                    
-                    GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/Monster" + (int)_dicionary.Value) as GameObject;
+                    CreateMap();
 
-                    GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x,1 , _pos.y), Quaternion.identity);
-                    
-                    _monster.name = string.Format("({0}, {1}){2}", _pos.x, _pos.y, _dicionary.Value);
-                    _monster.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
-
-                    if((int)_dicionary.Value == 1)
+                    foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
                     {
-                        monMaxArr[info.roomIndex]++;
+                        Vector2 _pos = _dicionary.Key;
+
+                        GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/Monster" + (int)_dicionary.Value) as GameObject;
+
+                        GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x, 1, _pos.y), Quaternion.identity);
+
+                        _monster.name = string.Format("({0}, {1}){2}", _pos.x, _pos.y, _dicionary.Value);
+                        _monster.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
+
+                        if ((int)_dicionary.Value == 1)
+                        {
+                            monMaxArr[info.roomIndex]++;
+                        }
                     }
-                }
 
-                foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
-                {
-                    Vector2 _pos = _dicionary.Key;
+                    foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
+                    {
+                        Vector2 _pos = _dicionary.Key;
 
-                    string _name = _dicionary.Value.name;
+                        string _name = _dicionary.Value.name;
 
-                    int _rotate = (int)_dicionary.Value.dir * 90;
+                        int _rotate = (int)_dicionary.Value.dir * 90;
 
-                    GameObject obfurniture = Resources.Load("Prefab/Furniture/" + _name) as GameObject;
+                        GameObject obfurniture = Resources.Load("Prefab/Furniture/" + _name) as GameObject;
 
-                    GameObject _furniture = Instantiate(obfurniture, new Vector3(_pos.x - 0.5f, 1, _pos.y - 0.5f), Quaternion.Euler(new Vector3(0, _rotate, 0)));
-                    _furniture.name = string.Format("{0} // {1} {2}", _pos.x, _pos.y, _name);
-                    _furniture.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
+                        GameObject _furniture = Instantiate(obfurniture, new Vector3(_pos.x - 0.5f, 1, _pos.y - 0.5f), Quaternion.Euler(new Vector3(0, _rotate, 0)));
+                        _furniture.name = string.Format("{0} // {1} {2}", _pos.x, _pos.y, _name);
+                        _furniture.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
+                    }
                 }
             }
         }
@@ -191,11 +195,18 @@ public class DungeonMaker : MonoBehaviour
 
             curIndex = mapBoardArr[BoardPosParse((int)_nextPos.x), BoardPosParse((int)_nextPos.y)].roomIndex;
 
-            GameObject nextroom = GameObject.Find(string.Format("Room {0}", curIndex));
-
-            for (int i = 0; i < nextroom.transform.childCount; i++)
+            if (!isRoomLoadArr[curIndex])
             {
-                nextroom.transform.GetChild(i).gameObject.SetActive(true);
+                LoadMap();
+            }
+            else
+            {
+                GameObject nextroom = GameObject.Find(string.Format("Room {0}", curIndex));
+
+                for (int i = 0; i < nextroom.transform.childCount; i++)
+                {
+                    nextroom.transform.GetChild(i).gameObject.SetActive(true);
+                }
             }
         }
         else
@@ -210,6 +221,8 @@ public class DungeonMaker : MonoBehaviour
         int _y = (int)curTilePos.Value.y;
 
         TileInfo _GetInfo = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
+
+        isRoomLoadArr[curIndex] = true;
 
         if (_GetInfo != null)
         {
@@ -251,11 +264,13 @@ public class DungeonMaker : MonoBehaviour
 
             floor.GetComponent<NavMeshSurface>().BuildNavMesh();
 
+            /*
             if (_GetInfo.roomIndex != 1)        //임시
             {
                 emptytile.SetActive(false);
                 curIndex = 1;
             }
+            */
         }
     }
 
