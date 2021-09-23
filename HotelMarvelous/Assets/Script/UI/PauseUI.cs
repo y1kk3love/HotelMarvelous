@@ -128,7 +128,7 @@ public class PauseUI : MonoBehaviour
         Time.timeScale = 1;
 
         ScenesManager.Instance.isOption = false;
-        ScenesManager.Instance.MoveToScene("Dungeon");
+        ScenesManager.Instance.MoveToScene(INTERACTION.DUNGEON);
     }
     public void OnclickbuttonSaveAndQuit()
     {
@@ -146,7 +146,7 @@ public class PauseUI : MonoBehaviour
         Time.timeScale = 1;
 
         ScenesManager.Instance.isOption = false;
-        ScenesManager.Instance.MoveToScene("Menu");
+        ScenesManager.Instance.MoveToScene(INTERACTION.MENU);
     }
     public void OnclickbuttonQuit()
     {

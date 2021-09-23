@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Singleton;
+using UnityEngine.SceneManagement;
 
 public class ScenesManager : MonoSingleton<ScenesManager>
 {
@@ -122,9 +123,19 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
     #region [SceneMove]
 
-    public void MoveToScene(string _scenename)
+    public void MoveToScene(INTERACTION _scenename)
     {
-        LoadingSceneController.LoadScene(_scenename);
+        string scene = _scenename.ToString();
+
+        if (_scenename == INTERACTION.DUNGEON || _scenename == INTERACTION.LOBBY)
+        {
+            LoadingSceneController.LoadScene(scene);
+        }
+        else
+        {
+            SceneManager.LoadScene(scene);
+        }
+        
     }
 
     #endregion

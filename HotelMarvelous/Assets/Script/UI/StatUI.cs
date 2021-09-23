@@ -43,11 +43,6 @@ public class StatUI : MonoBehaviour
 
     void Start()
     {
-        GameObject prefab = Resources.Load("Prefab/Characters/Player") as GameObject;
-        player = Instantiate(prefab, new Vector3(3, 1, 3), Quaternion.identity).GetComponent<Player>();
-        player.gameObject.name = "Player";
-        stat = player.GetStatus();
-
         miniMapCamera = GameObject.Find("MiniMap Camera").GetComponent<Camera>();
     }
 
@@ -63,40 +58,45 @@ public class StatUI : MonoBehaviour
     private void UIUpdate()
     {
         //Debug.Log("스텟 변함");
-
-        stat = player.GetStatus();
-
-        hpBar.maxValue = stat.maxHp;
-        hpBar.value = stat.hp;
-        hpText.text = string.Format("{0} / {1}", stat.hp, stat.maxHp);
-
-        staminaBar.value = stat.stamina;
-
-        mentalityBar.maxValue = stat.maxMentality;
-        mentalityBar.value = stat.mentality;
-        mentalityText.text = stat.mentality.ToString("0.0");
-
-        extraLife.text = "X " + stat.extraLife;
-        coin.text = "Coin : " + stat.coin;
-        key.text = "Key : " + stat.roomKeys;
-        bean.text = "Bean : " + stat.beans;
-
-        itemcounter.fillAmount = (float)stat.curItemStack / (float)stat.curItemMax;
-
-        ItemResource _resource = ResourceManager.Instance.GetItemResource(stat.curItemIndex);
-        itemImage.sprite = _resource.sprite;
-
-        if (stat.curDispoItemIndex != 255)
+        if(player == null)
         {
-            dispoitem.sprite = ResourceManager.Instance.GetDispoItemResource(stat.curDispoItemIndex);
-            dispoitem.color = new Vector4(1, 1, 1, 1);
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         }
         else
         {
-            dispoitem.sprite = null;
-            dispoitem.color = new Vector4(1,1,1,0);
+            stat = player.GetStatus();
+
+            hpBar.maxValue = stat.maxHp;
+            hpBar.value = stat.hp;
+            hpText.text = string.Format("{0} / {1}", stat.hp, stat.maxHp);
+
+            staminaBar.value = stat.stamina;
+
+            mentalityBar.maxValue = stat.maxMentality;
+            mentalityBar.value = stat.mentality;
+            mentalityText.text = stat.mentality.ToString("0.0");
+
+            extraLife.text = "X " + stat.extraLife;
+            coin.text = "Coin : " + stat.coin;
+            key.text = "Key : " + stat.roomKeys;
+            bean.text = "Bean : " + stat.beans;
+
+            itemcounter.fillAmount = (float)stat.curItemStack / (float)stat.curItemMax;
+
+            ItemResource _resource = ResourceManager.Instance.GetItemResource(stat.curItemIndex);
+            itemImage.sprite = _resource.sprite;
+
+            if (stat.curDispoItemIndex != 255)
+            {
+                dispoitem.sprite = ResourceManager.Instance.GetDispoItemResource(stat.curDispoItemIndex);
+                dispoitem.color = new Vector4(1, 1, 1, 1);
+            }
+            else
+            {
+                dispoitem.sprite = null;
+                dispoitem.color = new Vector4(1, 1, 1, 0);
+            }
         }
-        
     }
 
     #region [MiniMapControl]

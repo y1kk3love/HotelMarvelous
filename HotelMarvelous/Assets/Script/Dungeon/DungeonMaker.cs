@@ -7,10 +7,16 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class DungeonMaker : MonoBehaviour
 {
+    private List<TileInfo>[] roomIndexListArr = new List<TileInfo>[20];
+
     private TileData[,] mapDataArr = new TileData[51, 51];
-    private TileInfo[,] mapBoardArr = new TileInfo[51, 51];
+
+    private byte[,] boardRoomIndexArr = new byte[51, 51];
     private byte[] monMaxArr = new byte[50];
+
     private bool[] isRoomLoadArr = new bool[50];
+
+    private Player player;
 
     private GameObject curEmptyRoom;
     private GameObject curMiniMap;
@@ -24,7 +30,7 @@ public class DungeonMaker : MonoBehaviour
     private GameObject mapBlockWall;
     private GameObject mapDoorWall;
 
-    private Vector2? curTilePos = null;
+    private Vector2 curTilePos;
 
     private byte StageThemeIndex = 1;
 
@@ -43,7 +49,55 @@ public class DungeonMaker : MonoBehaviour
         miniMapGroup = new GameObject("MiniMaps");
 
         LoadData();
+
+        LoadMap(1);
+
+        GameObject prefab = Resources.Load("Prefab/Characters/Player") as GameObject;
+        player = Instantiate(prefab, new Vector3(3, 1, 3), Quaternion.identity).GetComponent<Player>();
+        player.gameObject.name = "Player";
     }
+
+    public void MonsterDead()
+    {
+        monMaxArr[curIndex]--;
+
+        Debug.Log(monMaxArr[curIndex]);
+    }
+
+    public void MoveNextRoom(Vector2 _nextPos)
+    {
+        Debug.Log(_nextPos);
+
+        if (monMaxArr[curIndex] == 0)
+        {
+            player.transform.position = new Vector3(_nextPos.x, 0, _nextPos.y);
+
+            for (int i = 0; i < roomIndexListArr[curIndex].Count; i++)
+            {
+                roomIndexListArr[curIndex][i].obTile.SetActive(false);
+            }
+
+            curIndex = boardRoomIndexArr[BoardPosParse((int)_nextPos.x), BoardPosParse((int)_nextPos.y)];
+
+            if (!isRoomLoadArr[curIndex])
+            {
+                LoadMap(curIndex);
+            }
+            else
+            {
+                for (int i = 0; i < roomIndexListArr[curIndex].Count; i++)
+                {
+                    roomIndexListArr[curIndex][i].obTile.SetActive(true);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("해치우지 못한 몬스터가 남아있습니다.");
+        }
+    }
+
+    #region [DATALOAD]
 
     public void LoadData()
     {
@@ -61,8 +115,6 @@ public class DungeonMaker : MonoBehaviour
         }
 
         GetDataParse();
-
-        LoadMap();
     }
 
     private void GetDataParse()
@@ -112,183 +164,93 @@ public class DungeonMaker : MonoBehaviour
                     _info.FurnitureInfoDic.Add(_finfo.pos, _finfo);
                 }
 
-                mapBoardArr[BoardPosParse(x), BoardPosParse(y)] = _info;
+                if(roomIndexListArr[_info.roomIndex] == null)
+                {
+                    List<TileInfo> roomIndexList = new List<TileInfo>();
+
+                    roomIndexListArr[_info.roomIndex] = roomIndexList;
+                }
+
+                roomIndexListArr[_info.roomIndex].Add(_info);
+
+                boardRoomIndexArr[BoardPosParse(x), BoardPosParse(y)] = _info.roomIndex;
+
+                CreateMiniMap(_info);
             }
         }
+
+        mapDataArr = null;
     }
 
-    private void LoadMap()
+    #endregion
+
+    private void LoadMap(int roomindex)
     {
-        foreach (TileInfo _info in mapBoardArr)
+        for(int i = 0; i < roomIndexListArr[roomindex].Count; i++)
         {
-            if (_info != null)
+            TileInfo _info = roomIndexListArr[roomindex][i];
+
+            curTilePos = _info.position;
+
+            CreateMap(_info);
+
+            foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
             {
-                curTilePos = _info.position;
+                Vector2 _pos = _dicionary.Key;
 
-                int x = (int)curTilePos.Value.x;
-                int y = (int)curTilePos.Value.y;
+                GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/Monster" + (int)_dicionary.Value) as GameObject;
 
-                TileInfo info = mapBoardArr[BoardPosParse(x), BoardPosParse(y)];
+                GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x, 1, _pos.y), Quaternion.identity);
 
-                if(info.roomIndex == curIndex)
+                _monster.name = string.Format("({0}, {1}){2}", _pos.x, _pos.y, _dicionary.Value);
+                _monster.transform.parent = _info.obTile.transform;
+
+                if ((int)_dicionary.Value == 1)
                 {
-                    CreateMap();
-
-                    foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
-                    {
-                        Vector2 _pos = _dicionary.Key;
-
-                        GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/Monster" + (int)_dicionary.Value) as GameObject;
-
-                        GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x, 1, _pos.y), Quaternion.identity);
-
-                        _monster.name = string.Format("({0}, {1}){2}", _pos.x, _pos.y, _dicionary.Value);
-                        _monster.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
-
-                        if ((int)_dicionary.Value == 1)
-                        {
-                            monMaxArr[info.roomIndex]++;
-                        }
-                    }
-
-                    foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
-                    {
-                        Vector2 _pos = _dicionary.Key;
-
-                        string _name = _dicionary.Value.name;
-
-                        int _rotate = (int)_dicionary.Value.dir * 90;
-
-                        GameObject obfurniture = Resources.Load("Prefab/Furniture/" + _name) as GameObject;
-
-                        GameObject _furniture = Instantiate(obfurniture, new Vector3(_pos.x - 0.5f, 1, _pos.y - 0.5f), Quaternion.Euler(new Vector3(0, _rotate, 0)));
-                        _furniture.name = string.Format("{0} // {1} {2}", _pos.x, _pos.y, _name);
-                        _furniture.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
-                    }
+                    monMaxArr[_info.roomIndex]++;
                 }
             }
+
+            foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
+            {
+                Vector2 _pos = _dicionary.Key;
+
+                string _name = _dicionary.Value.name;
+
+                int _rotate = (int)_dicionary.Value.dir * 90;
+
+                GameObject obfurniture = Resources.Load("Prefab/Furniture/" + _name) as GameObject;
+
+                GameObject _furniture = Instantiate(obfurniture, new Vector3(_pos.x - 0.5f, 1, _pos.y - 0.5f), Quaternion.Euler(new Vector3(0, _rotate, 0)));
+                _furniture.name = string.Format("{0} // {1} {2}", _pos.x, _pos.y, _name);
+                _furniture.transform.parent = _info.obTile.transform;
+            }
         }
     }
 
-    public void MonsterDead()
-    {
-        monMaxArr[curIndex]--;
+    #region [CreateRoom]
 
-        Debug.Log(monMaxArr[curIndex]);
+    #region [MiniMap]
+    public void CreateMiniMap(TileInfo _tileinfo)
+    {
+        int _x = (int)_tileinfo.position.x;
+        int _y = (int)_tileinfo.position.y;
+
+        curMiniMap = new GameObject(string.Format("MiniMap/{0},{1}", (_x / 18), (_y / 18)));
+
+        curMiniMap.transform.position = new Vector3(_x, 0, _y);
+        curMiniMap.transform.parent = miniMapGroup.transform;
+
+        GameObject mapfloor = Instantiate(mapFloor, new Vector3(_x, 0, _y), Quaternion.identity);
+        mapfloor.transform.parent = curMiniMap.transform;
+
+        BuildMiniMapWall(_tileinfo);
     }
 
-    public void MoveNextRoom(Vector2 _nextPos)
+    private void BuildMiniMapWall(TileInfo _tileinfo)
     {
-        Debug.Log(_nextPos);
-
-        if (monMaxArr[curIndex] == 0)
-        {
-            GameObject _player = GameObject.Find("Player");
-            _player.transform.position = new Vector3(_nextPos.x, 0, _nextPos.y);
-
-            GameObject curroom = GameObject.Find(string.Format("Room {0}", curIndex));
-
-            for (int i = 0; i < curroom.transform.childCount; i++)
-            {
-                curroom.transform.GetChild(i).gameObject.SetActive(false);
-            }
-
-            curIndex = mapBoardArr[BoardPosParse((int)_nextPos.x), BoardPosParse((int)_nextPos.y)].roomIndex;
-
-            if (!isRoomLoadArr[curIndex])
-            {
-                LoadMap();
-            }
-            else
-            {
-                GameObject nextroom = GameObject.Find(string.Format("Room {0}", curIndex));
-
-                for (int i = 0; i < nextroom.transform.childCount; i++)
-                {
-                    nextroom.transform.GetChild(i).gameObject.SetActive(true);
-                }
-            }
-        }
-        else
-        {
-            Debug.Log("해치우지 못한 몬스터가 남아있습니다.");
-        }
-    }
-
-    public void CreateMap()
-    {
-        int _x = (int)curTilePos.Value.x;
-        int _y = (int)curTilePos.Value.y;
-
-        TileInfo _GetInfo = mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)];
-
-        isRoomLoadArr[curIndex] = true;
-
-        if (_GetInfo != null)
-        {
-            curEmptyRoom = GameObject.Find(string.Format("Room {0}", _GetInfo.roomIndex));
-
-            if (curEmptyRoom == null)
-            {
-                curEmptyRoom = new GameObject(string.Format("Room {0}", _GetInfo.roomIndex));
-            }
-
-            #region[TileObject]
-
-            GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (_x / 18), (_y / 18)));
-
-            emptytile.transform.position = new Vector3(_x, 0, _y);
-            emptytile.transform.parent = curEmptyRoom.transform;
-
-            GameObject floor = Instantiate(obFloor, new Vector3(_x, 0, _y), Quaternion.identity);
-            floor.transform.parent = emptytile.transform;
-
-            #endregion
-
-            #region[MiniMapTile]
-
-            curMiniMap = new GameObject(string.Format("MiniMap/{0},{1}", (_x / 18), (_y / 18)));
-
-            curMiniMap.transform.position = new Vector3(_x, 0, _y);
-            curMiniMap.transform.parent = miniMapGroup.transform;
-
-            GameObject mapfloor = Instantiate(mapFloor, new Vector3(_x, 0, _y), Quaternion.identity);       
-            mapfloor.transform.parent = curMiniMap.transform;
-
-            #endregion
-
-            mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].obTile = emptytile;
-            mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)].position = new Vector2(_x, _y);
-
-            BuildWall(mapBoardArr[BoardPosParse(_x), BoardPosParse(_y)]);
-
-            floor.GetComponent<NavMeshSurface>().BuildNavMesh();
-
-            /*
-            if (_GetInfo.roomIndex != 1)        //임시
-            {
-                emptytile.SetActive(false);
-                curIndex = 1;
-            }
-            */
-        }
-    }
-
-    private void BuildWall(TileInfo _tileinfo)
-    {
-        if (_tileinfo.obTile.transform.Find("Walls") != null)
-        {
-            Destroy(_tileinfo.obTile.transform.Find("Walls").gameObject);
-        }
-
-        GameObject emptywall;           //벽들을 자식으로 가지고 있을 빈오브젝트
-
-        emptywall = new GameObject("Walls");
-        emptywall.transform.parent = _tileinfo.obTile.transform;
-
         for (int i = 0; i < 4; i++)
         {
-            GameObject _wall = null;
             GameObject _map = null;
 
             Vector2 _pos = _tileinfo.position;
@@ -298,26 +260,20 @@ public class DungeonMaker : MonoBehaviour
             switch (_tileinfo.doorArr[i])       //배열에서 벽 확인
             {
                 case WALLSTATE.BLOCK:
-                    _wall = obBlockWall;
                     _map = mapBlockWall;
                     break;
                 case WALLSTATE.EMPTY:
                     break;
                 case WALLSTATE.DOOR:
-                    _wall = obDoorWall;
                     _map = mapDoorWall;
                     break;
             }
 
-            if (_wall != null)
+            if (_map != null)
             {
                 switch (i)
                 {
                     case (int)DIRECTION.TOP:
-
-                        GameObject topWall = Instantiate(_wall, new Vector3(_x, 4, 8.5f + _y), Quaternion.Euler(0, 90, 90));
-                        topWall.name = "Top Wall";
-                        topWall.transform.parent = emptywall.transform;
 
                         GameObject topWallMap = Instantiate(_map, new Vector3(_x, 4, 8.5f + _y), Quaternion.Euler(0, 90, 90));
                         topWallMap.name = "Top Wall Map";
@@ -326,20 +282,12 @@ public class DungeonMaker : MonoBehaviour
                         break;
                     case (int)DIRECTION.RIGHT:
 
-                        GameObject rightWall = Instantiate(_wall, new Vector3(_x + 8.5f, 4, _y), Quaternion.Euler(0, -180, 90));
-                        rightWall.name = "Right Wall";
-                        rightWall.transform.parent = emptywall.transform;
-
                         GameObject rightWallMap = Instantiate(_map, new Vector3(_x + 8.5f, 4, _y), Quaternion.Euler(0, -180, 90));
                         rightWallMap.name = "Right Wall Map";
                         rightWallMap.transform.parent = curMiniMap.transform;
 
                         break;
                     case (int)DIRECTION.BOTTOM:
-
-                        GameObject bottomWall = Instantiate(_wall, new Vector3(_x, 4, _y - 8.5f), Quaternion.Euler(0, -90, 90));
-                        bottomWall.name = "Bottom Wall";
-                        bottomWall.transform.parent = emptywall.transform;
 
                         GameObject bottomWallMap = Instantiate(_map, new Vector3(_x, 4, _y - 8.5f), Quaternion.Euler(0, -90, 90));
                         bottomWallMap.name = "Bottom Wall Map";
@@ -348,19 +296,128 @@ public class DungeonMaker : MonoBehaviour
                         break;
                     case (int)DIRECTION.LEFT:
 
-                        GameObject leftWall = Instantiate(_wall, new Vector3(_x - 8.5f, 4, _y), Quaternion.Euler(0, 0, 90));
-                        leftWall.name = "Left Wall";
-                        leftWall.transform.parent = emptywall.transform;
-
                         GameObject leftWallMap = Instantiate(_map, new Vector3(_x - 8.5f, 4, _y), Quaternion.Euler(0, 0, 90));
                         leftWallMap.name = "Left Wall Map";
                         leftWallMap.transform.parent = curMiniMap.transform;
 
                         break;
                 }
-            }                
+            }
         }
     }
+
+    #endregion
+
+    #region [Room]
+    public void CreateMap(TileInfo _info)
+    {
+        int _x = (int)curTilePos.x;
+        int _y = (int)curTilePos.y;
+
+        isRoomLoadArr[curIndex] = true;
+
+        curEmptyRoom = GameObject.Find(string.Format("Room {0}", curIndex));
+
+        if (curEmptyRoom == null)
+        {
+            curEmptyRoom = new GameObject(string.Format("Room {0}", curIndex));
+        }
+
+        #region[TileObject]
+
+        GameObject emptytile = new GameObject(string.Format("Tile/{0},{1}", (_x / 18), (_y / 18)));
+
+        emptytile.transform.position = new Vector3(_x, 0, _y);
+        emptytile.transform.parent = curEmptyRoom.transform;
+
+        GameObject floor = Instantiate(obFloor, new Vector3(_x, 0, _y), Quaternion.identity);
+        floor.transform.parent = emptytile.transform;
+
+        #endregion
+
+        _info.obTile = emptytile;
+        _info.position = new Vector2(_x, _y);
+
+        BuildWall(_info);
+
+        //로딩 렉의 원인!!
+        floor.GetComponent<NavMeshSurface>().BuildNavMesh();
+    }
+
+    private void BuildWall(TileInfo _tileinfo)
+    {
+        if (_tileinfo.obTile.transform.Find("Walls") != null)
+        {
+            Destroy(_tileinfo.obTile.transform.Find("Walls").gameObject);
+        }
+
+        GameObject emptywall = new GameObject("Walls");           //벽들을 자식으로 가지고 있을 빈오브젝트
+        emptywall.transform.parent = _tileinfo.obTile.transform;
+
+        for (int i = 0; i < 4; i++)
+        {
+            GameObject _wallPrefab = null;
+
+            Vector2 _pos = _tileinfo.position;
+            int _x = (int)_pos.x;
+            int _y = (int)_pos.y;
+
+            WALLSTATE wallDir = _tileinfo.doorArr[i];
+
+            switch (wallDir)       //배열에서 벽 확인
+            {
+                case WALLSTATE.BLOCK:
+                    _wallPrefab = obBlockWall;
+                    break;
+                case WALLSTATE.EMPTY:
+                    break;
+                case WALLSTATE.DOOR:
+                    _wallPrefab = obDoorWall;
+                    break;
+            }
+
+            GameObject Wall = null;
+
+            if (_wallPrefab != null)
+            {
+                switch (i)
+                {
+                    case (int)DIRECTION.TOP:
+
+                        Wall = Instantiate(_wallPrefab, new Vector3(_x, 4, 8.5f + _y), Quaternion.Euler(0, 90, 90));
+                        break;
+                    case (int)DIRECTION.RIGHT:
+
+                        Wall = Instantiate(_wallPrefab, new Vector3(_x + 8.5f, 4, _y), Quaternion.Euler(0, -180, 90));
+                        break;
+                    case (int)DIRECTION.BOTTOM:
+
+                        Wall = Instantiate(_wallPrefab, new Vector3(_x, 4, _y - 8.5f), Quaternion.Euler(0, -90, 90));
+                        break;
+                    case (int)DIRECTION.LEFT:
+
+                        Wall = Instantiate(_wallPrefab, new Vector3(_x - 8.5f, 4, _y), Quaternion.Euler(0, 0, 90));
+                        break;
+                }
+
+                Wall.name = string.Format("{0} Wall", wallDir.ToString());
+                Wall.transform.parent = emptywall.transform;
+            }
+            
+            if(wallDir == WALLSTATE.DOOR)
+            {
+                DungeonMover door = Wall.GetComponent<DungeonMover>();
+                door.doorDir = (DIRECTION)i;
+                door.x = (byte)(_x / 18);
+                door.y = (byte)(_y / 18);
+                door.manager = GetComponent<DungeonMaker>();
+            }
+        }
+    }
+
+    #endregion
+
+    #endregion
 
     private byte BoardPosParse(int _pos)
     {

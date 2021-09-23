@@ -88,12 +88,12 @@ public class TitleUI : MonoBehaviour
 
     public void Test_SkipToLobby()
     {
-        ScenesManager.Instance.MoveToScene("Lobby");
+        ScenesManager.Instance.MoveToScene(INTERACTION.LOBBY);
     }
 
     public void Test_SkipToDungeon()
     {
-        ScenesManager.Instance.MoveToScene("Dungeon");
+        ScenesManager.Instance.MoveToScene(INTERACTION.DUNGEON);
     }
 
     public void CheckIn()
@@ -136,7 +136,7 @@ public class TitleUI : MonoBehaviour
         }
         else
         {
-            ScenesManager.Instance.MoveToScene("Menu");
+            ScenesManager.Instance.MoveToScene(INTERACTION.MENU);
         }
     }
 

@@ -380,7 +380,7 @@ public class Player : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        ScenesManager.Instance.MoveToScene("Lobby");
+        ScenesManager.Instance.MoveToScene(INTERACTION.LOBBY);
     }
 
     public PlayerStatus GetStatus()

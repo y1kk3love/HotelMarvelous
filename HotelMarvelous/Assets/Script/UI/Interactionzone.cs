@@ -14,8 +14,7 @@ public class Interactionzone : MonoBehaviour
 
         if (other.CompareTag("Player") && portalType != INTERACTION.NONE)
         {
-            string scenes = portalType.ToString();
-
+            ScenesManager.Instance.MoveToScene(portalType);
         }
     }
 }

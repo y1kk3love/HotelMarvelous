@@ -4,46 +4,40 @@ using UnityEngine;
 
 public class DungeonMover : MonoBehaviour
 {
+    public GameObject door;
+
+    public DungeonMaker manager;
+
+    public DIRECTION doorDir;
+
+    public byte x, y;
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            string[] doorname = transform.parent.name.Split(' ');
+            Vector2 pos = new Vector2(x * 18, y * 18);
 
-            string tilename = transform.parent.parent.parent.gameObject.name;
-            string[] name = tilename.Split('/');
-            string[] posname = name[1].Split(',');
-
-            int x = int.Parse(posname[0]) * 18;
-            int y = int.Parse(posname[1]) * 18;
-            Vector2 pos;
-
-            DungeonMaker manager = GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>();
-
-            switch (doorname[0])
+            switch (doorDir)
             {
-                case "Top":
-                    Debug.Log(doorname[0]);
+                case DIRECTION.TOP:
 
-                    pos = new Vector2(x, y + 18);
+                    pos += new Vector2(0, 18);
+                    
+                    break;
+                case DIRECTION.RIGHT:
+
+                    pos += new Vector2(18, 0);
                     manager.MoveNextRoom(pos);
                     break;
-                case "Right":
-                    Debug.Log(doorname[0]);
+                case DIRECTION.BOTTOM:
 
-                    pos = new Vector2(x + 18, y);
+                    pos += new Vector2(0, -18);
                     manager.MoveNextRoom(pos);
                     break;
-                case "Bottom":
-                    Debug.Log(doorname[0]);
+                case DIRECTION.LEFT:
 
-                    pos = new Vector2(x, y - 18);
-                    manager.MoveNextRoom(pos);
-                    break;
-                case "Left":
-                    Debug.Log(doorname[0]);
-
-                    pos = new Vector2(x - 18, y);
+                    pos += new Vector2(-18, 0);
                     manager.MoveNextRoom(pos);
                     break;
             }

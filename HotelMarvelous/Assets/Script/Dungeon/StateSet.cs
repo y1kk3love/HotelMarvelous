@@ -12,7 +12,9 @@ public enum INTERACTION
 {
     NONE,
     LOBBY,
-    DUNGEON
+    DUNGEON,
+    MENU,
+    TITLE
 }
 
 

@@ -34,7 +34,7 @@ public class MenuUI : MonoBehaviour
         }
         else
         {
-            ScenesManager.Instance.MoveToScene("Lobby");
+            ScenesManager.Instance.MoveToScene(INTERACTION.LOBBY);
         }
     }
 }

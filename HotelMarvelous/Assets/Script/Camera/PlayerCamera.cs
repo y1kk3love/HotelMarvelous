@@ -13,15 +13,15 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField]
     private float camerahight = 20f;
 
-    void Start()
-    {
-        player = GameObject.FindGameObjectWithTag("Player");
-
-        vOffset = transform.position - player.transform.position;                       //카메라와 플레이어 사이의 거리 Offset
-    }
-
     void FixedUpdate()
     {
+        if(player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+
+            vOffset = transform.position - player.transform.position;       //카메라와 플레이어 사이의 거리 Offset
+        }
+
         Vector3 targetpos = player.transform.position + vOffset;
 
         //this.transform.position = targetpos;
