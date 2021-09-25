@@ -23,7 +23,7 @@ public class DungeonMover : MonoBehaviour
                 case DIRECTION.TOP:
 
                     pos += new Vector2(0, 18);
-                    
+                    manager.MoveNextRoom(pos);
                     break;
                 case DIRECTION.RIGHT:
 

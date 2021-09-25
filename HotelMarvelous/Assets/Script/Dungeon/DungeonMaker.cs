@@ -18,6 +18,8 @@ public class DungeonMaker : MonoBehaviour
 
     private Player player;
 
+    public GameObject BossUI;
+
     private GameObject curEmptyRoom;
     private GameObject curMiniMap;
     private GameObject miniMapGroup;
@@ -52,6 +54,8 @@ public class DungeonMaker : MonoBehaviour
 
         LoadMap(1);
 
+        RoomOpen();
+
         GameObject prefab = Resources.Load("Prefab/Characters/Player") as GameObject;
         player = Instantiate(prefab, new Vector3(3, 1, 3), Quaternion.identity).GetComponent<Player>();
         player.gameObject.name = "Player";
@@ -61,7 +65,20 @@ public class DungeonMaker : MonoBehaviour
     {
         monMaxArr[curIndex]--;
 
-        Debug.Log(monMaxArr[curIndex]);
+        RoomOpen();
+    }
+
+    private void RoomOpen()
+    {
+        if(monMaxArr[curIndex] == 0)
+        {
+            GameObject[] Door = GameObject.FindGameObjectsWithTag("Door");
+
+            for (int i = 0; i < Door.Length; i++)
+            {
+                Door[i].GetComponent<Animator>().SetBool("isDoorOpen", true);
+            }
+        }
     }
 
     public void MoveNextRoom(Vector2 _nextPos)
@@ -82,6 +99,11 @@ public class DungeonMaker : MonoBehaviour
             if (!isRoomLoadArr[curIndex])
             {
                 LoadMap(curIndex);
+
+                if(roomIndexListArr[curIndex][0].roomType == ROOMTYPE.BOSS)
+                {
+                    GameObject bossui = Instantiate(BossUI, transform.position, Quaternion.identity);
+                }
             }
             else
             {

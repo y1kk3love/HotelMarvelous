@@ -25,7 +25,7 @@ public class Monster : MonoBehaviour
 
     private Vector3 targetpos;
 
-    public int monsterid;
+    public MONSTERTYPE monsterid;
 
     private bool isdead = false;
     private bool isattacking = false;
@@ -46,16 +46,23 @@ public class Monster : MonoBehaviour
 
         switch (monsterid)
         {
-            case 0:
+            case MONSTERTYPE.SUPERVIA:
                 touchdamage = 5;
                 monsterhp = 25;
                 monspeed = 0.9f;
                 mentaldamage = 0.5f;
                 raylength = 5;
                 break;
-            case 1:
+            case MONSTERTYPE.AVARITIA:
                 touchdamage = 3;
                 monsterhp = 22;
+                monspeed = 0.7f;
+                mentaldamage = 0f;
+                raylength = 8;
+                break;
+            case MONSTERTYPE.PORTRAIT:
+                touchdamage = 3;
+                monsterhp = 100;
                 monspeed = 0.7f;
                 mentaldamage = 0f;
                 raylength = 8;
@@ -95,9 +102,15 @@ public class Monster : MonoBehaviour
         Debug.DrawRay(this.transform.position, Debugdir * raylength, Color.red);
     }
 
+    public float GetBossHP()
+    {
+        return monsterhp;
+    }
+
     public void MonGetDamage(float _damage)
     {
         Debug.Log("Get " + _damage + " Damage");
+
         monsterhp -= _damage;
     }
 
@@ -281,7 +294,7 @@ public class Monster : MonoBehaviour
 
         switch (monsterid)
         {
-            case 0:
+            case MONSTERTYPE.SUPERVIA:
                 if (timer < 0.0f)
                 {
                     MoveTargetPlayer();
@@ -289,7 +302,7 @@ public class Monster : MonoBehaviour
                     timer = Random.Range(0.3f, 1);      //초기화할때 랜덤으로
                 }
                 break;
-            case 1:
+            case MONSTERTYPE.AVARITIA:
                 if(navi != null)
                 {
                     if (!isattacking)

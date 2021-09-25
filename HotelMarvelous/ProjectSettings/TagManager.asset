@@ -8,8 +8,10 @@ TagManager:
   - Attack
   - ConsumItem
   - Dialoguezone
+  - Door
   - RewardItem
-  - MoveLift
+  - Lobby
+  - Boss
   layers:
   - Default
   - TransparentFX

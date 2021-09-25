@@ -96,12 +96,6 @@ public class Player : MonoBehaviour
         {
             CheckDropItem(other);
         }
-
-        if(other.CompareTag("MoveLift"))
-        {
-            //다음 층으로 이동
-            Debug.Log("다음층으로 이동");
-        }
     }
 
     private void OnTriggerExit(Collider other)
