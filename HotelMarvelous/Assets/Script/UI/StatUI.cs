@@ -25,6 +25,7 @@ public class StatUI : MonoBehaviour
     public Image dispoitem;
 
     public GameObject miniMap;
+    public GameObject wideMap;
 
     public Camera miniMapCamera;
 
@@ -44,6 +45,8 @@ public class StatUI : MonoBehaviour
     void Start()
     {
         miniMapCamera = GameObject.Find("MiniMap Camera").GetComponent<Camera>();
+
+        ScenesManager.Instance.ShowPauseButton();
     }
 
     private void Update()
@@ -105,30 +108,21 @@ public class StatUI : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            RectTransform minimap = miniMap.GetComponent<RectTransform>();
-            RawImage maptexture = miniMap.GetComponent<RawImage>();
-
             if (isWideMap)
             {
-                minimap.transform.position = new Vector3(960, 540, 0);
-
-                minimap.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1800);
-                minimap.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 1000);
+                miniMap.SetActive(false);
+                wideMap.SetActive(true);
 
                 miniMapCamera.targetTexture = wideMapTexture as RenderTexture;
-                maptexture.texture = wideMapTexture;
 
                 isWideMap = false;
             }
             else
             {
-                minimap.transform.position = new Vector3(1760, 920, 0);
-
-                minimap.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 280);
-                minimap.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 280);
+                miniMap.SetActive(true);
+                wideMap.SetActive(false);
 
                 miniMapCamera.targetTexture = miniMapTexture as RenderTexture;
-                maptexture.texture = miniMapTexture;
 
                 isWideMap = true;
             }
