@@ -12,5 +12,14 @@ public class TestScript : MonoBehaviour
         {
             anim.SetTrigger("Attack01");
         }
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            anim.SetBool("Run", true);
+        }
+        else
+        {
+            anim.SetBool("Run", false);
+        }
     }
 }
