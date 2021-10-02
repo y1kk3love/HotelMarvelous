@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using Singleton;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ScenesManager : MonoSingleton<ScenesManager>
 {
+    public GameObject locationInfo;
     public GameObject pauseUI;
     public DialogUI dialogUI;
     public OptionInfo optionInfo = new OptionInfo();
@@ -138,6 +140,17 @@ public class ScenesManager : MonoSingleton<ScenesManager>
         
     }
 
+    public void ShowLocation()
+    {
+        locationInfo = Resources.Load<GameObject>("Prefab/UI/LocationInfo");
+
+        GameObject info = Instantiate(locationInfo, new Vector3(0,0,0), Quaternion.identity);
+
+        info.transform.GetChild(1).GetComponent<Text>().text = SceneManager.GetActiveScene().name;
+
+        Destroy(info, 1.3f);
+    }
+
     #endregion
 
     #region [Option]
@@ -147,7 +160,12 @@ public class ScenesManager : MonoSingleton<ScenesManager>
         pauseUI = Resources.Load<GameObject>("Prefab/UI/UI_Pause");
 
         GameObject option = Instantiate(pauseUI, new Vector3(0, 0, 0), Quaternion.identity);
-        option.transform.parent = GameObject.Find("UI").transform;
+        GameObject ui = GameObject.Find("UI");
+
+        if(ui != null)
+        {
+            option.transform.parent = ui.transform;
+        }
 
         Debug.Log("설정버튼 생성완료");
 

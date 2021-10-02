@@ -80,9 +80,9 @@ public class StatUI : MonoBehaviour
             mentalityText.text = stat.mentality.ToString("0.0");
 
             extraLife.text = "X " + stat.extraLife;
-            coin.text = "Coin : " + stat.coin;
-            key.text = "Key : " + stat.roomKeys;
-            bean.text = "Bean : " + stat.beans;
+            coin.text = stat.coin.ToString();
+            key.text = stat.roomKeys.ToString();
+            bean.text = stat.beans.ToString();
 
             itemcounter.fillAmount = (float)stat.curItemStack / (float)stat.curItemMax;
 

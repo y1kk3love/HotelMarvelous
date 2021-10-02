@@ -24,13 +24,15 @@ public class TitleUI : MonoBehaviour
     private bool isSkip = false;
     private bool isCircleFade = false;
 
-    void Awake()
+    void Start()
     {
         ResourceManager.Instance.LoadResources();        //리소스 매니저 생성
 
         ResetProcess();
         
         StartCoroutine(IntroProcess(imTitle));
+
+        ScenesManager.Instance.ShowPauseButton();
     }
 
     void FixedUpdate()

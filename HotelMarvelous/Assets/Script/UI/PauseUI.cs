@@ -8,44 +8,28 @@ public class PauseUI : MonoBehaviour
     private OptionInfo optionInfo = new OptionInfo();
     protected KEYSETBUTTON ketsetbutton;
 
-    private GameObject panelPause;
-    private GameObject panelButtons;
-    private GameObject panelOption;
-    private GameObject panelDisplay;
-    private GameObject scrollviewControl;
-    private GameObject panelSound;
+    public GameObject panelPause;
+    public GameObject panelButtons;
+    public GameObject panelOption;
+    public GameObject panelDisplay;
+    public GameObject scrollviewControl;
+    public GameObject panelSound;
     protected GameObject buttonSetKey;
     protected static List<GameObject> KeySetButtonList = new List<GameObject>();
 
     private static Text textSetKeyInfo;
 
-    private Dropdown dropdownResolution;
-    private Dropdown dropdownFullScreen;
+    public Dropdown dropdownResolution;
+    public Dropdown dropdownFullScreen;
 
     private bool isChangingKey = false;
     private bool isPause = false;
 
     void Start()
     {
-        panelPause = GameObject.Find("Panel_Pause").gameObject;
-        panelButtons = GameObject.Find("Panel_Buttons").gameObject;
-        panelOption = GameObject.Find("Panel_Option").gameObject;
-        panelDisplay = GameObject.Find("Panel_Display").gameObject;
-        scrollviewControl = GameObject.Find("ScrollView_Control").gameObject;
-        panelSound = GameObject.Find("Panel_Sound").gameObject;
-        dropdownResolution = GameObject.Find("Dropdown_Resolution").GetComponent<Dropdown>();
-        dropdownFullScreen = GameObject.Find("Dropdown_FullScreen").GetComponent<Dropdown>();
-
-        textSetKeyInfo = GameObject.Find("Text_SetKey").GetComponent<Text>();
+        textSetKeyInfo = GameObject.Find("Text_Info").GetComponent<Text>();
 
         optionInfo = ScenesManager.Instance.optionInfo;
-
-        panelButtons.SetActive(false);
-        textSetKeyInfo.text = "";
-        scrollviewControl.SetActive(false);
-        panelSound.SetActive(false);
-        panelPause.SetActive(false);
-        panelOption.SetActive(false);
     }
 
     void Update()
