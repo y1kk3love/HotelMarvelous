@@ -56,7 +56,7 @@ public class DungeonMaker : MonoBehaviour
 
         RoomOpen();
 
-        GameObject prefab = Resources.Load("Prefab/Characters/Player") as GameObject;
+        GameObject prefab = Resources.Load("Prefab/Characters/PC/Player") as GameObject;
         player = Instantiate(prefab, new Vector3(3, 1, 3), Quaternion.identity).GetComponent<Player>();
         player.gameObject.name = "Player";
     }

@@ -5,12 +5,22 @@ using UnityEngine;
 public class TestScript : MonoBehaviour
 {
     public Animator anim;
+    public GameObject attack;
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             anim.SetTrigger("Attack01");
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            attack.SetActive(true);
+        }
+        else
+        {
+            attack.SetActive(false);
         }
 
         if (Input.GetKey(KeyCode.W))
@@ -21,5 +31,10 @@ public class TestScript : MonoBehaviour
         {
             anim.SetBool("Run", false);
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(other.name);
     }
 }

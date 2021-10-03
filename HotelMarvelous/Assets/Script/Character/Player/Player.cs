@@ -6,8 +6,7 @@ public class Player : MonoBehaviour
 {
     private PlayerStatus stat = new PlayerStatus();
 
-    private GameObject[] attackRangeArr = new GameObject[3];
-
+    public GameObject attackRange;
     private GameObject curItemSkill = null;
 
     private bool isInvincible = false;
@@ -17,6 +16,8 @@ public class Player : MonoBehaviour
     private bool isattack = false;
     private bool isconvzone = false;
     public bool isconv = false;
+
+    private byte curattack = 0;
 
     private Animator anim;
 
@@ -34,8 +35,6 @@ public class Player : MonoBehaviour
     {
         stat = DataManager.Instance.GetPlayerStatus();
         anim = transform.GetComponent<Animator>();
-        attackRangeArr[0] = GameObject.Find("Sword").transform.GetChild(0).gameObject;
-        attackRangeArr[0].SetActive(false);
 
         GetItemInfo();
     }
@@ -44,7 +43,15 @@ public class Player : MonoBehaviour
     {
         DialogChecker();
 
-        if (isconv || isattack || ScenesManager.Instance.isOption)
+        if (isconv || ScenesManager.Instance.isOption)
+        {
+            anim.SetBool("Run", false);
+            return;
+        }
+
+        AttackInput();
+
+        if (isattack)
         {
             anim.SetBool("Run", false);
             return;
@@ -68,6 +75,16 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (isattack)
+        {
+            if (other.CompareTag("Monster") || other.CompareTag("Boss"))
+            {
+                float damage = DataManager.Instance.CalculateDamage();
+
+                other.GetComponent<Monster>().MonGetDamage(damage);
+            }
+        }
+
         if (other.CompareTag("Dialoguezone"))
         {
             Interactionzone textinfo = other.GetComponent<Interactionzone>();
@@ -396,14 +413,49 @@ public class Player : MonoBehaviour
 
     #region ----------------------------[Animation]----------------------------
 
-    private void Attack_00_Enter()
+    private void Attack_01_Enter()
     {
-        attackRangeArr[0].SetActive(true);
+        curattack = 0;
+        AttackRange(0.3f);
     }
 
-    private void Attack_00_Exit()
+    private void Attack_02_Enter()
     {
-        attackRangeArr[0].SetActive(false);
+        curattack = 1;
+        AttackRange(0.3f);
+    }
+
+    private void Attack_03_Enter()
+    {
+        curattack = 2;
+        AttackRange(0.4f);
+    }
+
+    private void Attack_Start()
+    {
+        isattack = true;
+    }
+
+    private void Attack_End()
+    {
+        isattack = false;
+    }
+
+    private void AttackRange(float time)
+    {
+        attackRange.transform.GetChild(curattack).gameObject.SetActive(true);
+
+        Invoke("AttackFinish", time);
+    }
+
+    private void AttackFinish()
+    {
+        attackRange.transform.GetChild(curattack).gameObject.SetActive(false);
+
+        if (curattack <= 2)
+        {
+            curattack = 0;
+        }
     }
 
     #endregion
@@ -443,17 +495,19 @@ public class Player : MonoBehaviour
             {
                 ScenesManager.Instance.MonologueProcess();
             }
-            
+        }
+    }
+
+    private void AttackInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            anim.SetTrigger("Attack");
         }
     }
 
     private void GetSkillInput()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            StartCoroutine(Attack_00());
-        }
-
         if (Input.GetKey(ScenesManager.Instance.optionInfo.run))
         {
             if(stat.stamina > 0)
@@ -531,16 +585,6 @@ public class Player : MonoBehaviour
         transform.position += transform.forward * velocity * Time.deltaTime * stat.speed;
     }
 
-    IEnumerator Attack_00()
-    {
-        anim.SetBool("Attack_00", true);
-        isattack = true;
-
-        yield return new WaitForSeconds(1.02f);
-
-        anim.SetBool("Attack_00", false);
-        isattack = false;
-    }
     #endregion
 
     #region ----------------------------[Calculate]----------------------------

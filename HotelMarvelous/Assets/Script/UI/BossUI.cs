@@ -8,7 +8,7 @@ public class BossUI : MonoBehaviour
     private Monster boss;
 
     public Slider hpBar;
-    public Text name;
+    public Text bossname;
 
     void Start()
     {
@@ -21,7 +21,7 @@ public class BossUI : MonoBehaviour
 
         hpBar.maxValue = boss.GetBossHP();
         hpBar.value = boss.GetBossHP();
-        name.text = boss.monsterid.ToString();
+        bossname.text = boss.monsterid.ToString();
     }
 
     void Update()
