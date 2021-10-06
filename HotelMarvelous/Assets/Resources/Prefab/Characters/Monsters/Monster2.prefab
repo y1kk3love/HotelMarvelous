@@ -169,5 +169,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portalType: 0
-  dialogPoint: 3
+  dialogPoint: 1
   dialogIndex: 0

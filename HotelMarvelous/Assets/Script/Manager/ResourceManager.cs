@@ -34,8 +34,21 @@ public class ResourceManager : MonoSingleton<ResourceManager>
             DialogData dialog = new DialogData();
 
             string line = streader.ReadLine();
-
+            
             string[] data = line.Split(',');
+            
+            if(data.Length > 5)
+            {
+                string _text = data[(int)DIALOGDATA.TEXT];
+
+                for (int i = 5; i < data.Length; i++)
+                {
+                    _text += string.Format(", {0}", data[i]);
+                }
+
+                data[(int)DIALOGDATA.TEXT] = _text;
+            }
+
             string[] text = data[(int)DIALOGDATA.TEXT].Split('&');
 
             dialog.dialogTextArr = text;
@@ -84,15 +97,31 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
             string[] data = line.Split(',');
 
+            if (data.Length > 5)
+            {
+                string _text = data[(int)DIALOGEVENTDATA.EVENTDIALOG];
+
+                for (int i = 5; i < data.Length; i++)
+                {
+                    _text += string.Format(", {0}", data[i]);
+                }
+
+                data[(int)DIALOGDATA.TEXT] = _text;
+            }
+
             string[] pointdata = data[(int)DIALOGEVENTDATA.EVENTMOVETO].Split('_');
             string[] text = data[(int)DIALOGEVENTDATA.EVENTDIALOG].Split('&');
 
             if (counter != 0)
             {
-                dialog.nextPoint = int.Parse(pointdata[0]);
-                dialog.nextDialogIndex = int.Parse(pointdata[1]);
-                dialog.nextDialog = text;
+                if(pointdata[0] != "")
+                {
+                    dialog.nextPoint = int.Parse(pointdata[0]);
+                    dialog.nextDialogIndex = int.Parse(pointdata[1]);
+                    
+                }
 
+                dialog.nextDialog = text;
                 dialog.chice = data[(int)DIALOGEVENTDATA.EVENTCHICE];
 
                 if (data[(int)DIALOGEVENTDATA.EVENTREWARD] != "")

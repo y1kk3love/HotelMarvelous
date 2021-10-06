@@ -12773,8 +12773,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portalType: 0
-  dialogPoint: 3
-  dialogIndex: 0
+  dialogPoint: 0
+  dialogIndex: 18
 --- !u!1 &9161909861556864349
 GameObject:
   m_ObjectHideFlags: 0

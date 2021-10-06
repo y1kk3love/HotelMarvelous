@@ -39,10 +39,8 @@ public enum DIALOGEVENTDATA
 
 public enum DIALOGZONE
 {
-    COUNTER,
-    ELEVATOR,
-    TEST,
-    KENNIS,
+    Keneth,
+    Elizabeth
 }
 
 public enum DIRECTION : byte

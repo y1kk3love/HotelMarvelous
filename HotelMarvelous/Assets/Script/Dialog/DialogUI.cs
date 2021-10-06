@@ -51,6 +51,9 @@ public class DialogUI : MonoBehaviour
 
             textBar.SetActive(false);
             ButtonOnAndOff(false);
+
+            ScenesManager.Instance.isimtalking = false;
+            ScenesManager.Instance.isOnChoice = false;
         }
         else if(_eventnum > -1)
         {
@@ -60,22 +63,31 @@ public class DialogUI : MonoBehaviour
 
                 List<DialogEventData> eventDataList = ResourceManager.Instance.GetDialogEvent(_eventnum);
 
-                GameObject prefab = Resources.Load("Prefab/UI/OptionButton") as GameObject;
-
-                foreach (DialogEventData _data in eventDataList)
+                if(eventDataList[0].chice != "")
                 {
-                    GameObject _button = Instantiate(prefab, transform.position, Quaternion.identity);
-                    _button.transform.parent = buttonContent.transform;
+                    GameObject prefab = Resources.Load("Prefab/UI/OptionButton") as GameObject;
 
-                    _button.transform.Find("Text").GetComponent<Text>().text = _data.chice;
+                    foreach (DialogEventData _data in eventDataList)
+                    {
+                        GameObject _button = Instantiate(prefab, transform.position, Quaternion.identity);
+                        _button.transform.SetParent(buttonContent.transform);
 
-                    DialogButton _nextdialog = _button.GetComponent<DialogButton>();
-                    _nextdialog.dialogPoint = _data.nextPoint;
-                    _nextdialog.dialogIndex = _data.nextDialogIndex;
-                    _nextdialog.myDialog = _data.nextDialog;
+                        _button.transform.Find("Text").GetComponent<Text>().text = _data.chice;
+
+                        DialogButton _nextdialog = _button.GetComponent<DialogButton>();
+                        _nextdialog.dialogPoint = _data.nextPoint;
+                        _nextdialog.dialogIndex = _data.nextDialogIndex;
+                        _nextdialog.myDialog = _data.nextDialog;
+                    }
                 }
+                else if (eventDataList[0].nextDialog[0] != "")
+                {
+                    ScenesManager.Instance.SetDialogPointInfo(-1, 0);
 
-                Debug.Log("이벤트 가능");
+                    ScenesManager.Instance.curMyDialogArr = eventDataList[0].nextDialog;
+                    ScenesManager.Instance.MonologueProcess();
+                    ScenesManager.Instance.isimtalking = true;
+                }
             }
         }
         else

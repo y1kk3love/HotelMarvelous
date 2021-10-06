@@ -14,11 +14,12 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
     private int curDialogPoint = -1;
     private int curDialogIndex = -1;
+    private int curNpcprofile = -1;
 
     private string[] curDialogArr;
     public string[] curMyDialogArr;
 
-    private bool isDialog = false;
+    public bool isDialog = false;
     public bool isDialogAnim = false;
     public bool isOption = false;
     public bool isOnChoice = false;
@@ -49,17 +50,18 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
     public void DialogProfileChanger(int _point)
     {
-        int npcindex = _point;
-
-        if (isimtalking)
+        if(curNpcprofile != _point)
         {
-            npcindex = -1;
+            curNpcprofile = _point;
+
+            if (isimtalking)
+            {
+                curNpcprofile = -1;
+            }
+
+            Sprite _sprite = Resources.Load<Sprite>("Image/DialogProfile/Profile_" + curNpcprofile);
+            dialogUI.SetProfile(_sprite);
         }
-
-        Debug.Log("Image/DialogProfile/" + npcindex);
-
-        Sprite _sprite = Resources.Load<Sprite>("Image/DialogProfile/Profile_" + npcindex);
-        dialogUI.SetProfile(_sprite);
     }
 
     public void DialogProcess()
@@ -83,10 +85,14 @@ public class ScenesManager : MonoSingleton<ScenesManager>
             {
                 int eventnum = ResourceManager.instance.GetDialogEvent(curDialogPoint, curDialogIndex);
 
-                dialogUI.DialogFinish(eventnum);
-
                 isDialog = false;
+
+                dialogUI.DialogFinish(eventnum);
             }
+        }
+        else
+        {
+            dialogUI.DialogFinish(-1);
         }
     }
 
@@ -107,12 +113,23 @@ public class ScenesManager : MonoSingleton<ScenesManager>
         }
         else
         {
-            dialogUI.DialogFinish(-2);
-
             isDialog = false;
 
+            dialogUI.DialogFinish(-2);
+
             DialogProfileChanger(curDialogPoint);
-            DialogProcess();
+
+            if(curDialogPoint != -1)
+            {
+                DialogProcess();
+            }
+            else
+            {
+                dialogUI.DialogFinish(-1);
+
+                isOnChoice = false;
+                isDialog = false;
+            }
         }
     }
 

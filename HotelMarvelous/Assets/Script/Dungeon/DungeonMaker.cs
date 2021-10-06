@@ -112,6 +112,8 @@ public class DungeonMaker : MonoBehaviour
                     roomIndexListArr[curIndex][i].obTile.SetActive(true);
                 }
             }
+
+            RoomOpen();
         }
         else
         {
