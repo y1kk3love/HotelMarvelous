@@ -15,6 +15,8 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
     private List<DialogEventData> dialogEventList = new List<DialogEventData>();
 
+    private GameObject[] dropItemArr;
+
     public void LoadResources()
     {
         LoadDialogData();
@@ -165,6 +167,8 @@ public class ResourceManager : MonoSingleton<ResourceManager>
     {
         return dialogData[_point][_index].dialogEvent;
     }
+
+    public void GetDropItem(int)
 
     private void LoadItemResources()
     {
