@@ -111,7 +111,10 @@ public class Player : MonoBehaviour
 
         if (other.CompareTag("ConsumItem"))
         {
-            CheckDropItem(other);
+            if (!isattack)
+            {
+                CheckDropItem(other);
+            }
         }
     }
 
@@ -348,7 +351,7 @@ public class Player : MonoBehaviour
 
     public void SetDamage(int _damage)
     {
-        if (isInvincible)
+        if (isInvincible || isattack)
         {
             return;
         }
@@ -551,6 +554,85 @@ public class Player : MonoBehaviour
                     wide.SetSkillPreset("Monster", 3f);
                     break;
                 case 2:
+                    byte[] consumItemperArr = new byte[] { 40, 40, 20 };
+
+                    int random = Random.Range(0, 101);
+                    int curpercent = 0;
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        curpercent += consumItemperArr[i];
+
+                        if (random <= curpercent)
+                        {
+                            switch (i)
+                            {
+                                case 0:
+                                    consumItemperArr = new byte[] { 59, 30, 7, 3, 1 };
+
+                                    random = Random.Range(0, 101);
+                                    curpercent = 0;
+                                    for (int x = 0; x < 5; x++)
+                                    {
+                                        curpercent += consumItemperArr[i];
+
+                                        if (random <= curpercent)
+                                        {
+                                            byte _coin = 0;
+
+                                            switch (x)
+                                            {
+                                                case 0:
+                                                    _coin = 1;
+                                                    break;
+                                                case 1:
+                                                    _coin = 2;
+                                                    break;
+                                                case 2:
+                                                    _coin = 5;
+                                                    break;
+                                                case 3:
+                                                    _coin = 10;
+                                                    break;
+                                                case 4:
+                                                    _coin = 100;
+                                                    break;
+                                            }
+
+                                            for (int _x = 0; _x < _coin; _x++)
+                                            {
+                                                GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.COIN);
+                                                GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                                ConsumItem conitem = coin.AddComponent<ConsumItem>();
+                                                conitem.consumitem = DROPITEM.COIN;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 1:
+                                    random = Random.Range(0, 101);
+
+                                    if (random <= 95)
+                                    {
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.KEY);
+                                        GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                        ConsumItem conitem = _key.AddComponent<ConsumItem>();
+                                        conitem.consumitem = DROPITEM.KEYS;
+                                    }
+                                    else
+                                    {
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.MASTERKEY);
+                                        GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                        ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
+                                        conitem.consumitem = DROPITEM.MASTERKEY;
+                                    }
+                                    break;
+                                case 2:
+                                    //타로 카드 드롭
+                                    break;
+                            }
+                        }
+                    }
                     Debug.Log("슬롯머신 발동!");
                     break;
             }

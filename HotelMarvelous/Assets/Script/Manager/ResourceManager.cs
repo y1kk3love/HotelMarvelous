@@ -168,7 +168,15 @@ public class ResourceManager : MonoSingleton<ResourceManager>
         return dialogData[_point][_index].dialogEvent;
     }
 
-    public void GetDropItem(int)
+    public GameObject GetDropItem(ITEMID id)
+    {
+        if(dropItemArr == null)
+        {
+            dropItemArr = Resources.LoadAll<GameObject>("Prefab/Item");        
+        }
+
+        return dropItemArr[(byte)id];
+    }
 
     private void LoadItemResources()
     {

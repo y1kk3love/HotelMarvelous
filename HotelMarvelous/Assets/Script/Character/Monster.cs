@@ -7,18 +7,6 @@ public class Monster : MonoBehaviour
 {
     public GameObject rangeskill;
 
-    #region [DropItem]
-
-    private GameObject obCoin;
-    private GameObject obKey;
-    private GameObject obMasterKey;
-    private GameObject obBean;
-    private GameObject obHealHp;
-    private GameObject obHealMental;
-    private GameObject obHealAll;
-
-    #endregion
-
     private GameObject player;
 
     private NavMeshAgent navi;
@@ -121,172 +109,265 @@ public class Monster : MonoBehaviour
             isdead = true;
             GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>().MonsterDead();
             navi = null;
-            //SpawnItem();
+            SpawnConsumItem();
+            SpawnHealItem();
             Destroy(gameObject);
         }
     }
 
-    private void SpawnItem()
+    #region [DropItem]
+
+    private void SpawnHealItem()
     {
-        //소모성 재화
-        if(Random.Range(0, 100) < 40)                                                                   //40%
+        byte[] consumItemperArr;
+
+        int random = Random.Range(0, 101);
+        int curpercent = 0;
+
+        if (random <= 10)
         {
-            int _stateper = Random.Range(0, 100);
+            random = Random.Range(0, 101);
 
-            if (_stateper < 50)                                         //50% 전체금화
+            for (int i = 0; i < 3; i++)
             {
-                int _coinper = Random.Range(0, 100);
+                consumItemperArr = new byte[] { 45, 45, 10 };
 
-                if(_coinper < 89)           //89% 금화 1개
+                curpercent += consumItemperArr[i];
+
+                if (random <= curpercent)
                 {
-                    GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _coin.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.COIN;
-                }
-                else if (_coinper < 96)     //7% 금화 2개
-                {
-                    for(int i = 0; i < 2; i++)
+                    switch (i)
                     {
-                        GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                        ConsumItem conitem = _coin.AddComponent<ConsumItem>();
-                        conitem.consumitem = DROPITEM.COIN;
+                        case 0:
+                            random = Random.Range(0, 101);
+
+                            for (int _x = 0; _x < 3; _x++)
+                            {
+                                consumItemperArr = new byte[] { 75, 25, 10 };
+
+                                curpercent += consumItemperArr[i];
+
+                                if (random <= curpercent)
+                                {
+                                    GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.HP);
+
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            GameObject s = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _s = s.AddComponent<ConsumItem>();
+                                            _s.consumitem = DROPITEM.HPS;
+                                            return;
+                                        case 1:
+                                            GameObject m = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _m = m.AddComponent<ConsumItem>();
+                                            _m.consumitem = DROPITEM.HPM;
+                                            return;
+                                        case 2:
+                                            GameObject l = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _l = l.AddComponent<ConsumItem>();
+                                            _l.consumitem = DROPITEM.HPL;
+                                            return;
+                                    }
+                                }
+                            }
+                            break;
+                        case 1:
+                            random = Random.Range(0, 101);
+
+                            for (int _x = 0; _x < 3; _x++)
+                            {
+                                consumItemperArr = new byte[] { 75, 25, 10 };
+
+                                curpercent += consumItemperArr[i];
+
+                                if (random <= curpercent)
+                                {
+                                    GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.MENTAL);
+
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            GameObject s = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _s = s.AddComponent<ConsumItem>();
+                                            _s.consumitem = DROPITEM.MENTALS;
+                                            return;
+                                        case 1:
+                                            GameObject m = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _m = m.AddComponent<ConsumItem>();
+                                            _m.consumitem = DROPITEM.MENTALM;
+                                            return;
+                                        case 2:
+                                            GameObject l = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _l = l.AddComponent<ConsumItem>();
+                                            _l.consumitem = DROPITEM.MENTALL;
+                                            return;
+                                    }
+                                }
+                            }
+                            break;
+                        case 2:
+                            random = Random.Range(0, 101);
+
+                            for (int _x = 0; _x < 3; _x++)
+                            {
+                                consumItemperArr = new byte[] { 80, 16, 4 };
+
+                                curpercent += consumItemperArr[i];
+
+                                if (random <= curpercent)
+                                {
+                                    GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.HEALALL);
+
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            GameObject s = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _s = s.AddComponent<ConsumItem>();
+                                            _s.consumitem = DROPITEM.TOTALHEALS;
+                                            return;
+                                        case 1:
+                                            GameObject m = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _m = m.AddComponent<ConsumItem>();
+                                            _m.consumitem = DROPITEM.TOTALHEALM;
+                                            return;
+                                        case 2:
+                                            GameObject l = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                            ConsumItem _l = l.AddComponent<ConsumItem>();
+                                            _l.consumitem = DROPITEM.TOTALHEALL;
+                                            return;
+                                    }
+                                }
+                            }
+                            break;
                     }
-                }
-                else                        //4% 금화 5개
-                {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        GameObject _coin = Instantiate(obCoin, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                        ConsumItem conitem = _coin.AddComponent<ConsumItem>();
-                        conitem.consumitem = DROPITEM.COIN;
-                    }
-                }
-            }
-            else if (_stateper < 80)                                    //30% 전체열쇠
-            {
-                int _keyper = Random.Range(0, 100);
-
-                if(_keyper < 99)            //99% 열쇠 1개
-                {
-                    GameObject _key = Instantiate(obKey, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _key.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.KEYS;
-                }
-                else                        //1% 마스터키
-                {
-                    GameObject _masterkey = Instantiate(obMasterKey, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.MASTERKEY;
-                }
-            }
-            else                                                        //20% 전체원두
-            {
-                int _beanper = Random.Range(0, 100);
-
-                if (_beanper < 89)          //89% 원두 1개
-                {
-                    GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _bean.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.BEANS;
-                }
-                else if(_beanper < 96)      //7% 원두 2개
-                {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                        ConsumItem conitem = _bean.AddComponent<ConsumItem>();
-                        conitem.consumitem = DROPITEM.BEANS;
-                    }
-                }
-                else                        //4% 원두 5개
-                {
-                    for (int i = 0; i < 5; i++)
-                    {
-                        GameObject _bean = Instantiate(obBean, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                        ConsumItem conitem = _bean.AddComponent<ConsumItem>();
-                        conitem.consumitem = DROPITEM.BEANS;
-                    }
-                }
-            }
-        }
-
-        //몬스터 드랍 회복 아이템
-        if(Random.Range(0,100) < 10)                                                                    //10%
-        {
-            int totalhealper = Random.Range(0, 100);
-
-            if(totalhealper < 45)                                       //45% 전체체력회복
-            {
-                int hphealper = Random.Range(0, 100);
-
-                if(hphealper < 70)          //70% +3
-                {
-                    GameObject _hp = Instantiate(obHealHp, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _hp.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.HPS;
-                }
-                else if(hphealper < 95)     //25% +5
-                {
-                    GameObject _hp = Instantiate(obHealHp, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _hp.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.HPM;
-                }
-                else                        //5% +10
-                {
-                    GameObject _hp = Instantiate(obHealHp, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _hp.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.HPL;
-                }
-            }
-            else if(totalhealper < 90)                                  //45% 전체정신력회복
-            {
-                int mentalper = Random.Range(0, 100);
-
-                if(mentalper < 70)          //70% +0.5
-                {
-                    GameObject _mental = Instantiate(obHealMental, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _mental.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.MENTALS;
-                }
-                else if(mentalper < 95)     //25% +1.0
-                {
-                    GameObject _mental = Instantiate(obHealMental, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _mental.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.MENTALM;
-                }
-                else                        //5% +5.0
-                {
-                    GameObject _mental = Instantiate(obHealMental, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _mental.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.MENTALL;
-                }
-            }
-            else                                                        //10% 전체체력,정신력회복
-            {
-                int totalper = Random.Range(0, 100);
-
-                if(totalper < 80)           //80% +3 && +1.0
-                {
-                    GameObject _total = Instantiate(obHealAll, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _total.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.TOTALHEALS;
-
-                }
-                else if(totalper < 96)      //16% +5 && 3.0
-                {
-                    GameObject _total = Instantiate(obHealAll, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _total.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.TOTALHEALM;
-                }
-                else                        //4% +20 & +10.0
-                {
-                    GameObject _total = Instantiate(obHealAll, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                    ConsumItem conitem = _total.AddComponent<ConsumItem>();
-                    conitem.consumitem = DROPITEM.TOTALHEALL;
                 }
             }
         }
     }
+
+    private void SpawnConsumItem()
+    {
+        byte[] consumItemperArr;
+
+        int random = Random.Range(0, 101);
+        int curpercent = 0;
+
+        if(random <= 40)
+        {
+            random = Random.Range(0, 101);
+
+            for (int i = 0; i < 3; i++)
+            {
+                consumItemperArr = new byte[] { 50, 30, 20 };
+
+                curpercent += consumItemperArr[i];
+
+                if (random <= curpercent)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            consumItemperArr = new byte[] { 89, 7, 4 };
+
+                            random = Random.Range(0, 101);
+                            curpercent = 0;
+
+                            for (int x = 0; x < 3; x++)
+                            {
+                                curpercent += consumItemperArr[i];
+
+                                if (random <= curpercent)
+                                {
+                                    byte _coin = 0;
+
+                                    switch (x)
+                                    {
+                                        case 0:
+                                            _coin = 1;
+                                            break;
+                                        case 1:
+                                            _coin = 2;
+                                            break;
+                                        case 2:
+                                            _coin = 5;
+                                            break;
+                                    }
+
+                                    for (int _x = 0; _x < _coin; _x++)
+                                    {
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.COIN);
+                                        GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                        ConsumItem conitem = coin.AddComponent<ConsumItem>();
+                                        conitem.consumitem = DROPITEM.COIN;
+                                    }
+
+                                    return;
+                                }
+                            }
+                            return;
+                        case 1:
+                            random = Random.Range(0, 101);
+
+                            if (random <= 99)
+                            {
+                                GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.KEY);
+                                GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                ConsumItem conitem = _key.AddComponent<ConsumItem>();
+                                conitem.consumitem = DROPITEM.KEYS;
+                            }
+                            else
+                            {
+                                GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.MASTERKEY);
+                                GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
+                                conitem.consumitem = DROPITEM.MASTERKEY;
+                            }
+                            return;
+                        case 2:
+                            consumItemperArr = new byte[] { 89, 7, 4 };
+
+                            random = Random.Range(0, 101);
+                            curpercent = 0;
+
+                            for (int y = 0; y < 3; y++)
+                            {
+                                curpercent += consumItemperArr[i];
+
+                                if (random <= curpercent)
+                                {
+                                    byte _bean = 0;
+
+                                    switch (y)
+                                    {
+                                        case 0:
+                                            _bean = 1;
+                                            break;
+                                        case 1:
+                                            _bean = 2;
+                                            break;
+                                        case 2:
+                                            _bean = 5;
+                                            break;
+                                    }
+
+                                    for (int _y = 0; _y < _bean; _y++)
+                                    {
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.BEAN);
+                                        GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
+                                        ConsumItem conitem = coin.AddComponent<ConsumItem>();
+                                        conitem.consumitem = DROPITEM.BEANS;
+                                    }
+                                }
+                            }
+                            return;
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion
 
     private void MonsterMove()
     {

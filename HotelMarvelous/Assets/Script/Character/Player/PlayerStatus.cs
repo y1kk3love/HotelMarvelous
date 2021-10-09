@@ -6,11 +6,6 @@ public class PlayerStatus
 {
     public int damage = 30;
 
-    public int missdam = 15;
-    public int lightdam = 15;
-    public int normaldam = 40;
-    public int harddam = 15;
-
     public float hp = 30;
     public float maxHp = 30;
     public float criticalPercent = 3.0f;

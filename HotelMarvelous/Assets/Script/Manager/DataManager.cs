@@ -26,28 +26,21 @@ public class DataManager : MonoSingleton<DataManager>
 
     public float CalculateDamage()
     {
-        int _percent = Random.Range(0, 100);
+        byte[] damagePerArr = new byte[] { 15, 15, 40, 15, 15 };
+
+        int _percent = Random.Range(0, 101);
+        int _curpercent = 0;
         float _damage = playerStatus.damage;
 
-        if (_percent < playerStatus.missdam)
+
+        for(int i = 0; i < 5; i++)
         {
-            _damage -= 2;
-        }
-        else if (_percent < playerStatus.missdam + playerStatus.lightdam)
-        {
-            _damage--;
-        }
-        else if (_percent < playerStatus.missdam + playerStatus.lightdam + playerStatus.normaldam)
-        {
-            return _damage;
-        }
-        else if (_percent < playerStatus.missdam + playerStatus.lightdam + playerStatus.normaldam + playerStatus.harddam)
-        {
-            _damage++;
-        }
-        else
-        {
-            _damage += 2;
+            _curpercent += damagePerArr[i];
+
+            if (_percent <= _curpercent)
+            {
+                _damage -= i - 2;
+            }
         }
 
         if (CalculateIsCritical())

@@ -17,7 +17,6 @@ public enum INTERACTION
     TITLE
 }
 
-
 public enum DIALOGDATA
 {
     POINTINDEX,
@@ -35,7 +34,6 @@ public enum DIALOGEVENTDATA
     EVENTCHICE,
     EVENTDIALOG
 }
-
 
 public enum DIALOGZONE
 {
@@ -141,4 +139,15 @@ public enum OBJECTDATA : int
     MONSTERNAME = 6,
     DISPOITEM = 8,
     DISPOINDEX
+}
+
+public enum ITEMID
+{
+    COIN,
+    KEY,
+    BEAN,
+    MASTERKEY,
+    HP,
+    MENTAL,
+    HEALALL
 }
