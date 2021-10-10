@@ -17,6 +17,17 @@ public enum INTERACTION
     TITLE
 }
 
+public enum OBJECTDATA : int
+{
+    INDEX,
+    FURNITURENAME,
+    ITEMNAME = 3,
+    MAXSTACK,
+    MONSTERNAME = 6,
+    DISPOITEM = 8,
+    DISPOINDEX
+}
+
 public enum DIALOGDATA
 {
     POINTINDEX,
@@ -92,9 +103,20 @@ public enum MONSTERTYPE
     INK
 }
 
-public enum ITEMCODE : byte
+public enum DISPOITEM
 {
-    CROWN,
+    COIN,
+    KEY,
+    BEAN,
+    MASTERKEY,
+    HP,
+    MENTAL,
+    HEALALL
+}
+
+public enum CONSUMITEM : byte
+{
+    CROWN = 1,
     SLOTMACHINE
 }
 
@@ -128,26 +150,4 @@ public enum TOOLEDITUI
     TILEMODE,
     MONSTERMODE,
     FURNITUREMODE
-}
-
-public enum OBJECTDATA : int
-{
-    INDEX,
-    FURNITURENAME,
-    ITEMNAME = 3,
-    MAXSTACK,
-    MONSTERNAME = 6,
-    DISPOITEM = 8,
-    DISPOINDEX
-}
-
-public enum ITEMID
-{
-    COIN,
-    KEY,
-    BEAN,
-    MASTERKEY,
-    HP,
-    MENTAL,
-    HEALALL
 }

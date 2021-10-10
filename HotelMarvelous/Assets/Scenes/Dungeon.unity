@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44133216, g: 0.49014127, b: 0.5701883, a: 1}
+  m_IndirectSpecularColor: {r: 0.16369973, g: 0.20502928, b: 0.28485262, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -341,7 +341,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 303783c43152120488dbd7aaf3ad4410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BossUI: {fileID: 4119265772506388271, guid: cfa76b13ad2f39d438d1e394d8128819, type: 3}
+  bossUI: {fileID: 4119265772506388271, guid: cfa76b13ad2f39d438d1e394d8128819, type: 3}
+  rewardItem: {fileID: 8455927372195779784, guid: b57d2f5544eaa814ab01f180b73d57f1,
+    type: 3}
 --- !u!1 &1846593198
 GameObject:
   m_ObjectHideFlags: 0

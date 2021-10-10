@@ -18,7 +18,8 @@ public class DungeonMaker : MonoBehaviour
 
     private Player player;
 
-    public GameObject BossUI;
+    public GameObject bossUI;
+    public GameObject rewardItem;
 
     private GameObject curEmptyRoom;
     private GameObject curMiniMap;
@@ -68,6 +69,26 @@ public class DungeonMaker : MonoBehaviour
         RoomOpen();
     }
 
+    private void RoomReward()
+    {
+        int random = Random.Range(1, 100);
+
+        if(random < 100)
+        {
+            int middle = (int)System.Math.Truncate((double)(roomIndexListArr[curIndex].Count / 2));
+
+            TileInfo info = roomIndexListArr[curIndex][middle];
+
+            if (info.roomType == ROOMTYPE.HALLWAY)
+            {
+                GameObject obj = Instantiate(rewardItem, new Vector3(info.position.x, 0.5f, info.position.y), Quaternion.identity);
+
+                RewardItem reward = obj.transform.GetComponent<RewardItem>();
+                reward.id = (CONSUMITEM)Random.Range(1, System.Enum.GetValues(typeof(CONSUMITEM)).Length);
+            }
+        }
+    }
+
     private void RoomOpen()
     {
         if(monMaxArr[curIndex] == 0)
@@ -78,6 +99,8 @@ public class DungeonMaker : MonoBehaviour
             {
                 Door[i].GetComponent<Animator>().SetBool("isDoorOpen", true);
             }
+
+            RoomReward();
         }
     }
 
@@ -102,7 +125,7 @@ public class DungeonMaker : MonoBehaviour
 
                 if(roomIndexListArr[curIndex][0].roomType == ROOMTYPE.BOSS)
                 {
-                    GameObject bossui = Instantiate(BossUI, transform.position, Quaternion.identity);
+                    GameObject bossui = Instantiate(bossUI, transform.position, Quaternion.identity);
                 }
             }
             else
@@ -365,7 +388,7 @@ public class DungeonMaker : MonoBehaviour
         BuildWall(_info);
 
         //로딩 렉의 원인!!
-        floor.GetComponent<NavMeshSurface>().BuildNavMesh();
+        //floor.GetComponent<NavMeshSurface>().BuildNavMesh();
     }
 
     private void BuildWall(TileInfo _tileinfo)

@@ -168,7 +168,7 @@ public class ResourceManager : MonoSingleton<ResourceManager>
         return dialogData[_point][_index].dialogEvent;
     }
 
-    public GameObject GetDropItem(ITEMID id)
+    public GameObject GetDropItem(DISPOITEM id)
     {
         if(dropItemArr == null)
         {

@@ -121,12 +121,12 @@ public class Monster : MonoBehaviour
     {
         byte[] consumItemperArr;
 
-        int random = Random.Range(0, 101);
+        int random = Random.Range(0, 100);
         int curpercent = 0;
 
-        if (random <= 10)
+        if (random < 10)
         {
-            random = Random.Range(0, 101);
+            random = Random.Range(0, 100);
 
             for (int i = 0; i < 3; i++)
             {
@@ -134,12 +134,12 @@ public class Monster : MonoBehaviour
 
                 curpercent += consumItemperArr[i];
 
-                if (random <= curpercent)
+                if (random < curpercent)
                 {
                     switch (i)
                     {
                         case 0:
-                            random = Random.Range(0, 101);
+                            random = Random.Range(0, 100);
 
                             for (int _x = 0; _x < 3; _x++)
                             {
@@ -147,9 +147,9 @@ public class Monster : MonoBehaviour
 
                                 curpercent += consumItemperArr[i];
 
-                                if (random <= curpercent)
+                                if (random < curpercent)
                                 {
-                                    GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.HP);
+                                    GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.HP);
 
                                     switch (i)
                                     {
@@ -173,7 +173,7 @@ public class Monster : MonoBehaviour
                             }
                             break;
                         case 1:
-                            random = Random.Range(0, 101);
+                            random = Random.Range(0, 100);
 
                             for (int _x = 0; _x < 3; _x++)
                             {
@@ -181,9 +181,9 @@ public class Monster : MonoBehaviour
 
                                 curpercent += consumItemperArr[i];
 
-                                if (random <= curpercent)
+                                if (random < curpercent)
                                 {
-                                    GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.MENTAL);
+                                    GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MENTAL);
 
                                     switch (i)
                                     {
@@ -207,7 +207,7 @@ public class Monster : MonoBehaviour
                             }
                             break;
                         case 2:
-                            random = Random.Range(0, 101);
+                            random = Random.Range(0, 100);
 
                             for (int _x = 0; _x < 3; _x++)
                             {
@@ -215,9 +215,9 @@ public class Monster : MonoBehaviour
 
                                 curpercent += consumItemperArr[i];
 
-                                if (random <= curpercent)
+                                if (random < curpercent)
                                 {
-                                    GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.HEALALL);
+                                    GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.HEALALL);
 
                                     switch (i)
                                     {
@@ -250,12 +250,12 @@ public class Monster : MonoBehaviour
     {
         byte[] consumItemperArr;
 
-        int random = Random.Range(0, 101);
+        int random = Random.Range(0, 100);
         int curpercent = 0;
 
-        if(random <= 40)
+        if(random < 40)
         {
-            random = Random.Range(0, 101);
+            random = Random.Range(0, 100);
 
             for (int i = 0; i < 3; i++)
             {
@@ -263,21 +263,21 @@ public class Monster : MonoBehaviour
 
                 curpercent += consumItemperArr[i];
 
-                if (random <= curpercent)
+                if (random < curpercent)
                 {
                     switch (i)
                     {
                         case 0:
                             consumItemperArr = new byte[] { 89, 7, 4 };
 
-                            random = Random.Range(0, 101);
+                            random = Random.Range(0, 100);
                             curpercent = 0;
 
                             for (int x = 0; x < 3; x++)
                             {
                                 curpercent += consumItemperArr[i];
 
-                                if (random <= curpercent)
+                                if (random < curpercent)
                                 {
                                     byte _coin = 0;
 
@@ -296,7 +296,7 @@ public class Monster : MonoBehaviour
 
                                     for (int _x = 0; _x < _coin; _x++)
                                     {
-                                        GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.COIN);
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
                                         GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
                                         ConsumItem conitem = coin.AddComponent<ConsumItem>();
                                         conitem.consumitem = DROPITEM.COIN;
@@ -307,18 +307,18 @@ public class Monster : MonoBehaviour
                             }
                             return;
                         case 1:
-                            random = Random.Range(0, 101);
+                            random = Random.Range(0, 100);
 
-                            if (random <= 99)
+                            if (random < 99)
                             {
-                                GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.KEY);
+                                GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.KEY);
                                 GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
                                 ConsumItem conitem = _key.AddComponent<ConsumItem>();
                                 conitem.consumitem = DROPITEM.KEYS;
                             }
                             else
                             {
-                                GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.MASTERKEY);
+                                GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MASTERKEY);
                                 GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
                                 ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
                                 conitem.consumitem = DROPITEM.MASTERKEY;
@@ -327,14 +327,14 @@ public class Monster : MonoBehaviour
                         case 2:
                             consumItemperArr = new byte[] { 89, 7, 4 };
 
-                            random = Random.Range(0, 101);
+                            random = Random.Range(0, 100);
                             curpercent = 0;
 
                             for (int y = 0; y < 3; y++)
                             {
                                 curpercent += consumItemperArr[i];
 
-                                if (random <= curpercent)
+                                if (random < curpercent)
                                 {
                                     byte _bean = 0;
 
@@ -353,7 +353,7 @@ public class Monster : MonoBehaviour
 
                                     for (int _y = 0; _y < _bean; _y++)
                                     {
-                                        GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.BEAN);
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.BEAN);
                                         GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 2, transform.position.z), Quaternion.identity);
                                         ConsumItem conitem = coin.AddComponent<ConsumItem>();
                                         conitem.consumitem = DROPITEM.BEANS;
@@ -441,7 +441,7 @@ public class Monster : MonoBehaviour
         {
             if (Hit.transform == player.transform)
             {
-                navi.SetDestination(Hit.transform.position);
+                //navi.SetDestination(Hit.transform.position);
             }
         }
     }

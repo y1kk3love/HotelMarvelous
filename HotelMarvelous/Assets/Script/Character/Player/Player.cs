@@ -106,6 +106,11 @@ public class Player : MonoBehaviour
 
         if (other.CompareTag("RewardItem"))
         {
+            byte id = (byte)other.transform.GetComponent<RewardItem>().id;
+
+            other.transform.GetComponent<RewardItem>().id = (CONSUMITEM)stat.curItemIndex;
+            stat.curItemIndex = id;
+
             GetItemInfo();
         }
 
@@ -556,27 +561,27 @@ public class Player : MonoBehaviour
                 case 2:
                     byte[] consumItemperArr = new byte[] { 40, 40, 20 };
 
-                    int random = Random.Range(0, 101);
+                    int random = Random.Range(0, 100);
                     int curpercent = 0;
 
                     for (int i = 0; i < 3; i++)
                     {
                         curpercent += consumItemperArr[i];
 
-                        if (random <= curpercent)
+                        if (random < curpercent)
                         {
                             switch (i)
                             {
                                 case 0:
                                     consumItemperArr = new byte[] { 59, 30, 7, 3, 1 };
 
-                                    random = Random.Range(0, 101);
+                                    random = Random.Range(0, 100);
                                     curpercent = 0;
                                     for (int x = 0; x < 5; x++)
                                     {
                                         curpercent += consumItemperArr[i];
 
-                                        if (random <= curpercent)
+                                        if (random < curpercent)
                                         {
                                             byte _coin = 0;
 
@@ -601,7 +606,7 @@ public class Player : MonoBehaviour
 
                                             for (int _x = 0; _x < _coin; _x++)
                                             {
-                                                GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.COIN);
+                                                GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
                                                 GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                                                 ConsumItem conitem = coin.AddComponent<ConsumItem>();
                                                 conitem.consumitem = DROPITEM.COIN;
@@ -610,18 +615,18 @@ public class Player : MonoBehaviour
                                     }
                                     break;
                                 case 1:
-                                    random = Random.Range(0, 101);
+                                    random = Random.Range(0, 100);
 
-                                    if (random <= 95)
+                                    if (random < 95)
                                     {
-                                        GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.KEY);
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.KEY);
                                         GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                                         ConsumItem conitem = _key.AddComponent<ConsumItem>();
                                         conitem.consumitem = DROPITEM.KEYS;
                                     }
                                     else
                                     {
-                                        GameObject obj = ResourceManager.Instance.GetDropItem(ITEMID.MASTERKEY);
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MASTERKEY);
                                         GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
                                         ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
                                         conitem.consumitem = DROPITEM.MASTERKEY;
