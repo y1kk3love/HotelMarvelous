@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 263c744754a3e704b91717ad0d6c0a9b
+guid: 9b02fc02283c8a949a5c905cfc2567ff
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
-    second: Attack_01
+    second: Player_Attack_Slash01
   - first:
-      74: -998496362607748373
-    second: Attack_02
+      74: -8002530983900328134
+    second: Player_Attack_Slash02
   - first:
-      74: -5405653242291790180
-    second: Attack_03
+      74: -9152106897514756542
+    second: Player_Attack_Slash03
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -41,7 +41,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Attack_01
+      name: Player_Attack_Slash01
       takeName: Take 001
       internalID: 0
       firstFrame: 0
@@ -70,13 +70,13 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Attack_02
+      name: Player_Attack_Slash02
       takeName: Take 001
       internalID: 0
       firstFrame: 17
       lastFrame: 35
       wrapMode: 0
-      orientationOffsetY: 180
+      orientationOffsetY: 175
       level: 0
       cycleOffset: 0
       loop: 0
@@ -99,11 +99,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Attack_03
+      name: Player_Attack_Slash03
       takeName: Take 001
       internalID: 0
       firstFrame: 35
-      lastFrame: 85
+      lastFrame: 75
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -177,7 +177,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.0254
+    globalScale: 1
     rootMotionBoneName: Bip001
     hasTranslationDoF: 0
     hasExtraRoot: 0
