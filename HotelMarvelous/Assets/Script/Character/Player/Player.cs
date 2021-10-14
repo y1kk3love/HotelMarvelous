@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
 
         if (isconv || ScenesManager.Instance.isOption)
         {
-            anim.SetBool("Run", false);
+            anim.SetBool("Move", false);
             return;
         }
 
@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
 
         if (Mathf.Abs(input.x) < 1 && Mathf.Abs(input.y) < 1)
         {
-            anim.SetBool("Run", false);
+            anim.SetBool("Move", false);
             return;
         }
 
@@ -668,7 +668,8 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        anim.SetBool("Run", true);
+        anim.SetBool("Move", true);
+        anim.SetFloat("Speed", stat.speed);
         transform.position += transform.forward * velocity * Time.deltaTime * stat.speed;
     }
 

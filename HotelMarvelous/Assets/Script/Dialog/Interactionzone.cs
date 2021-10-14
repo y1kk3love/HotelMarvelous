@@ -5,7 +5,7 @@ using UnityEngine;
 public class Interactionzone : MonoBehaviour
 {
     public INTERACTION portalType;
-    public DIALOGZONE dialogPoint;
+    public NPCID dialogPoint;
     public int dialogIndex;
 
     void OnTriggerEnter(Collider other)

@@ -124,6 +124,7 @@ public class ResourceManager : MonoSingleton<ResourceManager>
                 }
 
                 dialog.nextDialog = text;
+                dialog.dialogReward = int.Parse(data[(int)DIALOGEVENTDATA.EVENTREWARD]);
                 dialog.chice = data[(int)DIALOGEVENTDATA.EVENTCHICE];
 
                 if (data[(int)DIALOGEVENTDATA.EVENTREWARD] != "")
@@ -233,6 +234,8 @@ public class DialogEventData
     public int nextPoint = -1;
     public int nextDialogIndex = -1;
     public string[] nextDialog;
+
+    public int dialogReward = 0;
 
     public string chice = "";
     public int reward = 0;

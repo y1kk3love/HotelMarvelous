@@ -7,6 +7,8 @@ public class DataManager : MonoSingleton<DataManager>
 {
     private PlayerStatus playerStatus = new PlayerStatus();
 
+    private int[] favorabilityarr = new int[20];
+
     public PlayerStatus GetPlayerStatus()
     {
         return playerStatus;
@@ -15,6 +17,16 @@ public class DataManager : MonoSingleton<DataManager>
     public void SetPlayerStatus(PlayerStatus _stat)
     {
         playerStatus = _stat;
+    }
+
+    public void SetNPCFavorability(byte id, int levels)
+    {
+        favorabilityarr[id] += levels;
+    }
+
+    public int GetNPCFavorability(byte id)
+    {
+        return favorabilityarr[id];
     }
 
     public void DataLoad()

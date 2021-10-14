@@ -7,6 +7,8 @@ public class DialogButton : MonoBehaviour
     public int dialogPoint;
     public int dialogIndex;
 
+    public int reward = 0;
+
     public string[] myDialog;
 
     public void OnClickChoiceButton()
@@ -32,5 +34,7 @@ public class DialogButton : MonoBehaviour
         {
             Destroy(content.transform.GetChild(i).gameObject);
         }
+
+        DataManager.Instance.SetNPCFavorability((byte)dialogPoint, reward);
     }
 }

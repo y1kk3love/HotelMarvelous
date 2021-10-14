@@ -46,7 +46,7 @@ public enum DIALOGEVENTDATA
     EVENTDIALOG
 }
 
-public enum DIALOGZONE
+public enum NPCID
 {
     Keneth,
     Elizabeth

@@ -1504,7 +1504,7 @@ public class ToolManager : MonoBehaviour
             }
         }
 
-        DeleteMap();
+        DeleteALLMap();
         mapBoardArr = new TileInfo[51, 51];
     }
 

@@ -78,6 +78,7 @@ public class DialogUI : MonoBehaviour
                         _nextdialog.dialogPoint = _data.nextPoint;
                         _nextdialog.dialogIndex = _data.nextDialogIndex;
                         _nextdialog.myDialog = _data.nextDialog;
+                        _nextdialog.reward = _data.dialogReward;
                     }
                 }
                 else if (eventDataList[0].nextDialog[0] != "")
