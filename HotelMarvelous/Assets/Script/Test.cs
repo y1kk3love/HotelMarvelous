@@ -6,6 +6,8 @@ public class Test : MonoBehaviour
 {
     public GameObject[] objarr;
 
+    public Animator anim;
+
     void Start()
     {
         ResourceManager.Instance.LoadResources();
@@ -19,6 +21,27 @@ public class Test : MonoBehaviour
     }
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Keypad0))
+        {
+            anim.SetTrigger("Hit");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
+            anim.SetBool("Idle", true);
+        }
+        else
+        {
+            anim.SetBool("Idle", false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
+            anim.SetBool("Down", true);
+        }
+        else
+        {
+            anim.SetBool("Down", false);
+        }
     }
 }

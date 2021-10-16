@@ -84,6 +84,10 @@
     <Compile Include="Assets\Script\UI\PauseUI.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\material\CartoonShader\Surface.shader" />
+    <None Include="Assets\material\CartoonShader\Outline.shader" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2019.4.29f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
