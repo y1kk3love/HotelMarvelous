@@ -42,7 +42,7 @@
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                o.normal = v.normal;
+                o.normal = mul(unity_ObjectToWorld, float4(v.normal, 0)).xyz;   //월드에서의 노말 벡터값
                 return o;
             }
 
