@@ -48,13 +48,6 @@ public class Monster : MonoBehaviour
                 mentaldamage = 0f;
                 raylength = 8;
                 break;
-            case MONSTERTYPE.PORTRAIT:
-                touchdamage = 3;
-                monsterhp = 100;
-                monspeed = 0.7f;
-                mentaldamage = 0f;
-                raylength = 8;
-                break;
         }
 
         if(navi != null)
@@ -65,6 +58,11 @@ public class Monster : MonoBehaviour
 
     void Update()
     {
+        if(ScenesManager.Instance.CheckScene() == "MapTools")
+        {
+            return;
+        }
+
         MonsterDeath();
 
         MonsterMove();

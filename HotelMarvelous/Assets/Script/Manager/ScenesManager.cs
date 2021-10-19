@@ -142,6 +142,11 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
     #region [SceneMove]
 
+    public string CheckScene()
+    {
+        return SceneManager.GetActiveScene().name;
+    }
+
     public void MoveToScene(INTERACTION _scenename)
     {
         string scene = _scenename.ToString();

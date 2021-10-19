@@ -99,7 +99,6 @@ public enum MONSTERTYPE
     NONE,
     SUPERVIA,
     AVARITIA,
-    PORTRAIT,
     INK
 }
 

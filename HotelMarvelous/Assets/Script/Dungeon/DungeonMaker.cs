@@ -245,7 +245,9 @@ public class DungeonMaker : MonoBehaviour
             {
                 Vector2 _pos = _dicionary.Key;
 
-                GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/Monster" + (int)_dicionary.Value) as GameObject;
+                MONSTERTYPE _type = (MONSTERTYPE)_dicionary.Value;
+
+                GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/" + _type.ToString()) as GameObject;
 
                 GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x, 1, _pos.y), Quaternion.identity);
 

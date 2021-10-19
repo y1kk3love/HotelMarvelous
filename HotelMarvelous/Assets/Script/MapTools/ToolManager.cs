@@ -9,7 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 public class ToolManager : MonoBehaviour
 {
     private List<Vector2> selectTilesList = new List<Vector2>();
-    private List<string[]> furnitureDataList = new List<string[]>();
+    private List<string[]> objectDataList = new List<string[]>();
 
     private Coroutine errorcoroutine = null;
 
@@ -22,14 +22,16 @@ public class ToolManager : MonoBehaviour
     private GameObject obBlockWall;                                    //막힌 벽 리소스
     private GameObject obDoorWall;                                    //문있는 벽 리소스
     private GameObject obDragBox;                                     //드래그 박스 리소스   
-    private GameObject obMonPosCircle;                               //몬스터 스폰포인트를 표시할 리소스
     private GameObject obfurniture;
+    private GameObject obmonster;
 
     private GameObject obCurDragBox = null;                         //현재 생성된 드래그 박스
     private GameObject obCurDragSelectBox = null;                  //현재 생성된 드래스 선택 박스들을 넣은 빈오브젝트
     private GameObject obcurMonCircle;                                   //현재 선택된 몬스터 스폰포인트
     private GameObject obCurFurnPreviewModel = null;
     private GameObject obCurFurnMouseModel = null;
+    private GameObject obCurMonPreviewModel = null;
+    private GameObject obCurMonMouseModel = null;
 
     private GameObject obFurniturePanel;
     private GameObject obWallPanel;                                    //벽을 관리하는 인터페이스
@@ -91,7 +93,7 @@ public class ToolManager : MonoBehaviour
         ResetDropDowns();
         UIOFF();
 
-        LoadFurnitureCSVData();
+        LoadObjectCSVData();
         LoadDataIndex();
 
         ReSetDataIndex();
@@ -188,6 +190,13 @@ public class ToolManager : MonoBehaviour
                     float x = BPMonPosParse(hit.point.x) + 0.5f;
                     float y = BPMonPosParse(hit.point.y) + 0.5f;
 
+                    if (obCurMonMouseModel != null)
+                    {
+                        Vector2 _pos = hit.point;
+
+                        obCurMonMouseModel.transform.position = _pos;
+                    }
+
                     if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MONSTERTYPE _dmtype))
                     {
                         textMonsterInfo.text = string.Format("(X : {0} // Y : {1}) {2}", x, y, _dmtype);
@@ -200,8 +209,6 @@ public class ToolManager : MonoBehaviour
                 }
                 else if (editMode == TOOLEDITUI.FURNITUREMODE)
                 {
-                    //위와 같은 실시간 가구 정보 확인 기능 구현예정
-
                     if (obCurFurnMouseModel != null)
                     {
                         Vector2 _pos = hit.point;
@@ -239,7 +246,7 @@ public class ToolManager : MonoBehaviour
 
                                 if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out MONSTERTYPE _dmtype))
                                 {
-                                    obcurMonCircle = Instantiate(obMonPosCircle, new Vector2(x, y), Quaternion.identity);
+                                    obcurMonCircle = Instantiate(obmonster, new Vector2(x, y), Quaternion.Euler(new Vector3(-90, 0, 0)));
                                     obcurMonCircle.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
                                     obcurMonCircle.name = string.Format("{0} // {1} MonPos", x + 0.5f, y + 0.5f);
                                     mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.Add(new Vector2(x + 0.5f, y + 0.5f), _monType);
@@ -268,7 +275,7 @@ public class ToolManager : MonoBehaviour
                                     return;
                                 }
 
-                                string[] _data = furnitureDataList[ddFurnType.value];
+                                string[] _data = objectDataList[ddFurnType.value];
 
                                 FurnitureInfo _info = new FurnitureInfo();
 
@@ -485,7 +492,7 @@ public class ToolManager : MonoBehaviour
                 }
                 else
                 {
-                    ddFurnType.value = furnitureDataList.Count - 1;
+                    ddFurnType.value = objectDataList.Count - 1;
                 }
             }
             else
@@ -500,6 +507,29 @@ public class ToolManager : MonoBehaviour
                 }
             }
         }       
+    }
+    public void MonsterPreviewChanger()
+    {
+        if (obCurMonPreviewModel != null)
+        {
+            Destroy(obCurMonPreviewModel);
+        }
+
+        if (obCurMonMouseModel != null)
+        {
+            Destroy(obCurMonMouseModel);
+        }
+
+        if (ddMonType.value != 0)
+        {
+            string _modelname = objectDataList[ddMonType.value][(int)OBJECTDATA.MONSTERNAME];
+            obmonster = Resources.Load("Prefab/Characters/Monsters/" + _modelname) as GameObject;
+            obCurMonPreviewModel = Instantiate(obmonster, new Vector2(1000, 1000), Quaternion.identity);
+            obCurMonPreviewModel.name = "MonsterPreview";
+
+            obCurMonMouseModel = Instantiate(obmonster, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(-90, 0, 0)));
+            obCurMonMouseModel.name = "MonsterPointer";
+        }
     }
 
     public void FurniturePreviewChanger()
@@ -516,8 +546,8 @@ public class ToolManager : MonoBehaviour
 
         if (ddFurnType.value != 0)
         {
-            string _modelname = furnitureDataList[ddFurnType.value][(int)OBJECTDATA.FURNITURENAME];
-            obfurniture = Resources.Load("MapTools/Furniture/" + _modelname) as GameObject;
+            string _modelname = objectDataList[ddFurnType.value][(int)OBJECTDATA.FURNITURENAME];
+            obfurniture = Resources.Load("Prefab/Furniture/" + _modelname) as GameObject;
             obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
             obCurFurnPreviewModel.name = "FurniturePreview";
 
@@ -1125,6 +1155,31 @@ public class ToolManager : MonoBehaviour
     {
         Text _buttontext = GameObject.Find("TextGridMode").GetComponent<Text>();
 
+        if(obCurFurnMouseModel != null)
+        {
+            Destroy(obCurFurnMouseModel);
+        }
+
+        if (obCurMonMouseModel != null)
+        {
+            Destroy(obCurMonMouseModel);
+        }
+
+        if (obCurFurnPreviewModel != null)
+        {
+            Destroy(obCurFurnPreviewModel);
+        }
+
+        if (obCurMonPreviewModel != null)
+        {
+            Destroy(obCurMonPreviewModel);
+        }
+
+        if (obCurDragSelectBox != null)
+        {
+            Destroy(obCurDragSelectBox);
+        }
+
         if (editMode == TOOLEDITUI.TILEMODE)
         {
             editMode = TOOLEDITUI.TILEMODE;
@@ -1164,12 +1219,37 @@ public class ToolManager : MonoBehaviour
             textMakeTile.text = "배치하기 (Q)";
             textDelTile.text = "삭제하기 (E)";
 
+            string _modelname = objectDataList[ddMonType.value][(int)OBJECTDATA.MONSTERNAME];
+            obmonster = Resources.Load("Prefab/Characters/Monsters/" + _modelname) as GameObject;
+
+            if (obmonster != null)
+            {
+                obCurMonMouseModel = Instantiate(obmonster, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(-90, 0, 0)));
+                obCurMonMouseModel.name = "MonsterPointer";
+
+                obCurMonPreviewModel = Instantiate(obmonster, new Vector2(1000, 1000), Quaternion.identity);
+                obCurMonPreviewModel.name = "MonsterPreview";
+            }
+
             obWallPanel.SetActive(false);
             obMonsterPanel.SetActive(true);
             obFurniturePanel.SetActive(false);
         }
         else if (editMode == TOOLEDITUI.FURNITUREMODE)
         {
+            string _modelname = objectDataList[ddFurnType.value][(int)OBJECTDATA.FURNITURENAME];
+            obfurniture = Resources.Load("Prefab/Furniture/" + _modelname) as GameObject;
+
+            if(obfurniture != null)
+            {
+                int _rotate = (int)furnitureDir * 90;
+                obCurFurnMouseModel = Instantiate(obfurniture, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
+                obCurFurnMouseModel.name = "FurniturPointer";
+
+                obCurFurnPreviewModel = Instantiate(obfurniture, new Vector2(1000, 1000), Quaternion.identity);
+                obCurFurnPreviewModel.name = "FurniturePreview";
+            }
+
             editMode = TOOLEDITUI.FURNITUREMODE;
             _buttontext.text = "가구 설치중 (F3)";
             textMakeTile.text = "좌로 회전 (Q)";
@@ -1240,7 +1320,6 @@ public class ToolManager : MonoBehaviour
         obBlockWall = Resources.Load("MapTools/Prefab/Wall") as GameObject;
         obDoorWall = Resources.Load("MapTools/Prefab/Door") as GameObject;
         obDragBox = Resources.Load("MapTools/Prefab/BoxSelect") as GameObject;
-        obMonPosCircle = Resources.Load("MapTools/Prefab/MonsterPos") as GameObject;
 
         textMonsterInfo = GameObject.Find("TextMonsterInfo").GetComponent<Text>();
         textFurnitureDir = GameObject.Find("FurnitureDirText").GetComponent<Text>();
@@ -1279,20 +1358,6 @@ public class ToolManager : MonoBehaviour
         ddMonType = GameObject.Find("DropdownMonsterType").GetComponent<Dropdown>();
         ddFurnType = GameObject.Find("DropdownFurnitureType").GetComponent<Dropdown>();
         ddNewFloor = GameObject.Find("DropdownNewFloor").GetComponent<Dropdown>();
-
-
-        int monTypeMax = System.Enum.GetValues(typeof(MONSTERTYPE)).Length;
-        string[] _typename = new string[monTypeMax];
-
-        for (int i = 1; i < monTypeMax; i++)
-        {
-            MONSTERTYPE _type = (MONSTERTYPE)i;
-            Dropdown.OptionData newData = new Dropdown.OptionData();
-
-            _typename[i] = _type.ToString();
-            newData.text = _typename[i];
-            ddMonType.options.Add(newData);
-        }
     }
 
     #endregion
@@ -1354,7 +1419,11 @@ public class ToolManager : MonoBehaviour
                 {
                     Vector2 _pos = _dicionary.Key;
 
-                    GameObject _monster = Instantiate(obMonPosCircle, new Vector2(_pos.x - 0.5f, _pos.y - 0.5f), Quaternion.identity);
+                    string _name = _dicionary.Value.ToString();
+
+                    obmonster = Resources.Load("Prefab/Characters/Monsters/" + _name) as GameObject;
+
+                    GameObject _monster = Instantiate(obmonster, new Vector2(_pos.x - 0.5f, _pos.y - 0.5f), Quaternion.Euler(new Vector3(-90, 0, 0)));
                     _monster.name = string.Format("{0} // {1} MonPos", _pos.x, _pos.y);
                     _monster.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
                 }
@@ -1367,7 +1436,7 @@ public class ToolManager : MonoBehaviour
 
                     int _rotate = (int)_dicionary.Value.dir * 90;
 
-                    obfurniture = Resources.Load("MapTools/Furniture/" + _name) as GameObject;
+                    obfurniture = Resources.Load("Prefab/Furniture/" + _name) as GameObject;
 
                     GameObject _furniture = Instantiate(obfurniture, new Vector2(_pos.x - 0.5f, _pos.y - 0.5f), Quaternion.Euler(new Vector3(-90 + _rotate, 90, -90)));
                     _furniture.transform.parent = mapBoardArr[BoardPosParse(x), BoardPosParse(y)].obTile.transform;
@@ -1591,7 +1660,7 @@ public class ToolManager : MonoBehaviour
         }
     }
 
-    private void LoadFurnitureCSVData()
+    private void LoadObjectCSVData()
     {
         StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/ObjectData.csv");
         
@@ -1601,15 +1670,25 @@ public class ToolManager : MonoBehaviour
 
             string[] data = line.Split(',');
 
-            furnitureDataList.Add(data);
+            objectDataList.Add(data);
         }
 
-        for (int i = 1; i < furnitureDataList.Count; i++)
+        for (int i = 1; i < objectDataList.Count; i++)
         {
-            Dropdown.OptionData newData = new Dropdown.OptionData();
+            Dropdown.OptionData furniture = new Dropdown.OptionData();
+            Dropdown.OptionData monster = new Dropdown.OptionData();
 
-            newData.text = furnitureDataList[i][(int)OBJECTDATA.FURNITURENAME];
-            ddFurnType.options.Add(newData);
+            furniture.text = objectDataList[i][(int)OBJECTDATA.FURNITURENAME];
+            if (monster.text != "")
+            {
+                ddFurnType.options.Add(furniture);
+            }
+
+            monster.text = objectDataList[i][(int)OBJECTDATA.MONSTERNAME];
+            if (monster.text != "")
+            {
+                ddMonType.options.Add(monster);
+            }
         }
     }
 
