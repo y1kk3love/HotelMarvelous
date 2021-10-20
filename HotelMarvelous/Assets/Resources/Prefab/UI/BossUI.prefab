@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hpBar: {fileID: 3790098326211619580}
-  name: {fileID: 3068193576886145340}
+  bossname: {fileID: 3068193576886145340}
 --- !u!1 &7233059612773608380
 GameObject:
   m_ObjectHideFlags: 0

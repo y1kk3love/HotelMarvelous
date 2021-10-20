@@ -89,6 +89,18 @@ public class DungeonMaker : MonoBehaviour
         }
     }
 
+    public bool RoomClear()
+    {
+        if (monMaxArr[curIndex] == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     private void RoomOpen()
     {
         if(monMaxArr[curIndex] == 0)

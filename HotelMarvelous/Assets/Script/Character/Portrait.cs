@@ -4,14 +4,27 @@ using UnityEngine;
 
 public class Portrait : MonoBehaviour
 {
+    private DungeonMaker dungeon;
+
     public GameObject dart;
 
     private float timer = 3;
 
     private bool isAttacking = false;
 
+    void Start()
+    {
+        dungeon = GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>();
+    }
+
     void Update()
     {
+
+        if (dungeon != null && dungeon.RoomClear())
+        {
+            return;
+        }
+
         TargetFoward();
 
         if (timer >= 0)
@@ -46,7 +59,9 @@ public class Portrait : MonoBehaviour
 
                 float rot = Vector3.Dot(v1, v2);
 
-                GameObject _dart = Instantiate(dart, startPos, Quaternion.Euler(0, 0, rot * 90));
+                Debug.Log(transform.parent.transform.eulerAngles);
+
+                GameObject _dart = Instantiate(dart, startPos, Quaternion.Euler(rot * 90, transform.parent.transform.eulerAngles.y, 0));
                 _dart.transform.GetComponent<Projectile>().targetPos = targetPos - startPos;
             }
         }

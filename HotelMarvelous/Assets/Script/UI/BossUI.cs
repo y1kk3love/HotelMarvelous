@@ -10,25 +10,23 @@ public class BossUI : MonoBehaviour
     public Slider hpBar;
     public Text bossname;
 
-    void Start()
-    {
-        SetBossInfo();
-    }
-
     public void SetBossInfo()
     {
-        Monster boss = GameObject.FindGameObjectWithTag("Boss").GetComponent<Monster>();
+        boss = GameObject.FindGameObjectWithTag("Boss").GetComponent<Monster>();
 
-        hpBar.maxValue = boss.GetBossHP();
-        hpBar.value = boss.GetBossHP();
-        bossname.text = boss.monsterid.ToString();
+        if(boss != null)
+        {
+            hpBar.maxValue = boss.GetBossHP();
+            hpBar.value = boss.GetBossHP();
+            bossname.text = boss.monsterid.ToString();
+        }
     }
 
     void Update()
     {
         if(boss != null)
         {
-            hpBar.value = boss.GetBossHP();
+            SetBossInfo();
         }
         else
         {

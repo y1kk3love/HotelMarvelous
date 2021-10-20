@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
 
         if (isattack)
         {
-            anim.SetBool("Run", false);
+            anim.SetBool("Move", false);
             return;
         }
 
@@ -424,29 +424,22 @@ public class Player : MonoBehaviour
     private void Attack_01_Enter()
     {
         curattack = 0;
+        isattack = true;
         AttackRange(0.3f);
     }
 
     private void Attack_02_Enter()
     {
         curattack = 1;
+        isattack = true;
         AttackRange(0.3f);
     }
 
     private void Attack_03_Enter()
     {
         curattack = 2;
-        AttackRange(0.4f);
-    }
-
-    private void Attack_Start()
-    {
         isattack = true;
-    }
-
-    private void Attack_End()
-    {
-        isattack = false;
+        AttackRange(0.4f);
     }
 
     private void AttackRange(float time)
@@ -459,6 +452,8 @@ public class Player : MonoBehaviour
     private void AttackFinish()
     {
         attackRange.transform.GetChild(curattack).gameObject.SetActive(false);
+
+        isattack = false;
 
         if (curattack <= 2)
         {

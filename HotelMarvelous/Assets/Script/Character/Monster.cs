@@ -48,6 +48,13 @@ public class Monster : MonoBehaviour
                 mentaldamage = 0f;
                 raylength = 8;
                 break;
+            case MONSTERTYPE.INK:
+                touchdamage = 3;
+                monsterhp = 22;
+                monspeed = 0.7f;
+                mentaldamage = 0f;
+                raylength = 8;
+                break;
         }
 
         if(navi != null)

@@ -6,7 +6,7 @@ public class Projectile : MonoBehaviour
 {
     public Vector3 targetPos;
 
-    private float speed = 1;
+    private float speed = 3;
 
     void Update()
     {
