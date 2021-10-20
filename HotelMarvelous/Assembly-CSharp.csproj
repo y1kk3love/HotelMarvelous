@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -53,15 +53,14 @@
     <UnityVersion>2019.4.29f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Assets\Script\Camera\EditCamera.cs" />
     <Compile Include="Assets\Script\Camera\PlayerCamera.cs" />
     <Compile Include="Assets\Script\Character\ConsumItem.cs" />
     <Compile Include="Assets\Script\Character\Monster.cs" />
     <Compile Include="Assets\Script\Character\Player\Player.cs" />
     <Compile Include="Assets\Script\Character\Player\PlayerStatus.cs" />
+    <Compile Include="Assets\Script\Character\Portrait.cs" />
+    <Compile Include="Assets\Script\Character\Projectile.cs" />
     <Compile Include="Assets\Script\Character\WideAreaSkill.cs" />
     <Compile Include="Assets\Script\Dialog\DialogButton.cs" />
     <Compile Include="Assets\Script\Dialog\DialogUI.cs" />
