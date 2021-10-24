@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6755980811646011415}
   - component: {fileID: 6755980811646011408}
   - component: {fileID: 6755980811646011409}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AVARITIA
   m_TagString: Dialoguezone
   m_Icon: {fileID: 0}
@@ -85,10 +85,55 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6755980811646011414}
     m_Modifications:
+    - target: {fileID: 108694188047497333, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1024406682736730217, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1392955511756483240, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2364707488076147259, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3798130655026091722, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4197806465603691344, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4991401804696304907, guid: 104962eda7eecda458fd2bfd35d1266c,
         type: 3}
       propertyPath: m_Name
       value: Elizabeth
+      objectReference: {fileID: 0}
+    - target: {fileID: 4991401804696304907, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5440236499289010859, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5449739046721345257, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5624668084542039985, guid: 104962eda7eecda458fd2bfd35d1266c,
         type: 3}
@@ -144,6 +189,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5774951688762623034, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6173037200834761660, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7680420896955027583, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 9018594099380740254, guid: 104962eda7eecda458fd2bfd35d1266c,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 104962eda7eecda458fd2bfd35d1266c, type: 3}

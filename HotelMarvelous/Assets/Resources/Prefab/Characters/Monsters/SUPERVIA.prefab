@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1954029226290442967}
   - component: {fileID: 2257865938891010058}
   - component: {fileID: 4440943110811576339}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: MiniMapProfile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
