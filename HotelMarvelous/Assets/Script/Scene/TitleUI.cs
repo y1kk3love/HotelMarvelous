@@ -16,13 +16,13 @@ public class TitleUI : MonoBehaviour
 
     private GameObject startGameui;
 
-    private GameObject circleFadeout;
+    public GameObject fadeout;
+
     private Image imTitle;
     private RawImage imProlog;
 
     private bool isVideoPlaying = false;
     private bool isSkip = false;
-    private bool isCircleFade = false;
 
     void Start()
     {
@@ -33,14 +33,6 @@ public class TitleUI : MonoBehaviour
         StartCoroutine(IntroProcess(imTitle));
 
         ScenesManager.Instance.ShowPauseButton();
-    }
-
-    void FixedUpdate()
-    {
-        if (isCircleFade)
-        {
-            CircleOut();
-        }
     }
 
     //인트로 순서 관리
@@ -100,7 +92,7 @@ public class TitleUI : MonoBehaviour
 
     public void CheckIn()
     {
-        isCircleFade = true;
+        Instantiate(fadeout);
     }
 
     #endregion
@@ -113,7 +105,6 @@ public class TitleUI : MonoBehaviour
         startGameui = GameObject.Find("StartGame");
         imTitle = GameObject.Find("Title").GetComponent<Image>();
         imProlog = GameObject.Find("PrologVideo").GetComponent<RawImage>();
-        circleFadeout = GameObject.Find("CircleOut");
 
         startGameui.SetActive(false);
         imProlog.enabled = false;
@@ -128,20 +119,6 @@ public class TitleUI : MonoBehaviour
 
     //페이드인아웃 관리
     #region ------------------------------[UIEffect]------------------------------
-
-    //원형 페이드 아웃
-    private void CircleOut()
-    {
-        if (circleFadeout.transform.localScale.x < 35f)
-        {
-            circleFadeout.transform.localScale += new Vector3(1, 1, 0);
-        }
-        else
-        {
-            ScenesManager.Instance.MoveToScene(INTERACTION.MENU);
-        }
-    }
-
     //비디오 스킵
     private void SkipVideo()
     {

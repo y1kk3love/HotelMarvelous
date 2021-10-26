@@ -84,7 +84,8 @@ public class DungeonMaker : MonoBehaviour
                 GameObject obj = Instantiate(rewardItem, new Vector3(info.position.x, 0.5f, info.position.y), Quaternion.identity);
 
                 RewardItem reward = obj.transform.GetComponent<RewardItem>();
-                reward.id = (CONSUMITEM)Random.Range(1, System.Enum.GetValues(typeof(CONSUMITEM)).Length);
+                reward.transform.SetParent(roomIndexListArr[curIndex][0].obTile.transform);
+                reward.id = (CONSUMITEM)Random.Range(1, System.Enum.GetValues(typeof(CONSUMITEM)).Length + 1);
             }
         }
     }

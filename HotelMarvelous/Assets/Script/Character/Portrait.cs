@@ -6,22 +6,31 @@ public class Portrait : MonoBehaviour
 {
     private DungeonMaker dungeon;
 
+    private Animator anim;
+
     public GameObject dart;
 
     private float timer = 3;
 
+    private bool isdead = false;
     private bool isAttacking = false;
 
     void Start()
     {
+        anim = transform.GetComponent<Animator>();
         dungeon = GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>();
     }
 
     void Update()
     {
-
         if (dungeon != null && dungeon.RoomClear())
         {
+            if(!isdead)
+            {
+                anim.SetTrigger("Dead");
+
+                isdead = true;
+            }
             return;
         }
 
@@ -48,6 +57,8 @@ public class Portrait : MonoBehaviour
         {
             if (Hit.transform.CompareTag("Player") && !isAttacking)
             {
+                anim.SetTrigger("Attack");
+
                 timer = 3;
                 isAttacking = true;
 

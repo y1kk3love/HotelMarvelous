@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 
     #region [Movement]
 
+    private bool islobbymove = false;
     private bool isattack = false;
     private bool isconvzone = false;
     public bool isconv = false;
@@ -41,6 +42,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (ScenesManager.Instance.CheckScene() == "Lobby" && !islobbymove)
+        {
+            islobbymove = true;
+        }
+
         DialogChecker();
 
         if (isconv || ScenesManager.Instance.isOption)
@@ -470,7 +476,7 @@ public class Player : MonoBehaviour
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !islobbymove)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -503,7 +509,7 @@ public class Player : MonoBehaviour
 
     private void AttackInput()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !islobbymove)
         {
             anim.SetTrigger("Attack");
         }
@@ -511,145 +517,148 @@ public class Player : MonoBehaviour
 
     private void GetSkillInput()
     {
-        if (Input.GetKey(ScenesManager.Instance.optionInfo.run))
+        if (!islobbymove)
         {
-            if(stat.stamina > 0)
+            if (Input.GetKey(ScenesManager.Instance.optionInfo.run))
             {
-                stat.stamina -= Time.deltaTime;
-                stat.speed = stat.runspeed;
+                if (stat.stamina > 0)
+                {
+                    stat.stamina -= Time.deltaTime;
+                    stat.speed = stat.runspeed;
+                }
+                else
+                {
+                    stat.stamina = 0;
+                    stat.speed = 1;
+                }
             }
             else
             {
-                stat.stamina = 0;
                 stat.speed = 1;
+
+                if (stat.stamina <= 20)
+                {
+                    stat.stamina += Time.deltaTime / 3;
+                }
+                else
+                {
+                    stat.stamina = 20;
+                }
             }
-        }
-        else
-        {
-            stat.speed = 1;
 
-            if(stat.stamina <= 20)
+            float _itemrecharge = (float)stat.curItemStack / (float)stat.curItemMax;
+
+            if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.recharge) && _itemrecharge >= 1)
             {
-                stat.stamina += Time.deltaTime / 3;
-            }
-            else
-            {
-                stat.stamina = 20;
-            }
-        }
+                Debug.Log("재사용 아이템 사용!");
 
-        float _itemrecharge = (float)stat.curItemStack / (float)stat.curItemMax;
+                stat.curItemStack = 0;
 
-        if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.recharge) && _itemrecharge >= 1)
-        {
-            Debug.Log("재사용 아이템 사용!");
-
-            stat.curItemStack = 0;
-
-            switch (stat.curItemIndex)
-            {
-                case 1:
-                    GameObject areaskill = Instantiate(curItemSkill, new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z), Quaternion.identity);
-                    WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
-                    wide.SetSkillPreset("Monster", 3f);
-                    break;
-                case 2:
-                    byte[] consumItemperArr = new byte[] { 40, 40, 20 };
-
-                    int random = Random.Range(0, 100);
-                    int curpercent = 0;
-
-                    for (int i = 0; i < 3; i++)
-                    {
-                        curpercent += consumItemperArr[i];
-
-                        if (random < curpercent)
-                        {
-                            switch (i)
-                            {
-                                case 0:
-                                    consumItemperArr = new byte[] { 59, 30, 7, 3, 1 };
-
-                                    random = Random.Range(0, 100);
-                                    curpercent = 0;
-                                    for (int x = 0; x < 5; x++)
-                                    {
-                                        curpercent += consumItemperArr[i];
-
-                                        if (random < curpercent)
-                                        {
-                                            byte _coin = 0;
-
-                                            switch (x)
-                                            {
-                                                case 0:
-                                                    _coin = 1;
-                                                    break;
-                                                case 1:
-                                                    _coin = 2;
-                                                    break;
-                                                case 2:
-                                                    _coin = 5;
-                                                    break;
-                                                case 3:
-                                                    _coin = 10;
-                                                    break;
-                                                case 4:
-                                                    _coin = 100;
-                                                    break;
-                                            }
-
-                                            for (int _x = 0; _x < _coin; _x++)
-                                            {
-                                                GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
-                                                GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                                ConsumItem conitem = coin.AddComponent<ConsumItem>();
-                                                conitem.consumitem = DROPITEM.COIN;
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case 1:
-                                    random = Random.Range(0, 100);
-
-                                    if (random < 95)
-                                    {
-                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.KEY);
-                                        GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                        ConsumItem conitem = _key.AddComponent<ConsumItem>();
-                                        conitem.consumitem = DROPITEM.KEYS;
-                                    }
-                                    else
-                                    {
-                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MASTERKEY);
-                                        GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                        ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
-                                        conitem.consumitem = DROPITEM.MASTERKEY;
-                                    }
-                                    break;
-                                case 2:
-                                    //타로 카드 드롭
-                                    break;
-                            }
-                        }
-                    }
-                    Debug.Log("슬롯머신 발동!");
-                    break;
-            }
-        }
-
-        if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.disposable) && stat.curDispoItemIndex != 255)
-        {
-            Debug.Log("일회용 아이템 사용!");
-
-            if (_itemrecharge != 1)
-            {
-                switch (stat.curDispoItemIndex)
+                switch (stat.curItemIndex)
                 {
                     case 1:
-                        stat.curItemStack = stat.curItemMax;
-                        stat.curDispoItemIndex = 255;
+                        GameObject areaskill = Instantiate(curItemSkill, new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z), Quaternion.identity);
+                        WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
+                        wide.SetSkillPreset("Monster", 3f);
                         break;
+                    case 2:
+                        byte[] consumItemperArr = new byte[] { 40, 40, 20 };
+
+                        int random = Random.Range(0, 100);
+                        int curpercent = 0;
+
+                        for (int i = 0; i < 3; i++)
+                        {
+                            curpercent += consumItemperArr[i];
+
+                            if (random < curpercent)
+                            {
+                                switch (i)
+                                {
+                                    case 0:
+                                        consumItemperArr = new byte[] { 59, 30, 7, 3, 1 };
+
+                                        random = Random.Range(0, 100);
+                                        curpercent = 0;
+                                        for (int x = 0; x < 5; x++)
+                                        {
+                                            curpercent += consumItemperArr[i];
+
+                                            if (random < curpercent)
+                                            {
+                                                byte _coin = 0;
+
+                                                switch (x)
+                                                {
+                                                    case 0:
+                                                        _coin = 1;
+                                                        break;
+                                                    case 1:
+                                                        _coin = 2;
+                                                        break;
+                                                    case 2:
+                                                        _coin = 5;
+                                                        break;
+                                                    case 3:
+                                                        _coin = 10;
+                                                        break;
+                                                    case 4:
+                                                        _coin = 100;
+                                                        break;
+                                                }
+
+                                                for (int _x = 0; _x < _coin; _x++)
+                                                {
+                                                    GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
+                                                    GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                                    ConsumItem conitem = coin.AddComponent<ConsumItem>();
+                                                    conitem.consumitem = DROPITEM.COIN;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case 1:
+                                        random = Random.Range(0, 100);
+
+                                        if (random < 95)
+                                        {
+                                            GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.KEY);
+                                            GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                            ConsumItem conitem = _key.AddComponent<ConsumItem>();
+                                            conitem.consumitem = DROPITEM.KEYS;
+                                        }
+                                        else
+                                        {
+                                            GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MASTERKEY);
+                                            GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                            ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
+                                            conitem.consumitem = DROPITEM.MASTERKEY;
+                                        }
+                                        break;
+                                    case 2:
+                                        //타로 카드 드롭
+                                        break;
+                                }
+                            }
+                        }
+                        Debug.Log("슬롯머신 발동!");
+                        break;
+                }
+            }
+
+            if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.disposable) && stat.curDispoItemIndex != 255)
+            {
+                Debug.Log("일회용 아이템 사용!");
+
+                if (_itemrecharge != 1)
+                {
+                    switch (stat.curDispoItemIndex)
+                    {
+                        case 1:
+                            stat.curItemStack = stat.curItemMax;
+                            stat.curDispoItemIndex = 255;
+                            break;
+                    }
                 }
             }
         }
@@ -663,9 +672,13 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        anim.SetBool("Move", true);
-        anim.SetFloat("Speed", stat.speed);
+        anim.SetBool("Move", true);       
         transform.position += transform.forward * velocity * Time.deltaTime * stat.speed;
+
+        if(!islobbymove)
+        {
+            anim.SetFloat("Speed", stat.speed);
+        }
     }
 
     #endregion

@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 377c154bbda669a468beb154e8a2cfec
+guid: 961a42d8a56b2834f9001141d382c904
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
-    second: Monster_Portrait_Attack
+    second: Monster_Portrait_Dead
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -35,7 +35,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Monster_Portrait_Attack
+      name: Monster_Portrait_Dead
       takeName: Take 001
       internalID: 0
       firstFrame: 0

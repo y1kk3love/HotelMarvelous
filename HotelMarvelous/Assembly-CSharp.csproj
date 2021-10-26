@@ -85,12 +85,15 @@
     <Compile Include="Assets\Script\Scene\StatUI.cs" />
     <Compile Include="Assets\Script\Scene\TitleUI.cs" />
     <Compile Include="Assets\Script\Test.cs" />
+    <Compile Include="Assets\Script\UI\AskToMoveUI.cs" />
     <Compile Include="Assets\Script\UI\BossUI.cs" />
+    <Compile Include="Assets\Script\UI\FadeOut.cs" />
     <Compile Include="Assets\Script\UI\PauseUI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\material\CartoonShader\Surface.shader" />
     <None Include="Assets\material\CartoonShader\Outline.shader" />
+    <None Include="Assets\material\CartoonShader\Cutout.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
