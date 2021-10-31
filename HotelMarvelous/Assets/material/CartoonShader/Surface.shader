@@ -9,8 +9,7 @@ Shader "Unlit/Surface"
     }
     SubShader
     {
-        Tags { "RenderType"="TransparentCutout" "Queue" = "AlphaTest" }     
-        Blend SrcAlpha OneMinusSrcAlpha
+        Tags { "RenderType" = "Opaque" }
         Cull off
 
         Pass
@@ -53,21 +52,16 @@ Shader "Unlit/Surface"
             {
                 float4 col;
                 fixed4 MainTex = tex2D(_MainTex, i.uv);
-                
+                clip(MainTex.a - 0.5);
+
                 float3 worldSpaceLightDir = normalize(_WorldSpaceLightPos0);
+
                 float ndotl = dot(worldSpaceLightDir, i.normal);
                 float halfLambert = ndotl * 0.5 + 0.5;
+
                 float floorToon = floor(halfLambert * _StairNum) * (1/_StairNum);
-                col = MainTex * floorToon;
                 
-                if(MainTex.a == 0)
-                {
-                    col.a = 0;
-                }
-                else
-                {
-                    col.a = 1;
-                }
+                col = MainTex * floorToon;
 
                 return col;
             }
@@ -84,7 +78,6 @@ Shader "Unlit/Surface"
             #include "UnityCG.cginc"
 
             sampler2D _MainTex;
-            fixed _Cutoff;
 
             struct v2f
             {
@@ -104,7 +97,7 @@ Shader "Unlit/Surface"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 c = tex2D( _MainTex, i.uv );
-				clip( c.a - _Cutoff );
+				clip( c.a - 0.5 );
 				SHADOW_CASTER_FRAGMENT(i)
             }
             ENDCG
