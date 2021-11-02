@@ -60,7 +60,25 @@ public class ScenesManager : MonoSingleton<ScenesManager>
             }
 
             Sprite _sprite = Resources.Load<Sprite>("Image/DialogProfile/Profile_" + curNpcprofile);
-            dialogUI.SetProfile(_sprite);
+
+            string _name = "";
+
+            switch (_point)
+            {
+                case -1:
+                    _name = "클라우스 로빈슨";
+                    break;
+                case 0:
+                    _name = "케니스";
+                    break;
+                case 1:
+                    _name = "엘리자베스 테일러";
+                    break;
+                case 2:
+                    break;
+            }
+
+            dialogUI.SetProfile(_sprite, _name);
         }
     }
 

@@ -9,6 +9,7 @@ public class DialogUI : MonoBehaviour
     public GameObject pressimage;
     public GameObject buttonContent;
     public Image profile;
+    public Text npcName;
     public Text text;
 
     private string targetDialog;
@@ -36,10 +37,11 @@ public class DialogUI : MonoBehaviour
         }
     }
 
-    public void SetProfile(Sprite _profile)
+    public void SetProfile(Sprite _profile, string _name)
     {
         ButtonOnAndOff(true);
 
+        npcName.text = _name;
         profile.sprite = _profile;
     }
 
