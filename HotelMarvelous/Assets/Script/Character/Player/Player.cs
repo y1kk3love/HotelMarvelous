@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 
     #region [Movement]
 
-    private bool islobbymove = false;
+    private bool stopAllMove = false;
     private bool isattack = false;
     private bool isconvzone = false;
     public bool isconv = false;
@@ -42,9 +42,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (ScenesManager.Instance.CheckScene() == "Lobby" && !islobbymove)
+        if (ScenesManager.Instance.CheckScene() == "Lobby" && !stopAllMove)
         {
-            islobbymove = true;
+            stopAllMove = true;
         }
 
         DialogChecker();
@@ -401,9 +401,11 @@ public class Player : MonoBehaviour
 
     IEnumerator DeathProcess()
     {
-        //사망모션 넣을 자리
+        anim.SetTrigger("Dead");
 
-        yield return new WaitForSeconds(0.1f);
+        float animtime = anim.GetCurrentAnimatorStateInfo(0).length;
+
+        yield return new WaitForSeconds(animtime + 1f);
 
         ScenesManager.Instance.MoveToScene(INTERACTION.LOBBY);
     }
@@ -476,7 +478,7 @@ public class Player : MonoBehaviour
         input.x = Input.GetAxisRaw("Horizontal");
         input.y = Input.GetAxisRaw("Vertical");
 
-        if (Input.GetKeyDown(KeyCode.Mouse0) && !islobbymove)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !stopAllMove)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -509,7 +511,7 @@ public class Player : MonoBehaviour
 
     private void AttackInput()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && !islobbymove)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && !stopAllMove)
         {
             anim.SetTrigger("Attack");
         }
@@ -517,7 +519,7 @@ public class Player : MonoBehaviour
 
     private void GetSkillInput()
     {
-        if (!islobbymove)
+        if (!stopAllMove)
         {
             if (Input.GetKey(ScenesManager.Instance.optionInfo.run))
             {
@@ -675,10 +677,36 @@ public class Player : MonoBehaviour
         anim.SetBool("Move", true);       
         transform.position += transform.forward * velocity * Time.deltaTime * stat.speed;
 
-        if(!islobbymove)
+        if(!stopAllMove)
         {
             anim.SetFloat("Speed", stat.speed);
         }
+    }
+
+    #endregion
+
+    #region ----------------------------[Trigger]----------------------------
+
+    public IEnumerator MoveInIntro(float _timer)
+    {
+        float timer = 0;
+
+        anim = transform.GetComponent<Animator>();
+
+        stopAllMove = true;
+
+        while (timer <= _timer)
+        {
+            timer += Time.deltaTime;
+            anim.SetBool("Move", true);
+            transform.position += transform.forward * Time.deltaTime * 3;
+
+            yield return null;
+        }
+
+        anim.SetBool("Move", false);
+        stopAllMove = false;
+        yield return null;
     }
 
     #endregion

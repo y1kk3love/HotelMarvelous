@@ -79,7 +79,7 @@ public class Monster : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && isattacking)
         {
             Player player = other.gameObject.GetComponent<Player>();
 

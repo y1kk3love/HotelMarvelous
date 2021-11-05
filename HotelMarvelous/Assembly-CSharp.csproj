@@ -59,10 +59,11 @@
     <Compile Include="Assets\Script\Camera\EditCamera.cs" />
     <Compile Include="Assets\Script\Camera\PlayerCamera.cs" />
     <Compile Include="Assets\Script\Character\ConsumItem.cs" />
-    <Compile Include="Assets\Script\Character\Monster.cs" />
+    <Compile Include="Assets\Script\Character\Monster\Monster.cs" />
+    <Compile Include="Assets\Script\Character\Monster\MonsterMove.cs" />
+    <Compile Include="Assets\Script\Character\Monster\Portrait.cs" />
     <Compile Include="Assets\Script\Character\Player\Player.cs" />
     <Compile Include="Assets\Script\Character\Player\PlayerStatus.cs" />
-    <Compile Include="Assets\Script\Character\Portrait.cs" />
     <Compile Include="Assets\Script\Character\Projectile.cs" />
     <Compile Include="Assets\Script\Character\WideAreaSkill.cs" />
     <Compile Include="Assets\Script\Dialog\DialogButton.cs" />
