@@ -18,7 +18,7 @@ public class Portrait : MonoBehaviour
     void Start()
     {
         anim = transform.GetComponent<Animator>();
-        dungeon = GameObject.Find("DungeonMaker").GetComponent<DungeonMaker>();
+        dungeon = GameObject.Find("DungeonManager").GetComponent<DungeonMaker>();
     }
 
     void Update()

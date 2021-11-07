@@ -1,6 +1,6 @@
 ﻿INDEX,FURNITURE,,ITEM,MAXSTACK,,MONSTERNAME,,DISPOITEM,INDEX
-1,Portrait,,01_Crown,6,,Supervia,,01_Card,1
-2,Chair02,,02_SlotMachine,5,,Avaritia,,,
-3,Chair03,,,,,Ink,,,
+1,Portrait,,01_Crown,6,,SUPERVIA,,01_Card,1
+2,Chair02,,02_SlotMachine,5,,AVARITIA,,,
+3,Chair03,,,,,INK,,,
 4,Chair04,,,,,,,,
 5,Chair05,,,,,,,,

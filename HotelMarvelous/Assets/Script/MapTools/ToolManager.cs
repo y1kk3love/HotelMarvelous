@@ -197,13 +197,13 @@ public class ToolManager : MonoBehaviour
                         obCurMonMouseModel.transform.position = _pos;
                     }
 
-                    if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out MONSTERTYPE _dmtype))
+                    if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x, y), out int _dmtype))
                     {
                         textMonsterInfo.text = string.Format("(X : {0} // Y : {1}) {2}", x, y, _dmtype);
                     }
                     else
                     {
-                        MONSTERTYPE _type = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic[new Vector2(x, y)];
+                        int _type = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic[new Vector2(x, y)];
                         textMonsterInfo.text = string.Format("(X : {0} // Y : {1}) {2}", x, y, _type);
                     }
                 }
@@ -242,9 +242,9 @@ public class ToolManager : MonoBehaviour
 
                             if(curTileX == EditPosParse(hit.point.x) && curTileY == EditPosParse(hit.point.y))
                             {
-                                MONSTERTYPE _monType = (MONSTERTYPE)ddMonType.value;
+                                int _monType = ddMonType.value;
 
-                                if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out MONSTERTYPE _dmtype))
+                                if (!mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].monSpawnInfoDic.TryGetValue(new Vector2(x + 0.5f, y + 0.5f), out int _dmtype))
                                 {
                                     obcurMonCircle = Instantiate(obmonster, new Vector2(x, y), Quaternion.Euler(new Vector3(-90, 0, 0)));
                                     obcurMonCircle.transform.parent = mapBoardArr[BoardPosParse(curTileX), BoardPosParse(curTileY)].obTile.transform;
@@ -458,7 +458,7 @@ public class ToolManager : MonoBehaviour
             }
             else
             {
-                if (ddMonType.value < System.Enum.GetValues(typeof(MONSTERTYPE)).Length - 1)
+                if (ddMonType.value < ddMonType.options.Count)
                 {
                     ddMonType.value++;
                 }
@@ -503,7 +503,7 @@ public class ToolManager : MonoBehaviour
                 }
                 else
                 {
-                    ddMonType.value = System.Enum.GetValues(typeof(MONSTERTYPE)).Length - 1;
+                    ddMonType.value = ddMonType.options.Count - 1;
                 }
             }
         }       
@@ -1415,11 +1415,11 @@ public class ToolManager : MonoBehaviour
 
                 TypeChange(_info.roomType);
 
-                foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
+                foreach (KeyValuePair<Vector2, int> _dicionary in _info.monSpawnInfoDic)
                 {
                     Vector2 _pos = _dicionary.Key;
 
-                    string _name = _dicionary.Value.ToString();
+                    string _name = ResourceManager.Instance.GetObjectName(OBJECTDATA.MONSTERNAME, _dicionary.Value);
 
                     obmonster = Resources.Load("Prefab/Characters/Monsters/" + _name) as GameObject;
 
@@ -1468,14 +1468,14 @@ public class ToolManager : MonoBehaviour
                 _info.roomType = _data.roomType;
                 _info.doorArr = _data.doorArr;
 
-                foreach (KeyValuePair<string, MONSTERTYPE> _dicionary in _data.monSpawnInfoDic)
+                foreach (KeyValuePair<string, int> _dicionary in _data.monSpawnInfoDic)
                 {
                     string[] _xyPos = _dicionary.Key.Split('/');
 
                     float _x = float.Parse(_xyPos[0]);
                     float _y = float.Parse(_xyPos[1]);
 
-                    MONSTERTYPE _type = _dicionary.Value;
+                    int _type = _dicionary.Value;
 
                     _info.monSpawnInfoDic.Add(new Vector2(_x, _y), _type);
                 }
@@ -1630,11 +1630,11 @@ public class ToolManager : MonoBehaviour
                 _data.roomType = _info.roomType;
                 _data.doorArr = _info.doorArr;
 
-                foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
+                foreach (KeyValuePair<Vector2, int> _dicionary in _info.monSpawnInfoDic)
                 {
                     float _x = _dicionary.Key.x;
                     float _y = _dicionary.Key.y;
-                    MONSTERTYPE _type = _dicionary.Value;
+                    int _type = _dicionary.Value;
 
                     _data.monSpawnInfoDic.Add(string.Format("{0}/{1}", _x, _y), _type);
                 }

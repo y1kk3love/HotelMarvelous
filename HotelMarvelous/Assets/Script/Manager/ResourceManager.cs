@@ -214,6 +214,16 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
         return item;
     }
+
+    public string GetObjectName(OBJECTDATA _data, int _id)
+    {
+        if (objectDataList.Count == 0)
+        {
+            LoadItemResources();
+        }
+
+        return objectDataList[_id][(int)_data];
+    }
 }
 
 public class ItemResource

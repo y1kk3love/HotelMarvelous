@@ -610,6 +610,8 @@ MonoBehaviour:
   scene: 0
   isNextStage: 0
   text: {fileID: 8153173638853480935}
+  yestext: {fileID: 5837109336954793295}
+  notext: {fileID: 5594960117317236154}
 --- !u!1 &6091047231116888704
 GameObject:
   m_ObjectHideFlags: 0

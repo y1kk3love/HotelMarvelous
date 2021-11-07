@@ -5,22 +5,13 @@ using UnityEngine.UI;
 
 public class BossUI : MonoBehaviour
 {
-    private Monster boss;
+    private BossMonster boss;
 
     public Slider hpBar;
     public Text bossname;
+    public Image yellowbar;
 
-    public void SetBossInfo()
-    {
-        boss = GameObject.FindGameObjectWithTag("Boss").GetComponent<Monster>();
-
-        if(boss != null)
-        {
-            hpBar.maxValue = boss.GetBossHP();
-            hpBar.value = boss.GetBossHP();
-            bossname.text = boss.monsterid.ToString();
-        }
-    }
+    private float curBarPer = 1;
 
     void Update()
     {
@@ -34,9 +25,33 @@ public class BossUI : MonoBehaviour
             
             if(monster != null)
             {
-                boss = monster.GetComponent<Monster>();
+                
+                boss = monster.GetComponent<BossMonster>();
             }
         }
 
+        if(yellowbar.fillAmount >= curBarPer)
+        {
+            yellowbar.fillAmount -= Time.deltaTime;
+        }
+    }
+
+    public void SetBossInfo()
+    {
+        boss = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossMonster>();
+
+        if (boss != null)
+        {
+            hpBar.maxValue = boss.maxHP;
+            hpBar.value = boss.curHP;
+            bossname.text = "저스티스";
+
+            Invoke("FollowRedBar", 0.5f);
+        }
+    }
+
+    private void FollowRedBar()
+    {
+        curBarPer = boss.curHP / boss.maxHP;
     }
 }

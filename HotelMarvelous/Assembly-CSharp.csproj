@@ -59,6 +59,7 @@
     <Compile Include="Assets\Script\Camera\EditCamera.cs" />
     <Compile Include="Assets\Script\Camera\PlayerCamera.cs" />
     <Compile Include="Assets\Script\Character\ConsumItem.cs" />
+    <Compile Include="Assets\Script\Character\Monster\BossMonster.cs" />
     <Compile Include="Assets\Script\Character\Monster\Monster.cs" />
     <Compile Include="Assets\Script\Character\Monster\MonsterMove.cs" />
     <Compile Include="Assets\Script\Character\Monster\Portrait.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Assets\Script\Dialog\Interactionzone.cs" />
     <Compile Include="Assets\Script\Dungeon\DungeonMaker.cs" />
     <Compile Include="Assets\Script\Dungeon\DungeonMover.cs" />
+    <Compile Include="Assets\Script\Dungeon\DungeonPathFinder.cs" />
     <Compile Include="Assets\Script\Dungeon\RewardItem.cs" />
     <Compile Include="Assets\Script\Dungeon\StateSet.cs" />
     <Compile Include="Assets\Script\Manager\DataManager.cs" />
@@ -85,7 +87,6 @@
     <Compile Include="Assets\Script\Scene\MenuUI.cs" />
     <Compile Include="Assets\Script\Scene\StatUI.cs" />
     <Compile Include="Assets\Script\Scene\TitleUI.cs" />
-    <Compile Include="Assets\Script\Test.cs" />
     <Compile Include="Assets\Script\UI\AskToMoveUI.cs" />
     <Compile Include="Assets\Script\UI\BossUI.cs" />
     <Compile Include="Assets\Script\UI\FadeOut.cs" />

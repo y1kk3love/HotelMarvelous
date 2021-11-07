@@ -8,6 +8,8 @@ public class AskToMoveUI : MonoBehaviour
     public INTERACTION scene;
     public bool isNextStage = false;
     public Text text;
+    public Text yestext;
+    public Text notext;
 
     void Start()
     {
@@ -20,6 +22,15 @@ public class AskToMoveUI : MonoBehaviour
             else
             {
                 text.text = "호텔로 들어가시겠습니까?";
+            }
+        }
+        else
+        {
+            if (isNextStage)
+            {
+                text.text = "지금까지 호텔 마블러스 데모를 플레이 해주셔서 감사합니다.^^";
+                yestext.text = "처음으로..";
+                notext.text = "남아있기";
             }
         }
     }

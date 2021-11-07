@@ -18,6 +18,7 @@ public class DungeonMaker : MonoBehaviour
 
     private Player player;
 
+    public GameObject blackOut;
     public GameObject bossUI;
     public GameObject rewardItem;
 
@@ -55,18 +56,26 @@ public class DungeonMaker : MonoBehaviour
 
         LoadMap(1);
 
-        RoomOpen();
+        RoomEnd();
 
         GameObject prefab = Resources.Load("Prefab/Characters/PC/Player") as GameObject;
-        player = Instantiate(prefab, new Vector3(3, 1, 3), Quaternion.identity).GetComponent<Player>();
+        player = Instantiate(prefab, new Vector3(3, 0.5f, 3), Quaternion.identity).GetComponent<Player>();
         player.gameObject.name = "Player";
+
+        GameObject _ui = Instantiate(blackOut);
+        Destroy(_ui, 2f);
     }
 
     public void MonsterDead()
     {
         monMaxArr[curIndex]--;
 
-        RoomOpen();
+        RoomEnd();
+    }
+
+    public void MonsterAdd()
+    {
+        monMaxArr[curIndex]++;
     }
 
     private void RoomReward()
@@ -102,7 +111,24 @@ public class DungeonMaker : MonoBehaviour
         }
     }
 
-    private void RoomOpen()
+    private IEnumerator RoomStart()
+    {
+        GameObject[] Door = GameObject.FindGameObjectsWithTag("Door");
+
+        for (int i = 0; i < Door.Length; i++)
+        {
+            Door[i].GetComponent<Animator>().SetBool("isDoorOpen", true);
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        for (int i = 0; i < Door.Length; i++)
+        {
+            Door[i].GetComponent<Animator>().SetBool("isDoorOpen", false);
+        }
+    }
+
+    private void RoomEnd()
     {
         if(monMaxArr[curIndex] == 0)
         {
@@ -115,15 +141,18 @@ public class DungeonMaker : MonoBehaviour
 
             RoomReward();
         }
+
+        transform.GetComponent<DungeonPathFinder>().ResetGridMap(roomIndexListArr[curIndex]);
     }
 
-    public void MoveNextRoom(Vector2 _nextPos)
+    public void MoveNextRoom(Vector2 _nextPos, Vector2 _dir)
     {
-        Debug.Log(_nextPos);
-
         if (monMaxArr[curIndex] == 0)
         {
-            player.transform.position = new Vector3(_nextPos.x, 0, _nextPos.y);
+            GameObject _ui = Instantiate(blackOut);
+            Destroy(_ui, 2f);
+
+            StartCoroutine(MovePlayer(_dir / 6));
 
             for (int i = 0; i < roomIndexListArr[curIndex].Count; i++)
             {
@@ -138,7 +167,7 @@ public class DungeonMaker : MonoBehaviour
 
                 if(roomIndexListArr[curIndex][0].roomType == ROOMTYPE.BOSS)
                 {
-                    GameObject bossui = Instantiate(bossUI, transform.position, Quaternion.identity);
+                    GameObject bossui = Instantiate(bossUI);
                 }
             }
             else
@@ -149,12 +178,44 @@ public class DungeonMaker : MonoBehaviour
                 }
             }
 
-            RoomOpen();
+            if (monMaxArr[curIndex] == 0)
+            {
+                RoomEnd();
+            }
+            else
+            {
+                StartCoroutine(RoomStart());
+            }
         }
         else
         {
-            Debug.Log("해치우지 못한 몬스터가 남아있습니다.");
+            GameObject[] remainMonster = GameObject.FindGameObjectsWithTag("Monster");
+            GameObject boss = GameObject.FindGameObjectWithTag("Boss");
+
+            if (remainMonster.Length == 0 && boss == null)
+            {
+                monMaxArr[curIndex] = 0;
+                RoomEnd();
+            }
+            else
+            {
+                Debug.Log("해치우지 못한 몬스터가 남아있습니다.");
+            }
         }
+    }
+
+    IEnumerator MovePlayer(Vector2 _pos)
+    {
+        player.stopAllMove = true;
+        player.transform.gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(1.5f);
+
+        player.transform.gameObject.SetActive(true);
+        player.transform.forward = new Vector3(_pos.x, 0, _pos.y);
+        player.transform.position += new Vector3(_pos.x, 0, _pos.y);
+
+        StartCoroutine(player.MoveInIntro(1f, (new Vector3(_pos.x, 0, _pos.y)).normalized));
     }
 
     #region [DATALOAD]
@@ -194,14 +255,14 @@ public class DungeonMaker : MonoBehaviour
                 _info.roomType = _data.roomType;
                 _info.doorArr = _data.doorArr;
 
-                foreach (KeyValuePair<string, MONSTERTYPE> _dicionary in _data.monSpawnInfoDic)
+                foreach (KeyValuePair<string, int> _dicionary in _data.monSpawnInfoDic)
                 {
                     string[] _xyPos = _dicionary.Key.Split('/');
 
                     float _x = float.Parse(_xyPos[0]);
                     float _y = float.Parse(_xyPos[1]);
 
-                    MONSTERTYPE _type = _dicionary.Value;
+                    int _type = _dicionary.Value;
 
                     _info.monSpawnInfoDic.Add(new Vector2(_x, _y), _type);
                 }
@@ -244,9 +305,11 @@ public class DungeonMaker : MonoBehaviour
 
     #endregion
 
+    #region [CreateRoom]
+
     private void LoadMap(int roomindex)
     {
-        for(int i = 0; i < roomIndexListArr[roomindex].Count; i++)
+        for (int i = 0; i < roomIndexListArr[roomindex].Count; i++)
         {
             TileInfo _info = roomIndexListArr[roomindex][i];
 
@@ -254,23 +317,22 @@ public class DungeonMaker : MonoBehaviour
 
             CreateMap(_info);
 
-            foreach (KeyValuePair<Vector2, MONSTERTYPE> _dicionary in _info.monSpawnInfoDic)
+            foreach (KeyValuePair<Vector2, int> _dicionary in _info.monSpawnInfoDic)
             {
                 Vector2 _pos = _dicionary.Key;
 
-                MONSTERTYPE _type = (MONSTERTYPE)_dicionary.Value;
+                string name = ResourceManager.Instance.GetObjectName(OBJECTDATA.MONSTERNAME, _dicionary.Value);
 
-                GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/" + _type.ToString()) as GameObject;
+                Debug.Log(name);
+
+                GameObject _monPrefab = Resources.Load("Prefab/Characters/Monsters/" + name) as GameObject;
 
                 GameObject _monster = Instantiate(_monPrefab, new Vector3(_pos.x, 1, _pos.y), Quaternion.identity);
 
                 _monster.name = string.Format("({0}, {1}){2}", _pos.x, _pos.y, _dicionary.Value);
                 _monster.transform.parent = _info.obTile.transform;
 
-                if ((int)_dicionary.Value == 1)
-                {
-                    monMaxArr[_info.roomIndex]++;
-                }
+                monMaxArr[_info.roomIndex]++;
             }
 
             foreach (KeyValuePair<Vector2, FurnitureInfo> _dicionary in _info.FurnitureInfoDic)
@@ -289,8 +351,6 @@ public class DungeonMaker : MonoBehaviour
             }
         }
     }
-
-    #region [CreateRoom]
 
     #region [MiniMap]
     public void CreateMiniMap(TileInfo _tileinfo)

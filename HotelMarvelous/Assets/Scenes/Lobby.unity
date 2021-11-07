@@ -1208,6 +1208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: {fileID: 3348713484458971325}
+  stopAllMove: 0
   isconv: 0
 --- !u!4 &2514096835004111904
 Transform:
@@ -3462,7 +3463,7 @@ PrefabInstance:
     - target: {fileID: 4316462259021725453, guid: 921c9a08d187fc54fa151be55b2f448d,
         type: 3}
       propertyPath: m_CastShadows
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5320108714197793124, guid: 921c9a08d187fc54fa151be55b2f448d,
         type: 3}

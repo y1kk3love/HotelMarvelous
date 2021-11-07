@@ -13,7 +13,7 @@ public class TileInfo
 
     public WALLSTATE[] doorArr = new WALLSTATE[4];
 
-    public Dictionary<Vector2, MONSTERTYPE> monSpawnInfoDic = new Dictionary<Vector2, MONSTERTYPE>();
+    public Dictionary<Vector2, int> monSpawnInfoDic = new Dictionary<Vector2, int>();
     public Dictionary<Vector2, FurnitureInfo> FurnitureInfoDic = new Dictionary<Vector2, FurnitureInfo>();
 }
 
@@ -37,7 +37,7 @@ public class TileData
 
     public WALLSTATE[] doorArr = new WALLSTATE[4];
 
-    public Dictionary<string, MONSTERTYPE> monSpawnInfoDic = new Dictionary<string, MONSTERTYPE>();
+    public Dictionary<string, int> monSpawnInfoDic = new Dictionary<string, int>();
     public Dictionary<string, FurnitureData> FurnitureInfoDic = new Dictionary<string, FurnitureData>();
 }
 

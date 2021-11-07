@@ -94,14 +94,6 @@ public enum DROPITEM
     TOTALHEALL
 }
 
-public enum MONSTERTYPE
-{
-    NONE,
-    SUPERVIA,
-    AVARITIA,
-    INK
-}
-
 public enum DISPOITEM
 {
     COIN,

@@ -13,9 +13,10 @@ public class Player : MonoBehaviour
 
     #region [Movement]
 
-    private bool stopAllMove = false;
+    public bool stopAllMove = false;
     private bool isattack = false;
     private bool isconvzone = false;
+    private bool isDown = false;
     public bool isconv = false;
 
     private byte curattack = 0;
@@ -42,14 +43,14 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (ScenesManager.Instance.CheckScene() == "Lobby" && !stopAllMove)
+        if(stopAllMove)
         {
-            stopAllMove = true;
+            return;
         }
 
         DialogChecker();
 
-        if (isconv || ScenesManager.Instance.isOption)
+        if (isconv || ScenesManager.Instance.isOption || isDown)
         {
             anim.SetBool("Move", false);
             return;
@@ -81,50 +82,61 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (isattack)
-        {
-            if (other.CompareTag("Monster") || other.CompareTag("Boss"))
-            {
-                float damage = DataManager.Instance.CalculateDamage();
+        Debug.Log(other.gameObject.name);
 
-                other.GetComponent<Monster>().MonGetDamage(damage);
+        if (!stopAllMove)
+        {
+            if (isattack)
+            {
+                if (other.CompareTag("Monster"))
+                {
+                    float damage = DataManager.Instance.CalculateDamage();
+
+                    other.GetComponent<Monster>().MonGetDamage(damage);
+                }
+                else if (other.CompareTag("Boss"))
+                {
+                    float damage = DataManager.Instance.CalculateDamage();
+
+                    other.GetComponent<BossMonster>().MonGetDamage(damage);
+                }
             }
-        }
 
-        if (other.CompareTag("Dialoguezone"))
-        {
-            Interactionzone textinfo = other.GetComponent<Interactionzone>();
-
-            if(textinfo.portalType == INTERACTION.NONE)
+            if (other.CompareTag("Dialoguezone"))
             {
-                int point = (int)textinfo.dialogPoint;
-                int index = textinfo.dialogIndex;
+                Interactionzone textinfo = other.GetComponent<Interactionzone>();
 
-                ScenesManager.Instance.SetDialogPointInfo(point, index);
+                if (textinfo.portalType == INTERACTION.NONE)
+                {
+                    int point = (int)textinfo.dialogPoint;
+                    int index = textinfo.dialogIndex;
 
-                isconvzone = true;
+                    ScenesManager.Instance.SetDialogPointInfo(point, index);
 
-                ScenesManager.Instance.DialogEnter(point);
+                    isconvzone = true;
 
-                Debug.Log("대화 장소에 입장");
+                    ScenesManager.Instance.DialogEnter(point);
+
+                    Debug.Log("대화 장소에 입장");
+                }
             }
-        }
 
-        if (other.CompareTag("RewardItem"))
-        {
-            byte id = (byte)other.transform.GetComponent<RewardItem>().id;
-
-            other.transform.GetComponent<RewardItem>().id = (CONSUMITEM)stat.curItemIndex;
-            stat.curItemIndex = id;
-
-            GetItemInfo();
-        }
-
-        if (other.CompareTag("ConsumItem"))
-        {
-            if (!isattack)
+            if (other.CompareTag("RewardItem"))
             {
-                CheckDropItem(other);
+                byte id = (byte)other.transform.GetComponent<RewardItem>().id;
+
+                other.transform.GetComponent<RewardItem>().id = (CONSUMITEM)stat.curItemIndex;
+                stat.curItemIndex = id;
+
+                GetItemInfo();
+            }
+
+            if (other.CompareTag("ConsumItem"))
+            {
+                if (!isattack)
+                {
+                    CheckDropItem(other);
+                }
             }
         }
     }
@@ -362,17 +374,29 @@ public class Player : MonoBehaviour
 
     public void SetDamage(int _damage)
     {
-        if (isInvincible || isattack)
+        if (isInvincible || isattack || stopAllMove)
         {
             return;
         }
 
-        stat.hp -= _damage * (1 + stat.defense / 100);
+        float truedamage = _damage * (1 + stat.defense / 100);
+
+        stat.hp -= truedamage;
+
+        if(truedamage >= 10)
+        {
+            anim.SetTrigger("Down");
+        }
+        else
+        {
+            anim.SetTrigger("Hit");
+        }      
 
         if(stat.hp <= 0)
         {
             if(stat.extraLife > 0)
             {
+                anim.SetTrigger("Down");
                 stat.extraLife--;
                 stat.hp = stat.maxHp / 2;
                 stat.maxHp = stat.maxHp / 2;
@@ -391,21 +415,21 @@ public class Player : MonoBehaviour
     IEnumerator RebirthProcess()
     {
         isInvincible = true;
-
+        isDown = true;
         //무적 모션 시작자리
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(4.0f);
 
         isInvincible = false;
+        isDown = false;
     }
 
     IEnumerator DeathProcess()
     {
+        stopAllMove = true;
         anim.SetTrigger("Dead");
 
-        float animtime = anim.GetCurrentAnimatorStateInfo(0).length;
-
-        yield return new WaitForSeconds(animtime + 1f);
+        yield return new WaitForSeconds(4f);
 
         ScenesManager.Instance.MoveToScene(INTERACTION.LOBBY);
     }
@@ -519,148 +543,145 @@ public class Player : MonoBehaviour
 
     private void GetSkillInput()
     {
-        if (!stopAllMove)
+        if (Input.GetKey(ScenesManager.Instance.optionInfo.run) && ScenesManager.Instance.CheckScene() != "Lobby")
         {
-            if (Input.GetKey(ScenesManager.Instance.optionInfo.run))
+            if (stat.stamina > 0)
             {
-                if (stat.stamina > 0)
-                {
-                    stat.stamina -= Time.deltaTime;
-                    stat.speed = stat.runspeed;
-                }
-                else
-                {
-                    stat.stamina = 0;
-                    stat.speed = 1;
-                }
+                stat.stamina -= Time.deltaTime;
+                stat.speed = stat.runspeed;
             }
             else
             {
+                stat.stamina = 0;
                 stat.speed = 1;
-
-                if (stat.stamina <= 20)
-                {
-                    stat.stamina += Time.deltaTime / 3;
-                }
-                else
-                {
-                    stat.stamina = 20;
-                }
             }
+        }
+        else
+        {
+            stat.speed = 1;
 
-            float _itemrecharge = (float)stat.curItemStack / (float)stat.curItemMax;
-
-            if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.recharge) && _itemrecharge >= 1)
+            if (stat.stamina <= 20)
             {
-                Debug.Log("재사용 아이템 사용!");
+                stat.stamina += Time.deltaTime / 3;
+            }
+            else
+            {
+                stat.stamina = 20;
+            }
+        }
 
-                stat.curItemStack = 0;
+        float _itemrecharge = (float)stat.curItemStack / (float)stat.curItemMax;
 
-                switch (stat.curItemIndex)
-                {
-                    case 1:
-                        GameObject areaskill = Instantiate(curItemSkill, new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z), Quaternion.identity);
-                        WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
-                        wide.SetSkillPreset("Monster", 3f);
-                        break;
-                    case 2:
-                        byte[] consumItemperArr = new byte[] { 40, 40, 20 };
+        if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.recharge) && _itemrecharge >= 1)
+        {
+            Debug.Log("재사용 아이템 사용!");
 
-                        int random = Random.Range(0, 100);
-                        int curpercent = 0;
+            stat.curItemStack = 0;
 
-                        for (int i = 0; i < 3; i++)
+            switch (stat.curItemIndex)
+            {
+                case 1:
+                    GameObject areaskill = Instantiate(curItemSkill, new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z), Quaternion.identity);
+                    WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
+                    wide.SetSkillPreset("Monster", 3f);
+                    break;
+                case 2:
+                    byte[] consumItemperArr = new byte[] { 40, 40, 20 };
+
+                    int random = Random.Range(0, 100);
+                    int curpercent = 0;
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        curpercent += consumItemperArr[i];
+
+                        if (random < curpercent)
                         {
-                            curpercent += consumItemperArr[i];
-
-                            if (random < curpercent)
+                            switch (i)
                             {
-                                switch (i)
-                                {
-                                    case 0:
-                                        consumItemperArr = new byte[] { 59, 30, 7, 3, 1 };
+                                case 0:
+                                    consumItemperArr = new byte[] { 59, 30, 7, 3, 1 };
 
-                                        random = Random.Range(0, 100);
-                                        curpercent = 0;
-                                        for (int x = 0; x < 5; x++)
+                                    random = Random.Range(0, 100);
+                                    curpercent = 0;
+                                    for (int x = 0; x < 5; x++)
+                                    {
+                                        curpercent += consumItemperArr[i];
+
+                                        if (random < curpercent)
                                         {
-                                            curpercent += consumItemperArr[i];
+                                            byte _coin = 0;
 
-                                            if (random < curpercent)
+                                            switch (x)
                                             {
-                                                byte _coin = 0;
+                                                case 0:
+                                                    _coin = 1;
+                                                    break;
+                                                case 1:
+                                                    _coin = 2;
+                                                    break;
+                                                case 2:
+                                                    _coin = 5;
+                                                    break;
+                                                case 3:
+                                                    _coin = 10;
+                                                    break;
+                                                case 4:
+                                                    _coin = 100;
+                                                    break;
+                                            }
 
-                                                switch (x)
-                                                {
-                                                    case 0:
-                                                        _coin = 1;
-                                                        break;
-                                                    case 1:
-                                                        _coin = 2;
-                                                        break;
-                                                    case 2:
-                                                        _coin = 5;
-                                                        break;
-                                                    case 3:
-                                                        _coin = 10;
-                                                        break;
-                                                    case 4:
-                                                        _coin = 100;
-                                                        break;
-                                                }
-
-                                                for (int _x = 0; _x < _coin; _x++)
-                                                {
-                                                    GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
-                                                    GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                                    ConsumItem conitem = coin.AddComponent<ConsumItem>();
-                                                    conitem.consumitem = DROPITEM.COIN;
-                                                }
+                                            for (int _x = 0; _x < _coin; _x++)
+                                            {
+                                                GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
+                                                GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                                ConsumItem conitem = coin.AddComponent<ConsumItem>();
+                                                conitem.consumitem = DROPITEM.COIN;
                                             }
                                         }
-                                        break;
-                                    case 1:
-                                        random = Random.Range(0, 100);
+                                    }
+                                    break;
+                                case 1:
+                                    random = Random.Range(0, 100);
 
-                                        if (random < 95)
-                                        {
-                                            GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.KEY);
-                                            GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                            ConsumItem conitem = _key.AddComponent<ConsumItem>();
-                                            conitem.consumitem = DROPITEM.KEYS;
-                                        }
-                                        else
-                                        {
-                                            GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MASTERKEY);
-                                            GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                            ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
-                                            conitem.consumitem = DROPITEM.MASTERKEY;
-                                        }
-                                        break;
-                                    case 2:
-                                        //타로 카드 드롭
-                                        break;
-                                }
+                                    if (random < 95)
+                                    {
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.KEY);
+                                        GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                        ConsumItem conitem = _key.AddComponent<ConsumItem>();
+                                        conitem.consumitem = DROPITEM.KEYS;
+                                    }
+                                    else
+                                    {
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MASTERKEY);
+                                        GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
+                                        ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
+                                        conitem.consumitem = DROPITEM.MASTERKEY;
+                                    }
+                                    break;
+                                case 2:
+                                    //타로 카드 드롭
+                                    break;
                             }
                         }
-                        Debug.Log("슬롯머신 발동!");
-                        break;
-                }
-            }
-
-            if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.disposable) && stat.curDispoItemIndex != 255)
-            {
-                Debug.Log("일회용 아이템 사용!");
-
-                if (_itemrecharge != 1)
-                {
-                    switch (stat.curDispoItemIndex)
-                    {
-                        case 1:
-                            stat.curItemStack = stat.curItemMax;
-                            stat.curDispoItemIndex = 255;
-                            break;
                     }
+                    Debug.Log("슬롯머신 발동!");
+                    break;
+            }
+        }
+
+        if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.disposable) && stat.curDispoItemIndex != 255)
+        {
+            Debug.Log("일회용 아이템 사용!");
+
+            if (_itemrecharge != 1)
+            {
+                switch (stat.curDispoItemIndex)
+                {
+                    case 1:
+                        stat.curItemStack = stat.curItemMax;
+                        stat.curDispoItemIndex = 255;
+                        break;
                 }
             }
         }
@@ -674,10 +695,10 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        anim.SetBool("Move", true);       
+        anim.SetBool("Move", true);
         transform.position += transform.forward * velocity * Time.deltaTime * stat.speed;
 
-        if(!stopAllMove)
+        if (ScenesManager.Instance.CheckScene() != "Lobby")
         {
             anim.SetFloat("Speed", stat.speed);
         }
@@ -687,7 +708,7 @@ public class Player : MonoBehaviour
 
     #region ----------------------------[Trigger]----------------------------
 
-    public IEnumerator MoveInIntro(float _timer)
+    public IEnumerator MoveInIntro(float _timer, Vector3 _dir)
     {
         float timer = 0;
 
@@ -699,7 +720,7 @@ public class Player : MonoBehaviour
         {
             timer += Time.deltaTime;
             anim.SetBool("Move", true);
-            transform.position += transform.forward * Time.deltaTime * 3;
+            transform.position += _dir * Time.deltaTime * 3;
 
             yield return null;
         }

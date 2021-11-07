@@ -73,7 +73,7 @@ Material:
     - _SpecSource: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _StairNum: 10
+    - _StairNum: -2.63
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1

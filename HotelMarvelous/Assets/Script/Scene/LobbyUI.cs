@@ -14,6 +14,6 @@ public class LobbyUI : MonoBehaviour
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
 
-        StartCoroutine(player.MoveInIntro(1.5f));
+        StartCoroutine(player.MoveInIntro(1.5f, new Vector3(0, 0, 1)));
     }
 }
