@@ -70,6 +70,7 @@
     <Compile Include="Assets\Script\Dialog\DialogButton.cs" />
     <Compile Include="Assets\Script\Dialog\DialogUI.cs" />
     <Compile Include="Assets\Script\Dialog\Interactionzone.cs" />
+    <Compile Include="Assets\Script\Dungeon\DungeonEvent.cs" />
     <Compile Include="Assets\Script\Dungeon\DungeonMaker.cs" />
     <Compile Include="Assets\Script\Dungeon\DungeonMover.cs" />
     <Compile Include="Assets\Script\Dungeon\DungeonPathFinder.cs" />
@@ -95,7 +96,6 @@
   <ItemGroup>
     <None Include="Assets\material\CartoonShader\Surface.shader" />
     <None Include="Assets\material\CartoonShader\Outline.shader" />
-    <None Include="Assets\material\CartoonShader\Cutout.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

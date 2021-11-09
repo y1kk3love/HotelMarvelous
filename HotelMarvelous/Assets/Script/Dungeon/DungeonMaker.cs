@@ -168,6 +168,7 @@ public class DungeonMaker : MonoBehaviour
                 if(roomIndexListArr[curIndex][0].roomType == ROOMTYPE.BOSS)
                 {
                     GameObject bossui = Instantiate(bossUI);
+                    bossui.name = "BossUI";
                 }
             }
             else

@@ -11,6 +11,8 @@ public class Monster : MonoBehaviour
 
     public GameObject effect;
 
+    private bool isdead = true;
+
     public int monsterid;
 
     private int touchdamage;
@@ -69,7 +71,7 @@ public class Monster : MonoBehaviour
     {
         float dis = Vector3.Distance(player.transform.position, transform.position);
 
-        if (dis <= attackrange)
+        if (!isdead && dis <= attackrange)
         {
             if(timer >= 2)
             {
@@ -101,6 +103,7 @@ public class Monster : MonoBehaviour
 
     IEnumerator MonsterDead()
     {
+        isdead = true;
         anim.SetTrigger("Dead");
         transform.GetComponent<MonsterMove>().isDead = true;
 

@@ -111,7 +111,7 @@ public class MonsterMove : MonoBehaviour
 
     private Vector3 GetNextPath()
     {
-        if (pathcount < pathList.Count)
+        if (pathList != null && pathcount < pathList.Count)
         {
             float x = pathList[pathcount].X - 8.5f;
             float y = pathList[pathcount].Y - 8.5f;

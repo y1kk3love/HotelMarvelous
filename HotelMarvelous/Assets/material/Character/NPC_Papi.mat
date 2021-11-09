@@ -53,6 +53,7 @@ Material:
     - _BumpScale: 1
     - _Cull: 0
     - _Cutoff: 0.5
+    - _Darkness: 0.7
     - _Depth: 0.283
     - _DstBlend: 0
     - _EnvironmentReflections: 1
@@ -60,6 +61,7 @@ Material:
     - _Glossiness: 0
     - _GlossinessSource: 0
     - _GlossyReflections: 0
+    - _Level: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Outline_Bold: 0

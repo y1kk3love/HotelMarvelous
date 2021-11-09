@@ -49,7 +49,8 @@ public enum DIALOGEVENTDATA
 public enum NPCID
 {
     Keneth,
-    Elizabeth
+    Elizabeth,
+    Papi
 }
 
 public enum DIRECTION : byte

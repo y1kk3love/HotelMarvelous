@@ -13,6 +13,10 @@ public class BossMonster : MonoBehaviour
 
         if(curHP <= 0)
         {
+            GameObject manager = GameObject.Find("DungeonManager");
+            manager.GetComponent<DungeonEvent>().isBossDead = true;
+            manager.GetComponent<DungeonMaker>().MonsterDead();
+
             Destroy(transform.gameObject, 0.5f);
         }
     }

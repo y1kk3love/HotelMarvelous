@@ -3103,9 +3103,11 @@ GameObject:
   m_Component:
   - component: {fileID: 6030017549607401283}
   - component: {fileID: 4916369770035394195}
+  - component: {fileID: 8926539978747936190}
+  - component: {fileID: 7407316804727011303}
   m_Layer: 8
   m_Name: NPC_Papi
-  m_TagString: Untagged
+  m_TagString: Dialoguezone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3154,6 +3156,35 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!65 &8926539978747936190
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6405593870239280633}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5, y: 5, z: 5}
+  m_Center: {x: 0, y: 2, z: 0}
+--- !u!114 &7407316804727011303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6405593870239280633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74645c760086c3f41bfd4e76fb89d4fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalType: 0
+  dialogPoint: 0
+  dialogIndex: 0
+  isToNextStage: 0
 --- !u!1 &6411795628666588480
 GameObject:
   m_ObjectHideFlags: 0

@@ -76,6 +76,11 @@ public class DungeonPathFinder : MonoBehaviour
 
     public List<Tile> PathFind(Tile _StartTile, Tile _TargetTile)
     {
+        if(_StartTile == null || _TargetTile == null)
+        {
+            return null;
+        }
+
         PathList.Clear();
         OpenList.Clear();
         CloseList.Clear();
