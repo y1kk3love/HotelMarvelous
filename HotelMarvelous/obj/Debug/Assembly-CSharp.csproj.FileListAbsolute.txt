@@ -301,4 +301,16 @@ D:\GitHub\HotelMarvelous\HotelMarvelous\obj\Debug\Assembly-CSharp.csproj.Assembl
 D:\GitHub\HotelMarvelous\HotelMarvelous\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
 D:\GitHub\HotelMarvelous\HotelMarvelous\obj\Debug\Assembly-CSharp.dll
 D:\GitHub\HotelMarvelous\HotelMarvelous\obj\Debug\Assembly-CSharp.pdb
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Autodesk.Fbx.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Autodesk.Fbx.Editor.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Formats.Fbx.Editor.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Formats.Fbx.Runtime.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Postprocessing.Editor.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Postprocessing.Runtime.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Formats.Fbx.Editor.pdb
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Postprocessing.Editor.pdb
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Autodesk.Fbx.Editor.pdb
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Postprocessing.Runtime.pdb
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Autodesk.Fbx.pdb
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Formats.Fbx.Runtime.pdb
 D:\GitHub\HotelMarvelous\HotelMarvelous\obj\Debug\Assembly-CSharp.csproj.CopyComplete

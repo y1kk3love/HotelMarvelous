@@ -113,6 +113,13 @@ public class DungeonMaker : MonoBehaviour
 
     private IEnumerator RoomStart()
     {
+        GameObject[] mons = GameObject.FindGameObjectsWithTag("Monster");
+
+        for (int i = 0; i < mons.Length; i++)
+        {
+            mons[i].transform.GetComponent<PathFinder>().ResetGridMap(roomIndexListArr[curIndex]);
+        }
+
         GameObject[] Door = GameObject.FindGameObjectsWithTag("Door");
 
         for (int i = 0; i < Door.Length; i++)
@@ -141,8 +148,6 @@ public class DungeonMaker : MonoBehaviour
 
             RoomReward();
         }
-
-        transform.GetComponent<DungeonPathFinder>().ResetGridMap(roomIndexListArr[curIndex]);
     }
 
     public void MoveNextRoom(Vector2 _nextPos, Vector2 _dir)
@@ -346,7 +351,9 @@ public class DungeonMaker : MonoBehaviour
 
                 GameObject obfurniture = Resources.Load("Prefab/Furniture/" + _name) as GameObject;
 
-                GameObject _furniture = Instantiate(obfurniture, new Vector3(_pos.x - 0.5f, 1, _pos.y - 0.5f), Quaternion.Euler(new Vector3(0, _rotate, 0)));
+                GameObject _furniture = Instantiate(obfurniture);//, new Vector3(_pos.x - 0.5f, 1, _pos.y - 0.5f), Quaternion.Euler(new Vector3(0, _rotate, 0)));
+                _furniture.transform.rotation = Quaternion.Euler(new Vector3(0, _rotate, 0));
+                _furniture.transform.position += new Vector3(_pos.x - 0.5f, 0.5f, _pos.y - 0.5f);
                 _furniture.name = string.Format("{0} // {1} {2}", _pos.x, _pos.y, _name);
                 _furniture.transform.parent = _info.obTile.transform;
             }
@@ -512,10 +519,12 @@ public class DungeonMaker : MonoBehaviour
                     case (int)DIRECTION.RIGHT:
 
                         Wall = Instantiate(_wallPrefab, new Vector3(_x + 8.5f, 4, _y), Quaternion.Euler(0, -180, 90));
+                        Wall.AddComponent<WallView>();
                         break;
                     case (int)DIRECTION.BOTTOM:
 
                         Wall = Instantiate(_wallPrefab, new Vector3(_x, 4, _y - 8.5f), Quaternion.Euler(0, -90, 90));
+                        Wall.AddComponent<WallView>();
                         break;
                     case (int)DIRECTION.LEFT:
 

@@ -3182,7 +3182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portalType: 0
-  dialogPoint: 0
+  dialogPoint: 2
   dialogIndex: 0
   isToNextStage: 0
 --- !u!1 &6411795628666588480

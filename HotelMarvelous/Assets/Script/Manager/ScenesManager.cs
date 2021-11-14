@@ -75,6 +75,7 @@ public class ScenesManager : MonoSingleton<ScenesManager>
                     _name = "엘리자베스 테일러";
                     break;
                 case 2:
+                    _name = "파피";
                     break;
             }
 

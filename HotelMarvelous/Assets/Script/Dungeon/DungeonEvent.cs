@@ -31,7 +31,7 @@ public class DungeonEvent : MonoBehaviour
             isBossDead = false;
 
             GameObject ui = GameObject.Find("BossUI");
-            ui.GetComponent<Animator>().SetBool("FadeOut", false);
+            ui.GetComponent<Animator>().SetBool("FadeIn", true);
 
             GameObject door = GameObject.FindGameObjectWithTag("Door");
             Vector3 doorpos = new Vector3(door.transform.position.x, 0.5f, door.transform.position.z);
@@ -50,6 +50,7 @@ public class DungeonEvent : MonoBehaviour
             if (Vector3.Distance(targetPos, obpapi.transform.position) > 0.5f)
             {
                 Vector3 dir = (targetPos - obpapi.transform.position).normalized;
+                dir.y = 0;
 
                 obpapi.transform.position += dir * Time.deltaTime * 3;
                 obpapi.transform.forward = dir;

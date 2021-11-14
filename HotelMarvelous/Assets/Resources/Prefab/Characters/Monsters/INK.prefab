@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1356358813743056424}
   - component: {fileID: 7570502251017160711}
   - component: {fileID: 6656860840936376177}
+  - component: {fileID: 5168821535078036101}
   m_Layer: 0
   m_Name: INK
   m_TagString: Monster
@@ -80,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98ecf066e63f73946903c79367c3a629, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isAttacking: 0
+  isDead: 0
   speed: 5
 --- !u!114 &6656860840936376177
 MonoBehaviour:
@@ -96,6 +97,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   effect: {fileID: 8713502894485932117, guid: 92b3a3eb9c277b943b6aa931613ac79f, type: 3}
   monsterid: 0
+--- !u!114 &5168821535078036101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313533276772124681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d6679d2fa889c94b9e0ca098a19aa76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &576462791587137079
 GameObject:
   m_ObjectHideFlags: 0

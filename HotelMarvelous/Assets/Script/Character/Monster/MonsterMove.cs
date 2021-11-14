@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterMove : MonoBehaviour
 {
     private Animator anim;
-    private DungeonPathFinder pathfinder;
+    private PathFinder pathfinder;
 
     private GameObject obPlayer;
 
@@ -21,24 +22,24 @@ public class MonsterMove : MonoBehaviour
 
     private float movedelay = 0;
     private float targetPathDis;
-    public float speed = 5;    
+    public float speed = 5;
 
     void Start()
     {
+        movedelay = Random.Range(0, 1f);
         anim = transform.GetComponent<Animator>();
-        pathfinder = GameObject.Find("DungeonManager").transform.GetComponent<DungeonPathFinder>();
+        pathfinder = transform.GetComponent<PathFinder>();
     }
 
     void Update()
     {
-        if(obPlayer == null)
+        if (obPlayer == null)
         {
             obPlayer = GameObject.FindGameObjectWithTag("Player");
-
-            if (obPlayer != null) 
-            {
-                targetPos = obPlayer.transform.position;
-            }
+        }
+        else
+        {
+            targetPos = obPlayer.transform.position;
         }
 
         Move();
@@ -60,13 +61,13 @@ public class MonsterMove : MonoBehaviour
     {
         Vector3 dir = new Vector3(0, 0, 0);
 
-        targetPathDis = Vector3.Distance(transform.position, GetNextPath()); 
+        targetPathDis = Vector3.Distance(transform.position, GetNextPath());
 
-        if(targetPathDis > 1f)
+        if (targetPathDis > 1f)
         {
             dir = (GetNextPath() - transform.position).normalized;
         }
-        else if(targetPathDis > 0)
+        else if (targetPathDis > 0)
         {
             pathcount++;
             dir = (GetNextPath() - transform.position).normalized;
@@ -74,7 +75,7 @@ public class MonsterMove : MonoBehaviour
 
         transform.position += Time.deltaTime * dir * speed;
 
-        if(anim != null)
+        if (anim != null)
         {
             if (dir == new Vector3(0, 0, 0))
             {
@@ -92,17 +93,31 @@ public class MonsterMove : MonoBehaviour
     {
         movedelay += Time.deltaTime;
 
-        if(movedelay >= 1f && !isfindtarget)
+        if (movedelay >= 1f && !isfindtarget)
         {
             movedelay = 0;
             isfindtarget = true;
 
             pathList.Clear();
             pathcount = 0;
-            pathList = pathfinder.PathFind(CurrentPosition(), PlayerPosition());
+
+            List<Tile> _tile = pathfinder.PathFind(CurrentPosition(), PlayerPosition());
+
+            if(_tile == null)
+            {
+                Debug.Log("길찾기 실패");
+                return;
+            }
+
+            for (int i = 0; i < _tile.Count; i++)
+            {
+                Tile newtile = new Tile(false, _tile[i].X, _tile[i].Y);
+
+                pathList.Add(newtile);
+            }
         }
 
-        if(movedelay >= 5)
+        if (movedelay >= 5)
         {
             movedelay = 0;
             isfindtarget = false;
@@ -139,7 +154,7 @@ public class MonsterMove : MonoBehaviour
 
     private Tile PlayerPosition()
     {
-        if(obPlayer != null)
+        if (obPlayer != null)
         {
             float x = Mathf.Floor(obPlayer.transform.position.x);
             float y = Mathf.Floor(obPlayer.transform.position.z);

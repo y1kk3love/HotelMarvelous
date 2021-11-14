@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
         }
 
         DialogChecker();
+        GetUp();
 
         if (isconv || ScenesManager.Instance.isOption || isDown)
         {
@@ -382,15 +383,7 @@ public class Player : MonoBehaviour
         float truedamage = _damage * (1 + stat.defense / 100);
 
         stat.hp -= truedamage;
-
-        if(truedamage >= 10)
-        {
-            anim.SetTrigger("Down");
-        }
-        else
-        {
-            anim.SetTrigger("Hit");
-        }      
+        isInvincible = true;
 
         if(stat.hp <= 0)
         {
@@ -408,6 +401,18 @@ public class Player : MonoBehaviour
                 stat.hp = 0;
 
                 StartCoroutine(DeathProcess());
+            }
+        }
+        else
+        {
+            if (truedamage >= 10)
+            {
+                anim.SetTrigger("Down");
+                isDown = true;
+            }
+            else
+            {
+                anim.SetTrigger("Hit");
             }
         }
     }
@@ -493,6 +498,23 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void GetUp()
+    {
+        if(Input.anyKeyDown && isDown)
+        {
+            anim.SetTrigger("GetUp");
+            isDown = false;
+            stopAllMove = true;
+        }
+    }
+
+    public void InvincibleOff()
+    {
+        isDown = false;
+        isInvincible = false;
+        stopAllMove = false;
+    }
+
     #endregion
 
     #region ----------------------------[PlayerControl]----------------------------
@@ -543,7 +565,7 @@ public class Player : MonoBehaviour
 
     private void GetSkillInput()
     {
-        if (Input.GetKey(ScenesManager.Instance.optionInfo.run) && ScenesManager.Instance.CheckScene() != "Lobby")
+        if (Input.GetKey(ScenesManager.Instance.optionInfo.run) && ScenesManager.Instance.CheckScene() != "Lobby" && stat.hp > 10)
         {
             if (stat.stamina > 0)
             {
@@ -558,7 +580,15 @@ public class Player : MonoBehaviour
         }
         else
         {
-            stat.speed = 1;
+            if(stat.hp > 10)
+            {
+                stat.speed = 1;
+            }
+            else
+            {
+                stat.speed = 0.5f;
+            }
+            
 
             if (stat.stamina <= 20)
             {
@@ -720,6 +750,7 @@ public class Player : MonoBehaviour
         {
             timer += Time.deltaTime;
             anim.SetBool("Move", true);
+            anim.SetFloat("Speed", 1f);
             transform.position += _dir * Time.deltaTime * 3;
 
             yield return null;

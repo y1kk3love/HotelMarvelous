@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1665585075741187326}
   - component: {fileID: 8998269059687292594}
   m_Layer: 0
-  m_Name: Wall
+  m_Name: Wall_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 5052493616871819279}
   - component: {fileID: 5052493616871819276}
   m_Layer: 0
-  m_Name: Wall
+  m_Name: Wall_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -356,6 +356,7 @@ GameObject:
   - component: {fileID: 6240601220267536342}
   - component: {fileID: 8627275403698587581}
   - component: {fileID: 20074197391993449}
+  - component: {fileID: 7280466027436929656}
   m_Layer: 0
   m_Name: Door_1
   m_TagString: Untagged
@@ -412,6 +413,25 @@ MonoBehaviour:
   doorDir: 0
   x: 0
   y: 0
+--- !u!95 &7280466027436929656
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6240601220267536341}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 05b0eeaa158fad54a9460c99d3ba5cb7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7819110213630392796
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,7 +445,7 @@ GameObject:
   - component: {fileID: 7543405878177523816}
   - component: {fileID: 8097235630654378870}
   m_Layer: 0
-  m_Name: Wall
+  m_Name: Wall_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

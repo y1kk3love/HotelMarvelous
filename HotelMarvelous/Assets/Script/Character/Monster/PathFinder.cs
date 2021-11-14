@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DungeonPathFinder : MonoBehaviour
+public class PathFinder : MonoBehaviour
 {
     private Tile[,] TileArr;
     public List<Tile> PathList = new List<Tile>();
@@ -58,7 +58,7 @@ public class DungeonPathFinder : MonoBehaviour
             int curArrX = tx - sx;
             int curArrY = ty - sy;
 
-            for(int x = curArrX; x < curArrX + 18; x++)
+            for (int x = curArrX; x < curArrX + 18; x++)
             {
                 for (int y = curArrY; y < curArrY + 18; y++)
                 {
@@ -76,7 +76,7 @@ public class DungeonPathFinder : MonoBehaviour
 
     public List<Tile> PathFind(Tile _StartTile, Tile _TargetTile)
     {
-        if(_StartTile == null || _TargetTile == null)
+        if (_StartTile == null || _TargetTile == null)
         {
             return null;
         }
@@ -117,25 +117,34 @@ public class DungeonPathFinder : MonoBehaviour
                 PathList.Add(_StartTile);
                 PathList.Reverse();
 
+                Debug.Log(PathList.Count);
                 return PathList;
             }
 
-            OpenListAdd(_CurTile.X, _CurTile.Y + 1, _CurTile, _TargetTile);
-            OpenListAdd(_CurTile.X + 1, _CurTile.Y, _CurTile, _TargetTile);
-            OpenListAdd(_CurTile.X, _CurTile.Y - 1, _CurTile, _TargetTile);
-            OpenListAdd(_CurTile.X - 1, _CurTile.Y, _CurTile, _TargetTile);
+            OpenListAdd(_CurTile.X + 1, _CurTile.Y + 1, _CurTile, _TargetTile, true);
+            OpenListAdd(_CurTile.X + 1, _CurTile.Y + 1, _CurTile, _TargetTile, true);
+            OpenListAdd(_CurTile.X - 1, _CurTile.Y - 1, _CurTile, _TargetTile, true);
+            OpenListAdd(_CurTile.X + 1, _CurTile.Y - 1, _CurTile, _TargetTile, true);
+
+            OpenListAdd(_CurTile.X, _CurTile.Y + 1, _CurTile, _TargetTile, false);
+            OpenListAdd(_CurTile.X + 1, _CurTile.Y, _CurTile, _TargetTile, false);
+            OpenListAdd(_CurTile.X, _CurTile.Y - 1, _CurTile, _TargetTile, false);
+            OpenListAdd(_CurTile.X - 1, _CurTile.Y, _CurTile, _TargetTile, false);
         }
 
         return null;
     }
 
-    private void OpenListAdd(int _x, int _y, Tile _CurTile, Tile _TargetTile)
+    private void OpenListAdd(int _x, int _y, Tile _CurTile, Tile _TargetTile, bool _cross)
     {
         if (_x >= 0 && _x < xlen - 1 && _y >= 0 && _y < ylen - 1 && !TileArr[_x, _y].isWall && !CloseList.Contains(TileArr[_x, _y]))
         {
             Tile neighborTile = TileArr[_x, _y];
 
-            int curCost = _CurTile.curDis + 10;
+            int curCost = 0;
+
+            if (_cross) { curCost = _CurTile.curDis + 14; }
+            else { curCost = _CurTile.curDis + 10; }
 
             if (curCost < neighborTile.curDis || !OpenList.Contains(neighborTile))
             {

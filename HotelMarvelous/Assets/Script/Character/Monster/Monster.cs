@@ -5,13 +5,13 @@ using UnityEngine.AI;
 
 public class Monster : MonoBehaviour
 {
-    private Player player;
+    private GameObject player;
     private MonsterMove move;
     private Animator anim;
 
     public GameObject effect;
 
-    private bool isdead = true;
+    private bool isdead = false;
 
     public int monsterid;
 
@@ -25,7 +25,7 @@ public class Monster : MonoBehaviour
     {
         anim = transform.GetComponent<Animator>();
         move = transform.GetComponent<MonsterMove>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        player = GameObject.FindGameObjectWithTag("Player");
 
         switch (monsterid)
         {
@@ -69,19 +69,26 @@ public class Monster : MonoBehaviour
 
     private void MonsterAttack()
     {
-        float dis = Vector3.Distance(player.transform.position, transform.position);
-
-        if (!isdead && dis <= attackrange)
+        if(player == null)
         {
-            if(timer >= 2)
-            {
-                timer = 0;
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+        else
+        {
+            float dis = Vector3.Distance(player.transform.position, transform.position);
 
-                GameObject _effect = Instantiate(effect, player.transform.position, Quaternion.identity);
-                Destroy(_effect, 1f);
-                anim.SetTrigger("Attack");
-                player.SetDamage(touchdamage);
-                player.SetMentality(mentaldamage);
+            if (!isdead && dis <= attackrange)
+            {
+                if (timer >= 2)
+                {
+                    timer = 0;
+
+                    GameObject _effect = Instantiate(effect, player.transform.position, Quaternion.identity);
+                    Destroy(_effect, 1f);
+                    anim.SetTrigger("Attack");
+                    player.GetComponent<Player>().SetDamage(touchdamage);
+                    player.GetComponent<Player>().SetMentality(mentaldamage);
+                }
             }
         }
     }
