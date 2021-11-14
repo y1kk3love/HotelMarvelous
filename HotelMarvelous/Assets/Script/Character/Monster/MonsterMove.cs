@@ -20,7 +20,7 @@ public class MonsterMove : MonoBehaviour
 
     private int pathcount = 0;
 
-    private float movedelay = 0;
+    private float movedelay = 2;
     private float targetPathDis;
     public float speed = 5;
 

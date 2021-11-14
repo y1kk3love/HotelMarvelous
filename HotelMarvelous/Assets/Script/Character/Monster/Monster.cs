@@ -5,12 +5,14 @@ using UnityEngine.AI;
 
 public class Monster : MonoBehaviour
 {
+    public GameObject ink;
     private GameObject player;
     private MonsterMove move;
     private Animator anim;
 
     public GameObject effect;
 
+    private bool isDeadOnce = false;
     private bool isdead = false;
 
     public int monsterid;
@@ -115,6 +117,18 @@ public class Monster : MonoBehaviour
         transform.GetComponent<MonsterMove>().isDead = true;
 
         yield return new WaitForSeconds(1.1f);
+
+        if (isDeadOnce == false)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                GameObject mon = Instantiate(ink, new Vector3(transform.position.x + i, 0.5f, transform.position.z), Quaternion.identity);
+                mon.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterAdd();
+                mon.transform.GetComponent<Monster>().isDeadOnce = true;
+                mon.transform.GetComponent<MonsterMove>().isDead = false;
+            }
+        }
 
         Destroy(gameObject);
     }

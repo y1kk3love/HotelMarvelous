@@ -46,6 +46,17 @@ public class PathFinder : MonoBehaviour
 
             SetWallInMap(_list);
         }
+        else
+        {
+            GameObject manager = GameObject.Find("DungeonManager");
+
+            if(manager != null)
+            { 
+                List<TileInfo> list = manager.GetComponent<DungeonMaker>().GetTileMap();
+
+                ResetGridMap(list);
+            }
+        }
     }
 
     private void SetWallInMap(List<TileInfo> _list)
@@ -76,6 +87,11 @@ public class PathFinder : MonoBehaviour
 
     public List<Tile> PathFind(Tile _StartTile, Tile _TargetTile)
     {
+        if(TileArr == null)
+        {
+            ResetGridMap(null);
+        }
+
         if (_StartTile == null || _TargetTile == null)
         {
             return null;

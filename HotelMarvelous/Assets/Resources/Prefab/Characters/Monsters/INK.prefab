@@ -95,6 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d50c63e86e9fa144bda9ccaa9d97a1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ink: {fileID: 313533276772124681}
   effect: {fileID: 8713502894485932117, guid: 92b3a3eb9c277b943b6aa931613ac79f, type: 3}
   monsterid: 0
 --- !u!114 &5168821535078036101

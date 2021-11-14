@@ -76,6 +76,8 @@ public class DungeonMaker : MonoBehaviour
     public void MonsterAdd()
     {
         monMaxArr[curIndex]++;
+
+        RoomEnd();
     }
 
     private void RoomReward()
@@ -113,13 +115,6 @@ public class DungeonMaker : MonoBehaviour
 
     private IEnumerator RoomStart()
     {
-        GameObject[] mons = GameObject.FindGameObjectsWithTag("Monster");
-
-        for (int i = 0; i < mons.Length; i++)
-        {
-            mons[i].transform.GetComponent<PathFinder>().ResetGridMap(roomIndexListArr[curIndex]);
-        }
-
         GameObject[] Door = GameObject.FindGameObjectsWithTag("Door");
 
         for (int i = 0; i < Door.Length; i++)
@@ -550,6 +545,11 @@ public class DungeonMaker : MonoBehaviour
     #endregion
 
     #endregion
+
+    public List<TileInfo> GetTileMap()
+    {
+        return roomIndexListArr[curIndex];
+    }
 
     private byte BoardPosParse(int _pos)
     {
