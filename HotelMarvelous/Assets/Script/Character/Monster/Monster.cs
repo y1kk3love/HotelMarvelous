@@ -10,7 +10,8 @@ public class Monster : MonoBehaviour
     private MonsterMove move;
     private Animator anim;
 
-    public GameObject effect;
+    public GameObject DeadEffect;
+    public GameObject hitEffect;
 
     private bool isDeadOnce = false;
     private bool isdead = false;
@@ -85,7 +86,7 @@ public class Monster : MonoBehaviour
                 {
                     timer = 0;
 
-                    GameObject _effect = Instantiate(effect, player.transform.position, Quaternion.identity);
+                    GameObject _effect = Instantiate(hitEffect, player.transform.position, Quaternion.identity);
                     Destroy(_effect, 1f);
                     anim.SetTrigger("Attack");
                     player.GetComponent<Player>().SetDamage(touchdamage);
@@ -112,23 +113,34 @@ public class Monster : MonoBehaviour
 
     IEnumerator MonsterDead()
     {
-        isdead = true;
-        anim.SetTrigger("Dead");
+        isdead = true;       
         transform.GetComponent<MonsterMove>().isDead = true;
 
-        yield return new WaitForSeconds(1.1f);
-
-        if (isDeadOnce == false)
+        if (isDeadOnce)
+        { 
+            anim.SetTrigger("Dead"); 
+        }
+        else
         {
+            GameObject effect = Instantiate(DeadEffect, transform.position, Quaternion.Euler(-90, 0, 0));
+            Destroy(effect, 1f);
+
+            transform.Find("Body").gameObject.SetActive(false);
+
+            yield return new WaitForSeconds(0.5f);
+
             for (int i = 0; i < 2; i++)
             {
                 GameObject mon = Instantiate(ink, new Vector3(transform.position.x + i, 0.5f, transform.position.z), Quaternion.identity);
-                mon.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
                 GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterAdd();
                 mon.transform.GetComponent<Monster>().isDeadOnce = true;
                 mon.transform.GetComponent<MonsterMove>().isDead = false;
             }
+
+            Destroy(gameObject);
         }
+
+         yield return new WaitForSeconds(1.1f);
 
         Destroy(gameObject);
     }

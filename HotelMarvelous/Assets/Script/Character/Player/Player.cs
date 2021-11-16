@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     private PlayerStatus stat = new PlayerStatus();
 
     public GameObject attackRange;
+    public GameObject[] effects;
     private GameObject curItemSkill = null;
 
     private bool isInvincible = false;
@@ -175,28 +176,28 @@ public class Player : MonoBehaviour
             case DROPITEM.COIN:
                 if (stat.coin < 100)
                 {
-                    stat.coin++;
-                    Destroy(other.gameObject);
+                    stat.coin++;                   
                 }
                 break;
+
             case DROPITEM.KEYS:
                 if (stat.roomKeys < 100)
                 {
                     stat.roomKeys++;
-                    Destroy(other.gameObject);
                 }
                 break;
+
             case DROPITEM.MASTERKEY:
                 stat.roomKeys = 100;
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.BEANS:
                 if (stat.beans < 100)
                 {
                     stat.beans++;
-                    Destroy(other.gameObject);
                 }
                 break;
+
             case DROPITEM.HPS:
                 if (stat.hp + 3 <= stat.maxHp)
                 {
@@ -207,8 +208,8 @@ public class Player : MonoBehaviour
                     stat.hp = stat.maxHp;
                 }
 
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.HPM:
                 if (stat.hp + 5 <= stat.maxHp)
                 {
@@ -218,9 +219,8 @@ public class Player : MonoBehaviour
                 {
                     stat.hp = stat.maxHp;
                 }
-
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.HPL:
                 if (stat.hp + 10 <= stat.maxHp)
                 {
@@ -230,9 +230,8 @@ public class Player : MonoBehaviour
                 {
                     stat.hp = stat.maxHp;
                 }
-
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.MENTALS:
                 if (stat.mentality + 0.5f <= stat.maxMentality)
                 {
@@ -242,9 +241,8 @@ public class Player : MonoBehaviour
                 {
                     stat.mentality = stat.maxMentality;
                 }
-
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.MENTALM:
                 if (stat.mentality + 1.0f <= stat.maxMentality)
                 {
@@ -254,9 +252,8 @@ public class Player : MonoBehaviour
                 {
                     stat.mentality = stat.maxMentality;
                 }
-
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.MENTALL:
                 if (stat.mentality + 5.0f <= stat.maxMentality)
                 {
@@ -266,9 +263,8 @@ public class Player : MonoBehaviour
                 {
                     stat.mentality = stat.maxMentality;
                 }
-
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.TOTALHEALS:
                 if (stat.hp + 3 <= stat.maxHp)
                 {
@@ -288,8 +284,8 @@ public class Player : MonoBehaviour
                     stat.mentality = stat.maxMentality;
                 }
 
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.TOTALHEALM:
                 if (stat.hp + 5 <= stat.maxHp)
                 {
@@ -309,8 +305,8 @@ public class Player : MonoBehaviour
                     stat.mentality = stat.maxMentality;
                 }
 
-                Destroy(other.gameObject);
                 break;
+
             case DROPITEM.TOTALHEALL:
                 if (stat.hp + 20 <= stat.maxHp)
                 {
@@ -329,10 +325,15 @@ public class Player : MonoBehaviour
                 {
                     stat.mentality = stat.maxMentality;
                 }
-
-                Destroy(other.gameObject);
                 break;
         }
+
+        byte[] arr = new byte[] { 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 2, 2, 2 };
+
+        GameObject effect = Instantiate(effects[arr[(byte)_consumitem.consumitem]], transform.position, Quaternion.identity);
+        effect.transform.SetParent(transform);
+        Destroy(effect, 2.5f);
+        Destroy(other.gameObject);
     }
 
     #endregion
@@ -750,6 +751,7 @@ public class Player : MonoBehaviour
         {
             timer += Time.deltaTime;
             anim.SetBool("Move", true);
+            if(ScenesManager.Instance.CheckScene() != "Lobby")
             anim.SetFloat("Speed", 1f);
             transform.position += _dir * Time.deltaTime * 3;
 

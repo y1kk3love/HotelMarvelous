@@ -18,6 +18,7 @@ public class TitleUI : MonoBehaviour
 
     public GameObject fadeout;
 
+    private Image imLogo;
     private Image imTitle;
     private RawImage imProlog;
 
@@ -31,6 +32,7 @@ public class TitleUI : MonoBehaviour
         ResetProcess();
         
         StartCoroutine(IntroProcess(imTitle));
+        StartCoroutine(IntroProcess(imLogo));
 
         ScenesManager.Instance.ShowPauseButton();
     }
@@ -103,7 +105,8 @@ public class TitleUI : MonoBehaviour
     private void ResetProcess()
     {   //오브젝트들 초기화
         startGameui = GameObject.Find("StartGame");
-        imTitle = GameObject.Find("Title").GetComponent<Image>();
+        imTitle = GameObject.Find("TitleImage").GetComponent<Image>();
+        imLogo = GameObject.Find("TitleLogo").GetComponent<Image>();
         imProlog = GameObject.Find("PrologVideo").GetComponent<RawImage>();
 
         startGameui.SetActive(false);

@@ -1138,6 +1138,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: {fileID: 3348713484383930668}
+  effects:
+  - {fileID: 6424560197419597325, guid: 34d95c938e366854db7eaf8ba162090b, type: 3}
+  - {fileID: 6723000054925392983, guid: c6865ba339854cf4bbc3c3f61ca2533c, type: 3}
+  - {fileID: 5352199308823429163, guid: 542d2752877cd3b429f760cd9f7e48bd, type: 3}
+  - {fileID: 5204703738420594270, guid: 66abca7740d18f147a58f84e7e0152d3, type: 3}
+  stopAllMove: 0
   isconv: 0
 --- !u!1 &2727057177301874341
 GameObject:

@@ -11,6 +11,7 @@ public class DataManager : MonoSingleton<DataManager>
 
     public PlayerStatus GetPlayerStatus()
     {
+        playerStatus = new PlayerStatus();
         return playerStatus;
     }
 

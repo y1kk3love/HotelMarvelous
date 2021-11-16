@@ -7,6 +7,7 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 {
     public GameObject locationInfo;
     public GameObject pauseUI;
+    private GameObject dialog;
     public DialogUI dialogUI;
     public OptionInfo optionInfo = new OptionInfo();
 
@@ -35,14 +36,12 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
     public void DialogEnter(int _point)
     {
-        GameObject _ui = GameObject.Find("DialogUI(Clone)");
-
-        if (_ui == null)
+        if (dialog == null)
         {
             GameObject _uiprefab = Resources.Load("Prefab/UI/DialogUI") as GameObject;
 
-            _ui = Instantiate(_uiprefab, transform.position, Quaternion.identity);
-            dialogUI = _ui.GetComponent<DialogUI>();
+            dialog = Instantiate(_uiprefab, transform.position, Quaternion.identity);
+            dialogUI = dialog.GetComponent<DialogUI>();
         }
 
         DialogProfileChanger(curDialogPoint);
@@ -80,6 +79,10 @@ public class ScenesManager : MonoSingleton<ScenesManager>
             }
 
             dialogUI.SetProfile(_sprite, _name);
+        }
+        else
+        {
+            dialogUI.ButtonOnAndOff(true);
         }
     }
 

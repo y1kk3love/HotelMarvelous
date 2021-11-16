@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000000, guid: b3a4c8f7a38107e4ca19e5ae687146d5,
     type: 2}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -133,8 +133,8 @@ GameObject:
   - component: {fileID: 338479788}
   - component: {fileID: 338479787}
   - component: {fileID: 338479786}
-  - component: {fileID: 338479789}
   - component: {fileID: 338479790}
+  - component: {fileID: 338479789}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -200,13 +200,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 338479785}
-  m_LocalRotation: {x: -0.32291055, y: 0.0062417965, z: -0.0021298, w: -0.94640654}
-  m_LocalPosition: {x: 0.034181207, y: 3.8371396, z: -2.243187}
+  m_LocalRotation: {x: 0.46193978, y: -0.33141357, z: 0.19134171, w: 0.8001032}
+  m_LocalPosition: {x: 4.52, y: 12.84071, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: -45, z: 0}
 --- !u!114 &338479789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,9 +216,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 338479785}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93dad678e81d6cf47b18d96196bad413, type: 3}
+  m_Script: {fileID: 11500000, guid: b81ccba564bd3b54f9ff8799daa6d866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraspeed: 3
+  camerahight: 10
 --- !u!114 &338479790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1208,6 +1210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackRange: {fileID: 3348713484458971325}
+  effects: []
   stopAllMove: 0
   isconv: 0
 --- !u!4 &2514096835004111904

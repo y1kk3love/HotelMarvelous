@@ -95,8 +95,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d50c63e86e9fa144bda9ccaa9d97a1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ink: {fileID: 313533276772124681}
-  effect: {fileID: 8713502894485932117, guid: 92b3a3eb9c277b943b6aa931613ac79f, type: 3}
+  ink: {fileID: 313533276772124681, guid: e2c330d8f283901408d0f9b2613d36a9, type: 3}
+  DeadEffect: {fileID: 2640466346374672956, guid: afc548e7f3259b645b5c37bb10f05268,
+    type: 3}
+  hitEffect: {fileID: 5660907115328492660, guid: 92b3a3eb9c277b943b6aa931613ac79f,
+    type: 3}
   monsterid: 0
 --- !u!114 &5168821535078036101
 MonoBehaviour:
@@ -183,7 +186,7 @@ GameObject:
   - component: {fileID: 6986830096074092036}
   - component: {fileID: 78606940830453741}
   m_Layer: 0
-  m_Name: Sphere001
+  m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
