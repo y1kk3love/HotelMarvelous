@@ -96,9 +96,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ink: {fileID: 313533276772124681, guid: e2c330d8f283901408d0f9b2613d36a9, type: 3}
-  DeadEffect: {fileID: 2640466346374672956, guid: afc548e7f3259b645b5c37bb10f05268,
+  DeadEffect: {fileID: 3330464461207088929, guid: afc548e7f3259b645b5c37bb10f05268,
     type: 3}
-  hitEffect: {fileID: 5660907115328492660, guid: 92b3a3eb9c277b943b6aa931613ac79f,
+  hitEffect: {fileID: 4219944971931182393, guid: 92b3a3eb9c277b943b6aa931613ac79f,
     type: 3}
   monsterid: 0
 --- !u!114 &5168821535078036101

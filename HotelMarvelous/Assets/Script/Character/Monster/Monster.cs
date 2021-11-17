@@ -86,14 +86,31 @@ public class Monster : MonoBehaviour
                 {
                     timer = 0;
 
-                    GameObject _effect = Instantiate(hitEffect, player.transform.position, Quaternion.identity);
-                    Destroy(_effect, 1f);
+                    StartCoroutine(MonsterHitEffect());
                     anim.SetTrigger("Attack");
-                    player.GetComponent<Player>().SetDamage(touchdamage);
-                    player.GetComponent<Player>().SetMentality(mentaldamage);
+                    
                 }
             }
         }
+    }
+
+    IEnumerator MonsterHitEffect()
+    {
+        yield return new WaitForSeconds(0.8f);
+
+        float dis = Vector3.Distance(player.transform.position, transform.position);
+
+        Player _player = player.GetComponent<Player>();
+
+        if (!isdead && dis <= attackrange)
+        {
+            _player.SetDamage(touchdamage);
+            _player.SetMentality(mentaldamage);
+
+            GameObject _effect = Instantiate(hitEffect, player.transform.position, Quaternion.identity);
+            Destroy(_effect, 1f);
+        }
+            
     }
 
     public void MonGetDamage(float _damage)

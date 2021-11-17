@@ -422,7 +422,6 @@ public class Player : MonoBehaviour
     {
         isInvincible = true;
         isDown = true;
-        //무적 모션 시작자리
 
         yield return new WaitForSeconds(4.0f);
 
@@ -434,6 +433,10 @@ public class Player : MonoBehaviour
     {
         stopAllMove = true;
         anim.SetTrigger("Dead");
+        GameObject effect = Instantiate(effects[4], transform.position, Quaternion.identity);
+        effect.transform.SetParent(transform);
+        effect.transform.forward = transform.forward;
+        Destroy(effect, 3.15f);
 
         yield return new WaitForSeconds(4f);
 
@@ -507,6 +510,11 @@ public class Player : MonoBehaviour
             isDown = false;
             stopAllMove = true;
         }
+    }
+
+    public void GetUpAlone()
+    {
+        isDown = false;
     }
 
     public void InvincibleOff()
