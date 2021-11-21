@@ -157,6 +157,11 @@ public class ScenesManager : MonoSingleton<ScenesManager>
 
     public void EntranceDecision(bool _inout)
     {
+        if(dialogUI == null)
+        {
+            return;
+        }
+
         dialogUI.ButtonOnAndOff(_inout);
     }
 

@@ -11,7 +11,6 @@ public class DungeonEvent : MonoBehaviour
     private Vector3 targetPos;
 
     public bool isBossDead = false;
-    private bool isfaceplayer = false;
 
     private float timer = 0;
 

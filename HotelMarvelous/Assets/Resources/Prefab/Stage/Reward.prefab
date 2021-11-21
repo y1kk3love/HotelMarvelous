@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 8455927372195779785}
   - component: {fileID: 8455927372195779787}
   - component: {fileID: 6055856266478039086}
+  - component: {fileID: -5424594100778257177}
   m_Layer: 0
   m_Name: Reward
   m_TagString: RewardItem
@@ -154,6 +155,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   pos: {fileID: 8455927371761973699}
+--- !u!64 &-5424594100778257177
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8455927372195779784}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &8497707617860854047
 GameObject:
   m_ObjectHideFlags: 0

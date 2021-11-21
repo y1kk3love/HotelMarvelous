@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class WallView : MonoBehaviour
 {
-    Animator anim;
+    private GameObject Wall;
+    private Animator anim;
+
+    void Start()
+    {
+        Wall = transform.Find("Wall").gameObject;
+    }
 
     void Update()
     {
@@ -15,11 +21,11 @@ public class WallView : MonoBehaviour
 
         if(Vector3.Distance(transform.position, Camera.main.transform.position) < 13f)
         {
-            anim.SetBool("Show", false);
+            Wall.SetActive(false);
         }
         else
         {
-            anim.SetBool("Show", true);
+            Wall.SetActive(true);
         }
     }
 }

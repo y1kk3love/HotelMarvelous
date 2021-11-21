@@ -42,10 +42,6 @@ public class DungeonMaker : MonoBehaviour
 
     void Start()
     {
-        obFloor = Resources.Load("Prefab/Stage/Floor_" + StageThemeIndex) as GameObject;
-        obBlockWall = Resources.Load("Prefab/Stage/Wall_" + StageThemeIndex) as GameObject;
-        obDoorWall = Resources.Load("Prefab/Stage/Door_" + StageThemeIndex) as GameObject;
-
         mapFloor = Resources.Load("Prefab/Stage/MiniMap/Floor") as GameObject;
         mapBlockWall = Resources.Load("Prefab/Stage/MiniMap/Wall") as GameObject;
         mapDoorWall = Resources.Load("Prefab/Stage/MiniMap/Door") as GameObject;
@@ -73,9 +69,9 @@ public class DungeonMaker : MonoBehaviour
         RoomEnd();
     }
 
-    public void MonsterAdd()
+    public void MonsterAdd(byte _num)
     {
-        monMaxArr[curIndex]++;
+        monMaxArr[curIndex] += _num;
 
         RoomEnd();
     }
@@ -115,6 +111,8 @@ public class DungeonMaker : MonoBehaviour
 
     private IEnumerator RoomStart()
     {
+        player.ItemCounerAdd();
+
         GameObject[] Door = GameObject.FindGameObjectsWithTag("Door");
 
         for (int i = 0; i < Door.Length; i++)
@@ -216,7 +214,7 @@ public class DungeonMaker : MonoBehaviour
         player.transform.forward = new Vector3(_pos.x, 0, _pos.y);
         player.transform.position += new Vector3(_pos.x, 0, _pos.y);
 
-        StartCoroutine(player.MoveInIntro(1f, (new Vector3(_pos.x, 0, _pos.y)).normalized));
+        StartCoroutine(player.MoveInIntro(2f, (new Vector3(_pos.x, 0, _pos.y)).normalized));
     }
 
     #region [DATALOAD]
@@ -446,6 +444,19 @@ public class DungeonMaker : MonoBehaviour
         if (curEmptyRoom == null)
         {
             curEmptyRoom = new GameObject(string.Format("Room {0}", curIndex));
+        }
+
+        if (roomIndexListArr[curIndex][0].roomType == ROOMTYPE.HALLWAY)
+        {
+            obFloor = Resources.Load("Prefab/Stage/Floor_2") as GameObject;
+            obBlockWall = Resources.Load("Prefab/Stage/Wall_2") as GameObject;
+            obDoorWall = Resources.Load("Prefab/Stage/Door_2") as GameObject;
+        }
+        else
+        {
+            obFloor = Resources.Load("Prefab/Stage/Floor_" + StageThemeIndex) as GameObject;
+            obBlockWall = Resources.Load("Prefab/Stage/Wall_" + StageThemeIndex) as GameObject;
+            obDoorWall = Resources.Load("Prefab/Stage/Door_" + StageThemeIndex) as GameObject;
         }
 
         #region[TileObject]

@@ -2,37 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Video;
+
+enum FADE : byte
+{
+    OUT,
+    In
+}
+
+enum INTRO : int
+{
+    PROLOGUETITLE,
+    PROLOGUECOMMENT,
+    MAINTITLE,
+    CHECKIN
+}
 
 public class TitleUI : MonoBehaviour
 {
-    private enum FADE : byte
-    {
-        In,
-        OUT
-    }
+     private GameObject startGameui;
 
-    private VideoPlayer videoPlayer;
-
-    private GameObject startGameui;
-
+    public GameObject[] Intro;
     public GameObject fadeout;
 
-    private Image imLogo;
-    private Image imTitle;
-    private RawImage imProlog;
+    public Image imTitle;
+    public Image imTitleLogo;
 
-    private bool isVideoPlaying = false;
     private bool isSkip = false;
 
     void Start()
     {
         ResourceManager.Instance.LoadResources();        //리소스 매니저 생성
 
-        ResetProcess();
-        
-        StartCoroutine(IntroProcess(imTitle));
-        StartCoroutine(IntroProcess(imLogo));
+        StartCoroutine(IntroProcess());
 
         ScenesManager.Instance.ShowPauseButton();
     }
@@ -40,41 +41,32 @@ public class TitleUI : MonoBehaviour
     //인트로 순서 관리
     #region ------------------------------[IntroProcess]------------------------------
 
-    IEnumerator IntroProcess(Image _image)
+    IEnumerator IntroProcess()
     {
-        StartCoroutine(FadeInOut(_image.gameObject, FADE.OUT));
-
-        yield return new WaitForSeconds(5f);
-
-        videoPlayer.Play();
-
-        StartCoroutine(FadeInOut(_image.gameObject, FADE.In));
-
-        imProlog.enabled = true;
+        Intro[(int)INTRO.PROLOGUETITLE].SetActive(true);
 
         yield return new WaitForSeconds(3f);
 
-        isVideoPlaying = true;
+        Intro[(int)INTRO.PROLOGUETITLE].SetActive(false);
+        Intro[(int)INTRO.PROLOGUECOMMENT].SetActive(true);
 
-        while (true)
-        {
-            if (Input.anyKey && isVideoPlaying && !isSkip)
-            {
-                isSkip = true;
-                SkipVideo();
-                break;
-            }
+        yield return new WaitForSeconds(15f);
 
-            //코루틴을 업데이트 처럼 사용
-            yield return null;
-        }
+        Intro[(int)INTRO.PROLOGUECOMMENT].SetActive(false);
+        Intro[(int)INTRO.MAINTITLE].SetActive(true);
 
-        yield return new WaitForSeconds((float)videoPlayer.clip.length);
+        StartCoroutine(FadeInOut(imTitle, FADE.In, 4f));
+        StartCoroutine(FadeInOut(imTitleLogo, FADE.In, 4f));
 
-        if (!isSkip)
-        {
-            SkipVideo();
-        }
+        yield return new WaitForSeconds(4f);
+
+        StartCoroutine(FadeInOut(imTitle, FADE.OUT, 4f));
+        StartCoroutine(FadeInOut(imTitleLogo, FADE.OUT, 4f));
+
+        yield return new WaitForSeconds(4f);
+
+        Intro[(int)INTRO.MAINTITLE].SetActive(false);
+        Intro[(int)INTRO.CHECKIN].SetActive(true);
     }
 
     #endregion
@@ -99,96 +91,34 @@ public class TitleUI : MonoBehaviour
 
     #endregion
 
-    //값 초기화
-    #region ----------------------------[ResetProcess]----------------------------
-
-    private void ResetProcess()
-    {   //오브젝트들 초기화
-        startGameui = GameObject.Find("StartGame");
-        imTitle = GameObject.Find("TitleImage").GetComponent<Image>();
-        imLogo = GameObject.Find("TitleLogo").GetComponent<Image>();
-        imProlog = GameObject.Find("PrologVideo").GetComponent<RawImage>();
-
-        startGameui.SetActive(false);
-        imProlog.enabled = false;
-
-        //비디오 초기화
-        videoPlayer = gameObject.GetComponent<VideoPlayer>();
-        videoPlayer.clip = Resources.Load("Video/PrologVideo") as VideoClip;
-        videoPlayer.Stop();
-    }
-
-    #endregion
-
     //페이드인아웃 관리
     #region ------------------------------[UIEffect]------------------------------
-    //비디오 스킵
-    private void SkipVideo()
-    {
-        startGameui.SetActive(true);
-        isVideoPlaying = false;
-        videoPlayer.Pause();
-        StartCoroutine(FadeInOut(imProlog.gameObject, FADE.In));
-    }
 
     //들어간 게임오브젝트가 어떤형식의 이미지인지 확인해서 페이드 인 아웃
-    IEnumerator FadeInOut(GameObject _imageobj, FADE _inout)
+    IEnumerator FadeInOut(Image _image, FADE _inout, float _time)
     {
         float resettime = Time.time;
+
         Color color;
-        Image _image;
-        RawImage _rawimage;
+        color = _image.color;
 
+        while (color.a < 1 || color.a > 0)
+        {   //러프로 부드럽게 페이드 관리
+            color.a = Mathf.Lerp(1 - (byte)_inout, (byte)_inout, (Time.time - resettime) / _time);   //이미지의 알파가 1이면 페이드아웃 0이면 페이드인
 
-        if(_imageobj.GetComponent<Image>() != null)
-        {
-            _image = _imageobj.GetComponent<Image>();
-            color = _image.color;
-                
-            while (color.a < 1 || color.a > 0)
-            {   //러프로 부드럽게 페이드 관리
-                color.a = Mathf.Lerp(1 - (byte)_inout, (byte)_inout, (Time.time - resettime) * 0.4f);   //이미지의 알파가 1이면 페이드아웃 0이면 페이드인
+            _image.color = color;
 
-                _image.color = color;
-
-                if (color.a == (byte)_inout)
-                {
-                    break;
-                }
-
-                yield return null;
-            }
-        }
-        else if(_imageobj.GetComponent<RawImage>() != null)
-        {
-            _rawimage = _imageobj.GetComponent<RawImage>();
-            color = _rawimage.color;
-
-            while (color.a < 1 || color.a > 0)
+            if (color.a == (byte)_inout)
             {
-                color.a = Mathf.Lerp(1 - (byte)_inout, (byte)_inout, (Time.time - resettime) * 0.4f);
-
-                _rawimage.color = color;
-
-                if (color.a == (byte)_inout)
-                {
-                    break;
-                }
-
-                yield return null;
+                break;
             }
-        }
-        else
-        {
-            Debug.Log("페이드인아웃을 위한 Image 혹은 RawImag 형태의 게임오브젝트를 넣어주세요.");
 
-            yield break;
+            yield return null;
         }
 
         if (isSkip)
         {
             imTitle.gameObject.SetActive(false);
-            imProlog.gameObject.SetActive(false);
         }
     }
 

@@ -1503,11 +1503,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8599807434682086952}
-  - component: {fileID: 8599807434670896046}
   - component: {fileID: 8599807433899333729}
   - component: {fileID: 9017874324874829631}
   - component: {fileID: -2814240996636908688}
   - component: {fileID: -1316469378486043438}
+  - component: {fileID: 355576491183818703}
   m_Layer: 0
   m_Name: SUPERVIA
   m_TagString: Boss
@@ -1524,34 +1524,13 @@ Transform:
   m_GameObject: {fileID: 8599807434681920456}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.78, y: 0.64, z: 12.7}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 7, y: 7, z: 7}
   m_Children:
   - {fileID: 8599807434682086954}
   - {fileID: 8599807434682086956}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!111 &8599807434670896046
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8599807434681920456}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: db834b4988164f04bb3dd45f145ffb03, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 200a1f3ddb78cec42b20bd33ec781777, type: 2}
-  - {fileID: 7400000, guid: 4f40c3038f784c54fb31f0dee2a84bf9, type: 2}
-  - {fileID: 7400000, guid: 632fadb8876dd6442ba5564eba992765, type: 2}
-  - {fileID: 7400000, guid: 793b276440fa9d34f98fb58b4867eb6d, type: 2}
-  - {fileID: 7400000, guid: ad353623c0c90424ea56cef1a4afcc53, type: 2}
-  - {fileID: 7400000, guid: db834b4988164f04bb3dd45f145ffb03, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 1
 --- !u!65 &8599807433899333729
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1605,6 +1584,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d6679d2fa889c94b9e0ca098a19aa76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!111 &355576491183818703
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8599807434681920456}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: db834b4988164f04bb3dd45f145ffb03, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 200a1f3ddb78cec42b20bd33ec781777, type: 2}
+  - {fileID: 7400000, guid: 4f40c3038f784c54fb31f0dee2a84bf9, type: 2}
+  - {fileID: 7400000, guid: 632fadb8876dd6442ba5564eba992765, type: 2}
+  - {fileID: 7400000, guid: 793b276440fa9d34f98fb58b4867eb6d, type: 2}
+  - {fileID: 7400000, guid: ad353623c0c90424ea56cef1a4afcc53, type: 2}
+  - {fileID: 7400000, guid: db834b4988164f04bb3dd45f145ffb03, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 1
 --- !u!1 &8599807434681920458
 GameObject:
   m_ObjectHideFlags: 0

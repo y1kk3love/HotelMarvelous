@@ -121,7 +121,6 @@ public class Monster : MonoBehaviour
 
         if (monsterhp <= 0)
         {
-            GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterDead();
             SpawnConsumItem();
             SpawnHealItem();
             StartCoroutine(MonsterDead());
@@ -139,6 +138,7 @@ public class Monster : MonoBehaviour
         }
         else
         {
+            GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterAdd(2);
             GameObject effect = Instantiate(DeadEffect, transform.position, Quaternion.Euler(-90, 0, 0));
             Destroy(effect, 1f);
 
@@ -149,17 +149,18 @@ public class Monster : MonoBehaviour
             for (int i = 0; i < 2; i++)
             {
                 GameObject mon = Instantiate(ink, new Vector3(transform.position.x + i, 0.5f, transform.position.z), Quaternion.identity);
-                GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterAdd();
                 mon.transform.GetComponent<Monster>().isDeadOnce = true;
                 mon.transform.GetComponent<MonsterMove>().isDead = false;
             }
 
             Destroy(gameObject);
+            GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterDead();
         }
 
          yield return new WaitForSeconds(1.1f);
 
         Destroy(gameObject);
+        GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterDead();
     }
 
     #region [DropItem]

@@ -11,6 +11,7 @@ TagManager:
   - Monster
   - Lobby
   - RewardItem
+  - Floor
   layers:
   - Default
   - TransparentFX

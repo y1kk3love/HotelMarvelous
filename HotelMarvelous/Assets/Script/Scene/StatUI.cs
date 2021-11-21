@@ -29,6 +29,8 @@ public class StatUI : MonoBehaviour
 
     public Camera miniMapCamera;
 
+    public Sprite[] profiles;
+
     public Texture wideMapTexture;
     public Texture miniMapTexture;
 
@@ -41,6 +43,8 @@ public class StatUI : MonoBehaviour
     private float cameraWheelSpeed = 20.0f;                      //카메라 줌 스피드
     private float minCamZoom = 5.0f;                             //카메라 줌 최소사이즈
     private float maxCamZoom = 450.0f;                           //카메라 줌 최대사이즈
+
+    public static float profiletimer = 2;
 
     void Start()
     {
@@ -64,6 +68,7 @@ public class StatUI : MonoBehaviour
         if(player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+            return;
         }
         else
         {
@@ -100,6 +105,34 @@ public class StatUI : MonoBehaviour
                 dispoitem.color = new Vector4(1, 1, 1, 0);
             }
         }
+
+        if(stat.hp > 10)
+        {
+            if (profiletimer <= 0.5f)
+            {
+                profiletimer += Time.deltaTime;
+
+                profile.sprite = profiles[1];
+        }
+            else
+            {
+                profile.sprite = profiles[0];
+            }
+        }
+        else
+        {
+            if (profiletimer <= 0.5f)
+            {
+                profiletimer += Time.deltaTime;
+
+                profile.sprite = profiles[1];
+            }
+            else
+            {
+                profile.sprite = profiles[2];
+            }
+        }
+        
     }
 
     #region [MiniMapControl]
@@ -167,32 +200,6 @@ public class StatUI : MonoBehaviour
             Vector2 dir = (Vector2)mouseStartPos - curMousePos;
             Vector3 _pos = cameraStartPos + new Vector3(dir.x, 0, dir.y) * (miniMapCamera.orthographicSize / (minCamZoom + maxCamZoom) / 2);
             miniMapCamera.transform.position = _pos;
-        }
-    }
-
-    #endregion
-
-    #region ----------------------------[Test]----------------------------
-
-    public void Test_AddItemCount()
-    {
-        player.Test_ItemCounerAdd();
-    }
-
-    public void Test_AddDisoItem()
-    {
-        player.Test_ChangeDispoItem(1);
-    }
-
-    public void Test_GamePause()
-    {
-        if (Time.timeScale == 1)
-        {
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Time.timeScale = 1;
         }
     }
 

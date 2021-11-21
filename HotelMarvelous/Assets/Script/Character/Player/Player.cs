@@ -340,6 +340,10 @@ public class Player : MonoBehaviour
 
     #region ----------------------------[Public]----------------------------
 
+    public void ItemCounerAdd()
+    {
+        stat.curItemStack++;
+    }
     public void SetKey(bool _add)
     {
         if (_add)
@@ -380,6 +384,8 @@ public class Player : MonoBehaviour
         {
             return;
         }
+
+        StatUI.profiletimer = 0;
 
         float truedamage = _damage * (1 + stat.defense / 100);
 
@@ -446,11 +452,6 @@ public class Player : MonoBehaviour
     public PlayerStatus GetStatus()
     {
         return stat;
-    }
-
-    public void Test_ItemCounerAdd()
-    {
-        stat.curItemStack++;
     }
 
     public void Test_ChangeDispoItem(byte _index)

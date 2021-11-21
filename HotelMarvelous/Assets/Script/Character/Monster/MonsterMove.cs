@@ -87,6 +87,23 @@ public class MonsterMove : MonoBehaviour
                 anim.SetBool("Move", true);
             }
         }
+        else
+        {
+            Animation anime = transform.GetComponent<Animation>();
+
+            if (anime != null)
+            {
+                if (dir == new Vector3(0, 0, 0))
+                {
+                    anime.Play("sj001_wait");
+                }
+                else
+                {
+                    transform.forward = dir;
+                    anime.Play("sj001_run");
+                }
+            }
+        }
     }
 
     private void FindPlayer()

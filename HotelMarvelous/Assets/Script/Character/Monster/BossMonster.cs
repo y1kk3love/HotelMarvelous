@@ -16,8 +16,9 @@ public class BossMonster : MonoBehaviour
             GameObject manager = GameObject.Find("DungeonManager");
             manager.GetComponent<DungeonEvent>().isBossDead = true;
             manager.GetComponent<DungeonMaker>().MonsterDead();
+            transform.GetComponent<Animation>().Play("sj001_die");
 
-            Destroy(transform.gameObject, 0.5f);
+            Destroy(transform.gameObject, 1f);
         }
     }
 }
