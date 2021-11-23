@@ -3438,6 +3438,11 @@ PrefabInstance:
       propertyPath: dialogIndex
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 268174042038962571, guid: 921c9a08d187fc54fa151be55b2f448d,
+        type: 3}
+      propertyPath: dialogPoint
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1676207087481387327, guid: 921c9a08d187fc54fa151be55b2f448d,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

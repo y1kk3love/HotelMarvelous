@@ -13,29 +13,21 @@ enum INTRO : int
 {
     PROLOGUETITLE,
     PROLOGUECOMMENT,
-    MAINTITLE,
-    CHECKIN
+    BACKGROUND,
+    PRESSBUTTON,
+    SPINETITLE
 }
 
 public class TitleUI : MonoBehaviour
 {
-     private GameObject startGameui;
-
     public GameObject[] Intro;
     public GameObject fadeout;
-
-    public Image imTitle;
-    public Image imTitleLogo;
-
-    private bool isSkip = false;
 
     void Start()
     {
         ResourceManager.Instance.LoadResources();        //리소스 매니저 생성
 
         StartCoroutine(IntroProcess());
-
-        ScenesManager.Instance.ShowPauseButton();
     }
 
     //인트로 순서 관리
@@ -53,20 +45,29 @@ public class TitleUI : MonoBehaviour
         yield return new WaitForSeconds(15f);
 
         Intro[(int)INTRO.PROLOGUECOMMENT].SetActive(false);
-        Intro[(int)INTRO.MAINTITLE].SetActive(true);
 
-        StartCoroutine(FadeInOut(imTitle, FADE.In, 4f));
-        StartCoroutine(FadeInOut(imTitleLogo, FADE.In, 4f));
+        ScenesManager.Instance.ShowPauseButton();
 
-        yield return new WaitForSeconds(4f);
-
-        StartCoroutine(FadeInOut(imTitle, FADE.OUT, 4f));
-        StartCoroutine(FadeInOut(imTitleLogo, FADE.OUT, 4f));
+        StartCoroutine(FadeInOut(Intro[(int)INTRO.BACKGROUND].GetComponent<Image>(), FADE.OUT, 4f));
+        Intro[(int)INTRO.SPINETITLE].SetActive(true);
 
         yield return new WaitForSeconds(4f);
 
-        Intro[(int)INTRO.MAINTITLE].SetActive(false);
-        Intro[(int)INTRO.CHECKIN].SetActive(true);
+        Intro[(int)INTRO.BACKGROUND].SetActive(false);
+
+        yield return new WaitForSeconds(2f);
+
+        Intro[(int)INTRO.PRESSBUTTON].SetActive(true);
+
+        while (true)
+        {
+            if (Input.anyKey)
+            {
+                Instantiate(fadeout);
+            }
+
+            yield return null;
+        }
     }
 
     #endregion
@@ -82,11 +83,6 @@ public class TitleUI : MonoBehaviour
     public void Test_SkipToDungeon()
     {
         ScenesManager.Instance.MoveToScene(INTERACTION.DUNGEON);
-    }
-
-    public void CheckIn()
-    {
-        Instantiate(fadeout);
     }
 
     #endregion
@@ -114,11 +110,6 @@ public class TitleUI : MonoBehaviour
             }
 
             yield return null;
-        }
-
-        if (isSkip)
-        {
-            imTitle.gameObject.SetActive(false);
         }
     }
 

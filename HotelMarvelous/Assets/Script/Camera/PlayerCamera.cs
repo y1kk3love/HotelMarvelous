@@ -13,7 +13,7 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField]
     private float camerahight = 20f;
 
-    void FixedUpdate()
+    void Update()
     {
         if(player == null)
         {
@@ -24,7 +24,6 @@ public class PlayerCamera : MonoBehaviour
 
         Vector3 targetpos = player.transform.position + vOffset;
 
-        //this.transform.position = targetpos;
         transform.position = Vector3.Lerp(transform.position, new Vector3(targetpos.x, camerahight, targetpos.z), Time.deltaTime * cameraspeed);
     }
 }

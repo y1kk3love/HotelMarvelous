@@ -50,7 +50,8 @@ public enum NPCID
 {
     Keneth,
     Elizabeth,
-    Papi
+    Papi,
+    David
 }
 
 public enum DIRECTION : byte

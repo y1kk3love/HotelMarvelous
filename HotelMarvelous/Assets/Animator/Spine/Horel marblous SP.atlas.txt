@@ -1,0 +1,112 @@
+Horel marblous SP.png
+size:2048,2048
+filter:Linear,Linear
+1
+bounds:2,1178,382,809
+offsets:15,38,411,870
+rotate:90
+Lightning1
+bounds:2,1578,361,626
+offsets:7,8,377,635
+rotate:90
+Lightning5
+bounds:1404,1078,482,498
+offsets:1,6,489,514
+rotate:90
+c
+bounds:1064,2,672,672
+offsets:1,11,688,684
+character
+bounds:2,169,505,529
+offsets:1,1,509,531
+rotate:90
+cloud1
+bounds:630,1562,963,377
+offsets:1,1,965,379
+cloud2
+bounds:2,676,1623,400
+offsets:1,1,1625,402
+cloud6
+bounds:813,1096,589,464
+offsets:10,9,600,474
+d2
+bounds:533,169,505,529
+offsets:1,1,509,531
+rotate:90
+
+Horel marblous SP_2.png
+size:2048,2048
+filter:Linear,Linear
+Lightning3
+bounds:1131,904,728,955
+offsets:5,5,734,961
+cloud3
+bounds:2,42,1219,539
+offsets:1,1,1222,541
+cloud4
+bounds:2,1341,1127,518
+offsets:1,1,1129,520
+cloud7
+bounds:2,583,1092,756
+offsets:1,1,1096,758
+
+Horel marblous SP_3.png
+size:2048,2048
+filter:Linear,Linear
+Lightning2
+bounds:2,10,659,1276
+offsets:8,1,673,1278
+rotate:90
+Lightning4
+bounds:2,671,607,1254
+offsets:7,10,620,1265
+rotate:90
+
+Horel marblous SP_4.png
+size:2048,2048
+filter:Linear,Linear
+cloud5
+bounds:2,917,1237,861
+offsets:11,1,1249,863
+cloud8
+bounds:2,2,913,983
+offsets:1,1,915,985
+rotate:90
+
+Horel marblous SP_5.png
+size:2048,2048
+filter:Linear,Linear
+Ghost
+bounds:2,726,2000,1276
+offsets:1,1,2002,1278
+
+Horel marblous SP_6.png
+size:2048,2048
+filter:Linear,Linear
+Layer 7
+bounds:2,726,2000,1276
+offsets:1,1,2002,1278
+
+Horel marblous SP_7.png
+size:2048,2048
+filter:Linear,Linear
+c2
+bounds:2,745,2000,1257
+offsets:1,9,2002,1267
+
+Horel marblous SP_8.png
+size:2048,2048
+filter:Linear,Linear
+d
+bounds:2,968,1714,964
+offsets:3,1,1720,966
+hotel
+bounds:2,2,1714,964
+offsets:3,1,1720,966
+
+Horel marblous SP_9.png
+size:2048,2048
+filter:Linear,Linear
+logo
+bounds:2,529,1509,982
+offsets:481,172,2468,1600

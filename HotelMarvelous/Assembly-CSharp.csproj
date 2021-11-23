@@ -92,7 +92,9 @@
     <Compile Include="Assets\Script\UI\PauseUI.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\material\CartoonShader\Surface.shader" />
+    <None Include="Assets\Spine\version.txt" />
+    <None Include="Assets\Animator\Spine\Horel marblous SP.atlas.txt" />
+    <None Include="Assets\material\CartoonShader\SurfaceShader.shader" />
     <None Include="Assets\material\CartoonShader\Outline.shader" />
   </ItemGroup>
   <ItemGroup>
@@ -716,6 +718,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="spine-unity.csproj">
+      <Project>{32E9CB47-5513-6FFD-A59D-6284BF2A3763}</Project>
+      <Name>spine-unity</Name>
+    </ProjectReference>
+    <ProjectReference Include="spine-csharp.csproj">
+      <Project>{8E962D9C-640C-6781-0BE4-97291B1851B6}</Project>
+      <Name>spine-csharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="spine-unity-editor.csproj">
+      <Project>{DFE0A043-0F01-E085-7945-792CAA7294ED}</Project>
+      <Name>spine-unity-editor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

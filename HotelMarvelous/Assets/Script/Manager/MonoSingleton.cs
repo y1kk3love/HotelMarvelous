@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Singleton          //팀작업시 같은이름의 싱글톤중복을 피하기위해 네임스페이스로 나눈다.
 {
-    public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour           //T는 타입값 인트,플로트 뭐든지 들어갈 수 있다 사용예시는 MonsterManager참고
+    public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour           //T는 타입값 인트,플로트 뭐든지 들어갈 수 있다
     {
         protected static T instance = null;
 

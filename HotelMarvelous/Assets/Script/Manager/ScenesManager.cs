@@ -76,6 +76,9 @@ public class ScenesManager : MonoSingleton<ScenesManager>
                 case 2:
                     _name = "파피";
                     break;
+                case 3:
+                    _name = "데이비드";
+                    break;
             }
 
             dialogUI.SetProfile(_sprite, _name);
