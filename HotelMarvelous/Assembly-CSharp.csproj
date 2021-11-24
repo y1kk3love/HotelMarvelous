@@ -94,8 +94,9 @@
   <ItemGroup>
     <None Include="Assets\Spine\version.txt" />
     <None Include="Assets\Animator\Spine\Horel marblous SP.atlas.txt" />
-    <None Include="Assets\material\CartoonShader\SurfaceShader.shader" />
+    <None Include="Assets\material\CartoonShader\Surface.shader" />
     <None Include="Assets\material\CartoonShader\Outline.shader" />
+    <None Include="Assets\material\CartoonShader\BossSurface.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

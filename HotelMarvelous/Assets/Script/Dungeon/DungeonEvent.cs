@@ -34,9 +34,13 @@ public class DungeonEvent : MonoBehaviour
 
             GameObject door = GameObject.FindGameObjectWithTag("Door");
             Vector3 doorpos = new Vector3(door.transform.position.x, 0.5f, door.transform.position.z);
-
-            obpapi = Instantiate(papi, doorpos, Quaternion.identity);
-            obpapi.transform.forward = new Vector3(1, 0, 0);
+            
+            if(GameObject.Find("Papi") == null)
+            {
+                obpapi = Instantiate(papi, doorpos, Quaternion.identity);
+                obpapi.name = "Papi";
+                obpapi.transform.forward = new Vector3(1, 0, 0);
+            }
 
             targetPos = GameObject.Find("NPCPoint").transform.position;
         }
