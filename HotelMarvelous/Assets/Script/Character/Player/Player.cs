@@ -6,8 +6,8 @@ public class Player : MonoBehaviour
 {
     private PlayerStatus stat = new PlayerStatus();
 
-    public GameObject attackRange;
-    public GameObject[] effects;
+    private GameObject attackRange;
+    private GameObject deadEft;
     private GameObject curItemSkill = null;
 
     private bool isInvincible = false;
@@ -38,6 +38,13 @@ public class Player : MonoBehaviour
     {
         stat = DataManager.Instance.GetPlayerStatus();
         anim = transform.GetComponent<Animator>();
+        attackRange = transform.Find("AttackRange").gameObject;
+
+        if(ScenesManager.Instance.CheckScene() != "Lobby")
+        {
+            deadEft = transform.Find("04_Eft_Player_Death").gameObject;
+            deadEft.SetActive(false);
+        }
 
         GetItemInfo();
     }
@@ -125,9 +132,11 @@ public class Player : MonoBehaviour
 
             if (other.CompareTag("RewardItem"))
             {
-                byte id = (byte)other.transform.GetComponent<RewardItem>().id;
+                RewardItem reward = other.transform.GetComponent<RewardItem>();
 
-                other.transform.GetComponent<RewardItem>().id = (CONSUMITEM)stat.curItemIndex;
+                byte id = (byte)reward.id;
+
+                reward.ChangeItem((CONSUMITEM)stat.curItemIndex);
                 stat.curItemIndex = id;
 
                 GetItemInfo();
@@ -330,10 +339,46 @@ public class Player : MonoBehaviour
 
         byte[] arr = new byte[] { 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 2, 2, 2 };
 
+        GameObject[] effects = Resources.LoadAll<GameObject>("Effect/");
+
         GameObject effect = Instantiate(effects[arr[(byte)_consumitem.consumitem]], transform.position, Quaternion.identity);
         effect.transform.SetParent(transform);
         Destroy(effect, 2.5f);
         Destroy(other.gameObject);
+    }
+
+    IEnumerator SkillPerfume(int _curcount, int _max)
+    {
+        int count = _curcount;
+
+        if(count < _max)
+        {
+            count++;
+
+            GameObject[] Monsters = GameObject.FindGameObjectsWithTag("Monster");
+
+            for(int i = 0; i < Monsters.Length; i++)
+            {
+                if(transform.Find("Perfume") == null)
+                {
+                    GameObject[] effects = Resources.LoadAll<GameObject>("Effect/");
+
+                    GameObject eft = Instantiate(effects[12], Monsters[i].transform.position, Quaternion.identity);
+                    eft.name = "Perfume";
+                    eft.transform.SetParent(Monsters[i].transform);
+                }
+
+                Monsters[i].GetComponent<Monster>().MonGetDamage(Random.Range(4, 8));
+            }
+
+            yield return new WaitForSeconds(Random.Range(0.8f, 1f));
+
+            StartCoroutine(SkillPerfume(count, _max));
+        }
+        else
+        {
+            yield return null;
+        }
     }
 
     #endregion
@@ -378,7 +423,7 @@ public class Player : MonoBehaviour
         stat.mentality -= _damage;
     }
 
-    public void SetDamage(int _damage)
+    public void SetDamage(float _damage)
     {
         if (isInvincible || isattack || stopAllMove)
         {
@@ -439,12 +484,14 @@ public class Player : MonoBehaviour
     {
         stopAllMove = true;
         anim.SetTrigger("Dead");
-        GameObject effect = Instantiate(effects[4], transform.position, Quaternion.identity);
-        effect.transform.SetParent(transform);
-        effect.transform.forward = transform.forward;
-        Destroy(effect, 3.15f);
 
-        yield return new WaitForSeconds(4f);
+        deadEft.SetActive(true);
+
+        yield return new WaitForSeconds(3.15f);
+
+        deadEft.SetActive(false);
+
+        yield return new WaitForSeconds(0.85f);
 
         ScenesManager.Instance.MoveToScene(INTERACTION.LOBBY);
     }
@@ -614,98 +661,99 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(ScenesManager.Instance.optionInfo.recharge) && _itemrecharge >= 1)
         {
-            Debug.Log("재사용 아이템 사용!");
-
+            GameObject[] effects = Resources.LoadAll<GameObject>("Effect/");
             stat.curItemStack = 0;
 
             switch (stat.curItemIndex)
             {
                 case 1:
+                    anim.SetTrigger("Fire");
+
                     GameObject areaskill = Instantiate(curItemSkill, new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z), Quaternion.identity);
+                    areaskill.transform.SetParent(transform);
                     WideAreaSkill wide = areaskill.GetComponent<WideAreaSkill>();
-                    wide.SetSkillPreset("Monster", 3f);
+                    wide.SetSkillPreset("Monster", 20, 3f);
+
+                    stopAllMove = true;
+                    Invoke("InvincibleOff", 2.1f);
                     break;
                 case 2:
-                    byte[] consumItemperArr = new byte[] { 40, 40, 20 };
+                    GameObject butterfly = Instantiate(effects[10], transform.position, Quaternion.identity);
+                    butterfly.transform.SetParent(transform);
 
-                    int random = Random.Range(0, 100);
-                    int curpercent = 0;
-
-                    for (int i = 0; i < 3; i++)
+                    if(stat.hp + 3 <= stat.maxHp)
                     {
-                        curpercent += consumItemperArr[i];
-
-                        if (random < curpercent)
-                        {
-                            switch (i)
-                            {
-                                case 0:
-                                    consumItemperArr = new byte[] { 59, 30, 7, 3, 1 };
-
-                                    random = Random.Range(0, 100);
-                                    curpercent = 0;
-                                    for (int x = 0; x < 5; x++)
-                                    {
-                                        curpercent += consumItemperArr[i];
-
-                                        if (random < curpercent)
-                                        {
-                                            byte _coin = 0;
-
-                                            switch (x)
-                                            {
-                                                case 0:
-                                                    _coin = 1;
-                                                    break;
-                                                case 1:
-                                                    _coin = 2;
-                                                    break;
-                                                case 2:
-                                                    _coin = 5;
-                                                    break;
-                                                case 3:
-                                                    _coin = 10;
-                                                    break;
-                                                case 4:
-                                                    _coin = 100;
-                                                    break;
-                                            }
-
-                                            for (int _x = 0; _x < _coin; _x++)
-                                            {
-                                                GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
-                                                GameObject coin = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                                ConsumItem conitem = coin.AddComponent<ConsumItem>();
-                                                conitem.consumitem = DROPITEM.COIN;
-                                            }
-                                        }
-                                    }
-                                    break;
-                                case 1:
-                                    random = Random.Range(0, 100);
-
-                                    if (random < 95)
-                                    {
-                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.KEY);
-                                        GameObject _key = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                        ConsumItem conitem = _key.AddComponent<ConsumItem>();
-                                        conitem.consumitem = DROPITEM.KEYS;
-                                    }
-                                    else
-                                    {
-                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MASTERKEY);
-                                        GameObject _masterkey = Instantiate(obj, new Vector3(transform.position.x, 0.25f, transform.position.z), Quaternion.identity);
-                                        ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
-                                        conitem.consumitem = DROPITEM.MASTERKEY;
-                                    }
-                                    break;
-                                case 2:
-                                    //타로 카드 드롭
-                                    break;
-                            }
-                        }
+                        stat.hp += 3;
                     }
-                    Debug.Log("슬롯머신 발동!");
+                    else
+                    {
+                        stat.hp = stat.maxHp;
+                    }
+
+                    if(stat.mentality + 2 <= stat.maxMentality)
+                    {
+                        stat.mentality += 2;
+                    }
+                    else
+                    {
+                        stat.mentality = stat.maxMentality;
+                    }
+                    break;
+                case 3:
+                    GameObject perfume = Instantiate(effects[11], transform.position, Quaternion.identity);
+                    perfume.transform.SetParent(transform);
+
+                    StartCoroutine(SkillPerfume(0, 5));
+                    break;
+                case 4:
+                    GameObject magicwallet = Instantiate(effects[12], transform.position, Quaternion.identity);
+                    magicwallet.transform.SetParent(transform);
+
+                    for (int i = 0; i < Random.Range(1,6); i++)
+                    {
+                        int x = Random.Range(-3, 4);
+                        int z = Random.Range(-3, 4);
+
+                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
+                        GameObject coin = Instantiate(obj, new Vector3(transform.position.x + x, 2, transform.position.z + z), Quaternion.identity);
+                        ConsumItem conitem = coin.AddComponent<ConsumItem>();
+                        conitem.consumitem = DROPITEM.COIN;
+                    }
+                    break;
+                case 5:
+                    GameObject raindow = Instantiate(effects[13], transform.position, Quaternion.identity);
+                    raindow.transform.SetParent(transform);
+
+                    if (stat.hp + 10 <= stat.maxHp)
+                    {
+                        stat.hp += 10;
+                    }
+                    else
+                    {
+                        stat.hp = stat.maxHp;
+                    }
+
+                    if (stat.mentality + 5 <= stat.maxMentality)
+                    {
+                        stat.mentality += 5;
+                    }
+                    else
+                    {
+                        stat.mentality = stat.maxMentality;
+                    }
+                    break;
+                case 6:
+                    anim.SetTrigger("Lightning");
+
+                    GameObject lightning = Instantiate(effects[14], new Vector3(transform.position.x, 5, transform.position.z), transform.rotation);
+                    lightning.transform.SetParent(transform);
+
+                    GameObject[] Monsters = GameObject.FindGameObjectsWithTag("Monster");
+
+                    for (int i = 0; i < Monsters.Length; i++)
+                    {
+                        Monsters[i].GetComponent<Monster>().MonGetDamage(5);
+                    }
                     break;
             }
         }

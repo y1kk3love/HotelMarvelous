@@ -6,23 +6,27 @@ public class RewardItem : MonoBehaviour
 {
     public CONSUMITEM id;
 
-    public GameObject pos;
+    public GameObject[] item;
+
+    private float speed = 100;
 
     void Start()
     {
         ChangeItem(id);
     }
 
+    void Update()
+    {
+        item[2].transform.Rotate(new Vector3(0, Time.deltaTime * speed, 0));
+    }
+
     public void ChangeItem(CONSUMITEM _id)
     {
-        switch (_id)
-        {
-            case CONSUMITEM.CROWN:
-                pos.transform.GetComponent<MeshRenderer>().material.color = new Vector4(1, 0, 0, 1);
-                break;
-            case CONSUMITEM.SLOTMACHINE:
-                pos.transform.GetComponent<MeshRenderer>().material.color = new Vector4(0, 1, 0, 1);
-                break;
-        }
+        id = _id;
+        ResourceManager.Instance.LoadResources();
+        Texture2D _image = ResourceManager.Instance.GetItemResource((byte)id).image;
+
+        item[0].transform.GetComponent<MeshRenderer>().material.mainTexture = _image;
+        item[1].transform.GetComponent<MeshRenderer>().material.mainTexture = _image;
     }
 }

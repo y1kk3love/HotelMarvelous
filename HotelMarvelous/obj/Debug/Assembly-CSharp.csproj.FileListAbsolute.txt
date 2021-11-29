@@ -314,3 +314,11 @@ D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Postprocessing.Runt
 D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Autodesk.Fbx.pdb
 D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Formats.Fbx.Runtime.pdb
 D:\GitHub\HotelMarvelous\HotelMarvelous\obj\Debug\Assembly-CSharp.csproj.CopyComplete
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\nunit.framework.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\unityplastic.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Plastic.Newtonsoft.Json.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\Unity.Plastic.Antlr3.Runtime.dll
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\spine-unity.pdb
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\spine-csharp.pdb
+D:\GitHub\HotelMarvelous\HotelMarvelous\Temp\bin\Debug\spine-unity-editor.pdb

@@ -100,7 +100,7 @@ MonoBehaviour:
     type: 3}
   hitEffect: {fileID: 4219944971931182393, guid: 92b3a3eb9c277b943b6aa931613ac79f,
     type: 3}
-  monsterid: 0
+  monsterid: 1
 --- !u!114 &5168821535078036101
 MonoBehaviour:
   m_ObjectHideFlags: 0

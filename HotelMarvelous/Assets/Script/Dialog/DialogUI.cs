@@ -49,6 +49,13 @@ public class DialogUI : MonoBehaviour
     {
         if(_eventnum == -1)
         {
+            GameObject boss = GameObject.FindGameObjectWithTag("Boss");
+
+            if(boss != null)
+            {
+                boss.GetComponent<BossMonster>().FinishIntro();
+            }
+
             GameObject.Find("Player").GetComponent<Player>().isconv = false;
 
             textBar.SetActive(false);

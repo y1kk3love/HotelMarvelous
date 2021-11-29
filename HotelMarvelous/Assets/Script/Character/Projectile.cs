@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    public GameObject effect;
+
     public Vector3 targetPos;
 
     private float speed = 3;
@@ -19,11 +21,15 @@ public class Projectile : MonoBehaviour
         {
             other.transform.GetComponent<Player>().SetDamage(10);
 
+            Instantiate(effect, transform.position, Quaternion.identity);
+
             Destroy(transform.gameObject);
         }
         else
         {
             targetPos = new Vector3(0, 0, 0);
+
+            Instantiate(effect, transform.position, Quaternion.identity);
 
             Destroy(transform.gameObject, 3);
         }

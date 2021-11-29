@@ -50,8 +50,11 @@ public enum NPCID
 {
     Keneth,
     Elizabeth,
+    David,
+    BossPapi,
     Papi,
-    David
+    Help,
+    Flora
 }
 
 public enum DIRECTION : byte
@@ -109,8 +112,12 @@ public enum DISPOITEM
 
 public enum CONSUMITEM : byte
 {
-    CROWN = 1,
-    SLOTMACHINE
+    PhoenixTiara = 1,
+    ButterfltDream,
+    LilyPerfume,
+    MagicWallet,
+    RainbowMacaron,
+    LightningRod
 }
 
 public enum RESOULUTION : byte

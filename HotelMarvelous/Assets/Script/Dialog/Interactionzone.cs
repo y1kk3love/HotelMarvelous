@@ -15,13 +15,21 @@ public class Interactionzone : MonoBehaviour
 
         if (other.CompareTag("Player") && portalType != INTERACTION.NONE)
         {
-            GameObject ui = Resources.Load("Prefab/UI/AskToMoveUI") as GameObject;
-            GameObject obj = Instantiate(ui);
-            AskToMoveUI ask = obj.transform.GetComponent<AskToMoveUI>();
-            ask.scene = portalType;
-            ask.isNextStage = isToNextStage;
+            GameObject dungeon = GameObject.Find("DungeonManager");
 
-            other.GetComponent<Player>().isconv = true;
+            if(dungeon != null)
+            {
+                if (dungeon.GetComponent<DungeonMaker>().IsBossClear())
+                {
+                    GameObject ui = Resources.Load("Prefab/UI/AskToMoveUI") as GameObject;
+                    GameObject obj = Instantiate(ui);
+                    AskToMoveUI ask = obj.transform.GetComponent<AskToMoveUI>();
+                    ask.scene = portalType;
+                    ask.isNextStage = isToNextStage;
+
+                    other.GetComponent<Player>().isconv = true;
+                }
+            }
         }
     }
 }

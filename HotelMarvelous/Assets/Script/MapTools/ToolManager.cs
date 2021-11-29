@@ -141,7 +141,7 @@ public class ToolManager : MonoBehaviour
         {
             Vector2 dir = (Vector2)dragGridStartPos - dragBPCurPos;
             Vector2 _pos = dragBPCamPos +dir * (bpCamera.orthographicSize / (minCamZoom + maxCamZoom) / 2);
-            bpCamera.transform.position = new Vector3(_pos.x, _pos.y, -6);
+            bpCamera.transform.position = new Vector3(_pos.x, _pos.y, -50);
         }
     }
 

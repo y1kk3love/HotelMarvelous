@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Monster : MonoBehaviour
 {
@@ -40,11 +39,11 @@ public class Monster : MonoBehaviour
                 attackrange = 2;
                 break;
             case 1:
-                touchdamage = 3;
-                monsterhp = 22;
-                move.speed = 0.7f;
-                mentaldamage = 0f;
-                attackrange = 8;
+                touchdamage = 2;
+                monsterhp = 12;
+                move.speed = 5f;
+                mentaldamage = 0.45f;
+                attackrange = 2;
                 break;
             case 2:
                 touchdamage = 3;
@@ -153,14 +152,14 @@ public class Monster : MonoBehaviour
                 mon.transform.GetComponent<MonsterMove>().isDead = false;
             }
 
-            Destroy(gameObject);
             GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterDead();
+            Destroy(gameObject);
         }
 
          yield return new WaitForSeconds(1.1f);
 
-        Destroy(gameObject);
         GameObject.Find("DungeonManager").GetComponent<DungeonMaker>().MonsterDead();
+        Destroy(gameObject);
     }
 
     #region [DropItem]

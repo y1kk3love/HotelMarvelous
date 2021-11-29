@@ -44,7 +44,7 @@ public class BossUI : MonoBehaviour
         {
             hpBar.maxValue = boss.maxHP;
             hpBar.value = boss.curHP;
-            bossname.text = "저스티스";
+            bossname.text = "달빛 아래의 백합";
 
             Invoke("FollowRedBar", 0.5f);
         }

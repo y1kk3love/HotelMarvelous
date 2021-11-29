@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DungeonEvent : MonoBehaviour
 {
+    private Animator anim;
+
     public GameObject papi;
     private GameObject obpapi;
     private GameObject player;
@@ -39,6 +41,7 @@ public class DungeonEvent : MonoBehaviour
             {
                 obpapi = Instantiate(papi, doorpos, Quaternion.identity);
                 obpapi.name = "Papi";
+                anim = obpapi.GetComponent<Animator>();
                 obpapi.transform.forward = new Vector3(1, 0, 0);
             }
 
@@ -50,13 +53,15 @@ public class DungeonEvent : MonoBehaviour
     {
         if(obpapi != null)
         {
-            if (Vector3.Distance(targetPos, obpapi.transform.position) > 0.5f)
+            if (Vector3.Distance(targetPos, obpapi.transform.position) > 1f)
             {
                 Vector3 dir = (targetPos - obpapi.transform.position).normalized;
                 dir.y = 0;
 
                 obpapi.transform.position += dir * Time.deltaTime * 3;
                 obpapi.transform.forward = dir;
+
+                anim.SetBool("Walk", true);
             }
             else
             {
@@ -69,6 +74,8 @@ public class DungeonEvent : MonoBehaviour
                     Vector3 dir = (player.transform.position - obpapi.transform.position).normalized;
 
                     obpapi.transform.rotation = Quaternion.Lerp(obpapi.transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime * 3);
+
+                    anim.SetBool("Walk", false);
                 }
             }
         }

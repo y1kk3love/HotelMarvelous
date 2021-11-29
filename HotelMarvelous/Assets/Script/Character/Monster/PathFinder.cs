@@ -25,10 +25,18 @@ public class PathFinder : MonoBehaviour
                 int x = (int)_list[i].position.x;
                 int y = (int)_list[i].position.y;
 
-                if (x < sx) { sx = x; }
-                if (x > bx) { bx = x; }
-                if (y < sy) { sy = y; }
-                if (y > by) { by = y; }
+                if(i == 0)
+                {
+                    sx = x;
+                    sy = y;
+                }
+                else
+                {
+                    if (x < sx) { sx = x; }
+                    if (x > bx) { bx = x; }
+                    if (y < sy) { sy = y; }
+                    if (y > by) { by = y; }
+                }
             }
 
             xlen = Mathf.Abs(sx - bx) + 18;
@@ -96,6 +104,13 @@ public class PathFinder : MonoBehaviour
         {
             return null;
         }
+        else
+        {
+            _StartTile.X -= sx;
+            _StartTile.Y -= sy;
+            _TargetTile.X -= sx;
+            _TargetTile.Y -= sy;
+        }
 
         PathList.Clear();
         OpenList.Clear();
@@ -132,6 +147,12 @@ public class PathFinder : MonoBehaviour
 
                 PathList.Add(_StartTile);
                 PathList.Reverse();
+
+                for(int i = 0; i < PathList.Count; i++)
+                {
+                    PathList[i].X += sx;
+                    PathList[i].Y += sy;
+                }
 
                 Debug.Log(PathList.Count);
                 return PathList;
@@ -198,6 +219,6 @@ public class Tile
 
     public void DistanceCalculator(Tile start, Tile target)
     {
-        remainDis = (Mathf.Abs(start.X - target.Y) + Mathf.Abs(start.Y - target.Y)) * 10;
+        remainDis = (Mathf.Abs(start.X - target.X) + Mathf.Abs(start.Y - target.Y)) * 10;
     }
 }

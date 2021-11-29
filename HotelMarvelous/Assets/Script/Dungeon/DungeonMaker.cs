@@ -19,8 +19,6 @@ public class DungeonMaker : MonoBehaviour
     private Player player;
 
     public GameObject blackOut;
-    public GameObject bossUI;
-    public GameObject rewardItem;
 
     private GameObject curEmptyRoom;
     private GameObject curMiniMap;
@@ -52,7 +50,7 @@ public class DungeonMaker : MonoBehaviour
 
         LoadMap(1);
 
-        RoomEnd();
+        RoomMonsterCheck();
 
         GameObject prefab = Resources.Load("Prefab/Characters/PC/Player") as GameObject;
         player = Instantiate(prefab, new Vector3(3, 0.5f, 3), Quaternion.identity).GetComponent<Player>();
@@ -60,6 +58,18 @@ public class DungeonMaker : MonoBehaviour
 
         GameObject _ui = Instantiate(blackOut);
         Destroy(_ui, 2f);
+    }
+
+    public bool IsBossClear()
+    {
+        if(monMaxArr[curIndex] == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void MonsterDead()
@@ -78,21 +88,98 @@ public class DungeonMaker : MonoBehaviour
 
     private void RoomReward()
     {
-        int random = Random.Range(1, 100);
-
-        if(random < 100)
+        if (roomIndexListArr[curIndex][0].clear)
         {
-            int middle = (int)System.Math.Truncate((double)(roomIndexListArr[curIndex].Count / 2));
+            return;
+        }
 
-            TileInfo info = roomIndexListArr[curIndex][middle];
+        int middle = (int)System.Math.Truncate((double)(roomIndexListArr[curIndex].Count / 2));
 
-            if (info.roomType == ROOMTYPE.HALLWAY)
+        TileInfo info = roomIndexListArr[curIndex][middle];
+
+        if (info.roomType == ROOMTYPE.HALLWAY)
+        {
+            byte[] consumItemperArr = new byte[] { 40, 40, 20 };
+
+            int random = Random.Range(0, 100);
+            int curpercent = 0;
+
+            for (int i = 0; i < 3; i++)
             {
-                GameObject obj = Instantiate(rewardItem, new Vector3(info.position.x, 0.5f, info.position.y), Quaternion.identity);
+                int _x = Random.Range(-3, 4);
+                int _z = Random.Range(-3, 4);
 
-                RewardItem reward = obj.transform.GetComponent<RewardItem>();
-                reward.transform.SetParent(roomIndexListArr[curIndex][0].obTile.transform);
-                reward.id = (CONSUMITEM)Random.Range(1, System.Enum.GetValues(typeof(CONSUMITEM)).Length + 1);
+                curpercent += consumItemperArr[i];
+
+                if (random < curpercent)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            consumItemperArr = new byte[] { 59, 30, 7, 3, 1 };
+
+                            random = Random.Range(0, 100);
+                            curpercent = 0;
+                            for (int x = 0; x < 5; x++)
+                            {
+                                _x = Random.Range(-3, 4);
+                                _z = Random.Range(-3, 4);
+
+                                curpercent += consumItemperArr[i];
+
+                                if (random < curpercent)
+                                {
+                                    byte _coin = 0;
+
+                                    switch (x)
+                                    {
+                                        case 0:
+                                            _coin = 1;
+                                            break;
+                                        case 1:
+                                            _coin = 2;
+                                            break;
+                                        case 2:
+                                            _coin = 5;
+                                            break;
+                                    }
+
+                                    for (int s = 0; s < _coin; s++)
+                                    {
+                                        GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.COIN);
+                                        GameObject coin = Instantiate(obj, new Vector3(info.position.x + _x, 2, info.position.y + _z), Quaternion.identity);
+                                        ConsumItem conitem = coin.AddComponent<ConsumItem>();
+                                        conitem.consumitem = DROPITEM.COIN;
+
+                                        coin.transform.SetParent(roomIndexListArr[curIndex][0].obTile.transform);
+                                    }
+                                }
+                            }
+                            break;
+                        case 1:
+                            random = Random.Range(0, 100);
+
+                            if (random < 95)
+                            {
+                                GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.KEY);
+                                GameObject _key = Instantiate(obj, new Vector3(info.position.x + _x, 2, info.position.y + _z), Quaternion.identity);
+                                ConsumItem conitem = _key.AddComponent<ConsumItem>();
+                                conitem.consumitem = DROPITEM.KEYS;
+
+                                _key.transform.SetParent(roomIndexListArr[curIndex][0].obTile.transform);
+                            }
+                            else
+                            {
+                                GameObject obj = ResourceManager.Instance.GetDropItem(DISPOITEM.MASTERKEY);
+                                GameObject _masterkey = Instantiate(obj, new Vector3(info.position.x + _x, 2, info.position.y + _z), Quaternion.identity);
+                                ConsumItem conitem = _masterkey.AddComponent<ConsumItem>();
+                                conitem.consumitem = DROPITEM.MASTERKEY;
+
+                                _masterkey.transform.SetParent(roomIndexListArr[curIndex][0].obTile.transform);
+                            }
+                            break;
+                    }
+                }
             }
         }
     }
@@ -140,6 +227,25 @@ public class DungeonMaker : MonoBehaviour
             }
 
             RoomReward();
+
+            roomIndexListArr[curIndex][0].clear = true;
+        }
+    }
+
+    private void RoomMonsterCheck()
+    {
+        GameObject[] mons = GameObject.FindGameObjectsWithTag("Monster");
+        GameObject boss = GameObject.FindGameObjectWithTag("Boss");
+
+        if (mons.Length == 0 && boss == null)
+        {
+            monMaxArr[curIndex] = 0;
+
+            RoomEnd();
+        }
+        else
+        {
+            Invoke("RoomMonsterCheck", 1f);
         }
     }
 
@@ -162,12 +268,6 @@ public class DungeonMaker : MonoBehaviour
             if (!isRoomLoadArr[curIndex])
             {
                 LoadMap(curIndex);
-
-                if(roomIndexListArr[curIndex][0].roomType == ROOMTYPE.BOSS)
-                {
-                    GameObject bossui = Instantiate(bossUI);
-                    bossui.name = "BossUI";
-                }
             }
             else
             {
@@ -177,6 +277,8 @@ public class DungeonMaker : MonoBehaviour
                 }
             }
 
+            RoomMonsterCheck();
+
             if (monMaxArr[curIndex] == 0)
             {
                 RoomEnd();
@@ -184,21 +286,6 @@ public class DungeonMaker : MonoBehaviour
             else
             {
                 StartCoroutine(RoomStart());
-            }
-        }
-        else
-        {
-            GameObject[] remainMonster = GameObject.FindGameObjectsWithTag("Monster");
-            GameObject boss = GameObject.FindGameObjectWithTag("Boss");
-
-            if (remainMonster.Length == 0 && boss == null)
-            {
-                monMaxArr[curIndex] = 0;
-                RoomEnd();
-            }
-            else
-            {
-                Debug.Log("해치우지 못한 몬스터가 남아있습니다.");
             }
         }
     }
@@ -451,6 +538,12 @@ public class DungeonMaker : MonoBehaviour
             obFloor = Resources.Load("Prefab/Stage/Floor_2") as GameObject;
             obBlockWall = Resources.Load("Prefab/Stage/Wall_2") as GameObject;
             obDoorWall = Resources.Load("Prefab/Stage/Door_2") as GameObject;
+        }
+        else if(roomIndexListArr[curIndex][0].roomType == ROOMTYPE.BOSS)
+        {
+            obFloor = Resources.Load("Prefab/Stage/Floor_3") as GameObject;
+            obBlockWall = Resources.Load("Prefab/Stage/Wall_3") as GameObject;
+            obDoorWall = Resources.Load("Prefab/Stage/Door_3") as GameObject;
         }
         else
         {

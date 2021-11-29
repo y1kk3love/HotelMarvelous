@@ -22,7 +22,7 @@ public class DataManager : MonoSingleton<DataManager>
 
     public void SetNPCFavorability(byte id, int levels)
     {
-        favorabilityarr[id] += levels;
+        //favorabilityarr[id] += levels;
     }
 
     public int GetNPCFavorability(byte id)

@@ -209,6 +209,7 @@ public class ResourceManager : MonoSingleton<ResourceManager>
         string _path = objectDataList[_itemindex][(int)OBJECTDATA.ITEMNAME];
 
         item.sprite = Resources.Load<Sprite>("Prefab/ActiveItem/Image/" + _path);
+        item.image = Resources.Load("Prefab/ActiveItem/Image/" + _path, typeof(Texture2D)) as Texture2D;
         item.skillprefab = Resources.Load("Prefab/ActiveItem/Object/" + _path) as GameObject;
         item.max = byte.Parse(objectDataList[_itemindex][(int)OBJECTDATA.MAXSTACK]);
 
@@ -229,6 +230,7 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 public class ItemResource
 {
     public Sprite sprite;
+    public Texture2D image;
     public GameObject skillprefab;
     public byte max;
 }

@@ -116,8 +116,7 @@ public class PauseUI : MonoBehaviour
     }
     public void OnclickbuttonSaveAndQuit()
     {
-        //저장 기능 추가
-        Application.Quit();
+        ScenesManager.Instance.MoveToScene(INTERACTION.TITLE);
     }
 
     public void OnclickbuttonOption()

@@ -7,6 +7,7 @@ public class TileInfo
 
     public GameObject obTile;
 
+    public bool clear = false;
     public byte roomIndex;
 
     public ROOMTYPE roomType = ROOMTYPE.EMPTY;

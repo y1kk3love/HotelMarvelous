@@ -10,7 +10,7 @@ public class WideAreaSkill : MonoBehaviour
 
     private float skilldelay = 0;
     private float skillendtime = 0;
-    private float zscale = 0.5f;
+    private float skilldamage = 0;
 
     void Update()
     {
@@ -28,13 +28,13 @@ public class WideAreaSkill : MonoBehaviour
         {
             isexitzone = false;
 
-            if(targettag == "Monster")
+            if(targettag == "Monster" && targettag == "Boss")
             {
-                StartCoroutine(FireTile(other, 20, 1, targettag));
+                StartCoroutine(FireTile(other, skilldamage, 1, targettag));
             }
             else if (targettag == "Player")
             {
-                StartCoroutine(FireTile(other, 9, 1, targettag));
+                StartCoroutine(FireTile(other, skilldamage, 1, targettag));
             }
             
         }
@@ -48,19 +48,14 @@ public class WideAreaSkill : MonoBehaviour
         }
     }
 
-    public void SetSkillPreset(string _tag, float _endtime)
+    public void SetSkillPreset(string _tag, float _damage, float _endtime)
     {
+        skilldamage = _damage;
         skillendtime = _endtime;
         targettag = _tag;
     }
 
-    public void SetSkillRange(float _zscale)
-    {
-        zscale = _zscale;
-        transform.localScale = new Vector3(0.3f, 1, zscale);
-    }
-
-    IEnumerator FireTile(Collider _other, int _damage, float _delay, string _targettag)
+    IEnumerator FireTile(Collider _other, float _damage, float _delay, string _targettag)
     {
         if(_other != null)
         {

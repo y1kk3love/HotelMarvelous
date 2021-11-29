@@ -74,10 +74,19 @@ public class ScenesManager : MonoSingleton<ScenesManager>
                     _name = "엘리자베스 테일러";
                     break;
                 case 2:
-                    _name = "파피";
+                    _name = "데이비드";
                     break;
                 case 3:
-                    _name = "데이비드";
+                    _name = "파피";
+                    break;
+                case 4:
+                    _name = "파피";
+                    break;
+                case 5:
+                    _name = "도움말";
+                    break;
+                case 6:
+                    _name = "달빛 아래의 백합";
                     break;
             }
 
@@ -181,6 +190,8 @@ public class ScenesManager : MonoSingleton<ScenesManager>
     {
         string scene = _scenename.ToString();
 
+        Time.timeScale = 1;
+
         if (_scenename == INTERACTION.DUNGEON || _scenename == INTERACTION.LOBBY)
         {
             LoadingSceneController.LoadScene(scene);
@@ -189,7 +200,6 @@ public class ScenesManager : MonoSingleton<ScenesManager>
         {
             SceneManager.LoadScene(scene);
         }
-        
     }
 
     public void ShowLocation()

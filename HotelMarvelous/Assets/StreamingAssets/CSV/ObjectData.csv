@@ -1,10 +1,10 @@
 ﻿INDEX,FURNITURE,,ITEM,MAXSTACK,,MONSTERNAME,,DISPOITEM,INDEX
-1,Portrait,,01_Crown,6,,SUPERVIA,,01_Card,1
-2,Elevator,,02_SlotMachine,5,,AVARITIA,,,
-3,2F_R_Bed,,,,,INK,,,
-4,2F_R_Chair1,,,,,,,,
-5,2F_R_Chair2,,,,,,,,
-6,2F_R_Chair3,,,,,,,,
+1,Portrait,,01_PhoenixTiara,6,,FLORA,,01_Card,1
+2,Elevator,,02_ButterfltDream,4,,TAYLOR,,02_Pillow,2
+3,2F_R_Bed,,03_LilyPerfume,6,,INK,,03_CenturyCoke,3
+4,2F_R_Chair1,,04_MagicWallet,4,,PAPI,,04_HerbTea,4
+5,2F_R_Chair2,,05_RainbowMacaron,6,,,,05_Iceberg,5
+6,2F_R_Chair3,,06_LightningRod,6,,,,,
 7,2F_R_Frame,,,,,,,,
 8,2F_R_Lamp,,,,,,,,
 9,2F_R_mirror,,,,,,,,
@@ -26,3 +26,9 @@
 25,corridor_rattan_chair,,,,,,,,
 26,corridor_plant_1,,,,,,,,
 27,corridor_cart,,,,,,,,
+28,Boss_Furniture,,,,,,,,
+29,00_Reward,,,,,,,,
+30,01_Reward,,,,,,,,
+31,02_Reward,,,,,,,,
+32,03_Reward,,,,,,,,
+33,04_Reward,,,,,,,,
