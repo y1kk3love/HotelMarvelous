@@ -30,6 +30,14 @@ public class Interactionzone : MonoBehaviour
                     other.GetComponent<Player>().isconv = true;
                 }
             }
+            else
+            {
+                GameObject ui = Resources.Load("Prefab/UI/AskToMoveUI") as GameObject;
+                GameObject obj = Instantiate(ui);
+                AskToMoveUI ask = obj.transform.GetComponent<AskToMoveUI>();
+                ask.scene = portalType;
+                ask.isNextStage = isToNextStage;
+            }
         }
     }
 }

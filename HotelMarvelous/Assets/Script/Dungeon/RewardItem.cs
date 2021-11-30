@@ -23,7 +23,6 @@ public class RewardItem : MonoBehaviour
     public void ChangeItem(CONSUMITEM _id)
     {
         id = _id;
-        ResourceManager.Instance.LoadResources();
         Texture2D _image = ResourceManager.Instance.GetItemResource((byte)id).image;
 
         item[0].transform.GetComponent<MeshRenderer>().material.mainTexture = _image;
