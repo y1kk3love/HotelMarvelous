@@ -6,14 +6,14 @@ using Singleton;
 
 public class ResourceManager : MonoSingleton<ResourceManager>
 {
-    private Dictionary<int, List<DialogData>> dialogData = new Dictionary<int, List<DialogData>>();
+    private Dictionary<int, List<DialogData>> dialogData = new Dictionary<int, List<DialogData>>(); //
 
-    private List<string[]> objectDataList = new List<string[]>();
-    private List<DialogData> dialogDataList = new List<DialogData>();
+    private List<string[]> objectDataList = new List<string[]>(); //
+    private List<DialogData> dialogDataList = new List<DialogData>(); //
 
-    private Dictionary<int, List<DialogEventData>> dialogEventData = new Dictionary<int, List<DialogEventData>>();
+    private Dictionary<int, List<DialogEventData>> dialogEventData = new Dictionary<int, List<DialogEventData>>(); //
 
-    private List<DialogEventData> dialogEventList = new List<DialogEventData>();
+    private List<DialogEventData> dialogEventList = new List<DialogEventData>(); //
 
     private GameObject[] dropItemArr;
 
@@ -26,6 +26,10 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
     private void LoadDialogData()
     {
+        dialogData = new Dictionary<int, List<DialogData>>();
+        dialogEventData = new Dictionary<int, List<DialogEventData>>();
+        dialogDataList = new List<DialogData>();
+
         StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/DialogData.csv");
 
         int counter = 0;
@@ -86,6 +90,8 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
     private void LoadDialogEventData()
     {
+        dialogEventList = new List<DialogEventData>();
+
         StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/DialogEventData.csv");
 
         int counter = 0;
@@ -181,6 +187,8 @@ public class ResourceManager : MonoSingleton<ResourceManager>
 
     private void LoadItemResources()
     {
+        objectDataList = new List<string[]>();
+
         StreamReader streader = new StreamReader(Application.dataPath + "/StreamingAssets/CSV/ObjectData.csv");
 
         while (!streader.EndOfStream)

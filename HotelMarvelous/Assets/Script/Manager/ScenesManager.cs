@@ -190,6 +190,7 @@ public class ScenesManager : MonoSingleton<ScenesManager>
     {
         string scene = _scenename.ToString();
 
+        isOption = false;
         Time.timeScale = 1;
 
         if (_scenename == INTERACTION.DUNGEON || _scenename == INTERACTION.LOBBY)
