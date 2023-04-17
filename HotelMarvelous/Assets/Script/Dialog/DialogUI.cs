@@ -126,12 +126,12 @@ public class DialogUI : MonoBehaviour
         }
     }
 
-    private void DiaLogAnimStart()
+    private void DiaLogAnimStart()          //한글자씩 호출하는 애니메이션
     {
         text.text = "";
         curTextIndex = 0;
 
-        interval = 1.0f / dialogSpeed;
+        interval = 1.0f / dialogSpeed;          //애니메이션 속도
 
         ScenesManager.Instance.isDialogAnim = true;
 

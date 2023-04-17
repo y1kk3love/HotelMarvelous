@@ -32,10 +32,10 @@
             {
                 ST_VertexOutput stOutput;
 
-                float3 fNormalized_Normal = normalize(stInput.normal);
-                float3 fOutline_Position = stInput.vertex + fNormalized_Normal * (_Outline_Bold * 0.1f);
+                float3 Normal = normalize(stInput.normal);      //노말 벡터 정규화
+                float3 OutPos = stInput.vertex + Normal * (_Outline_Bold * 0.1f);
 
-                stOutput.vertex = UnityObjectToClipPos(fOutline_Position);
+                stOutput.vertex = UnityObjectToClipPos(OutPos);
                 return stOutput;
             }
 

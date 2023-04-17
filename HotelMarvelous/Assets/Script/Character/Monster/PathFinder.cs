@@ -104,7 +104,7 @@ public class PathFinder : MonoBehaviour
         {
             return null;
         }
-        else
+        else                                        //방의 모양으로 보드 초기화
         {
             _StartTile.X -= sx;
             _StartTile.Y -= sy;
@@ -117,25 +117,27 @@ public class PathFinder : MonoBehaviour
         CloseList.Clear();
 
         Tile _CurTile = _StartTile;
-        _CurTile.DistanceCalculator(_CurTile, _TargetTile);
-        OpenList.Add(_CurTile);
+        _CurTile.DistanceCalculator(_CurTile, _TargetTile);                 //목표까지의 거리 계산
+        OpenList.Add(_CurTile);                                                 //OPEN 리스트에 추가
 
-        while (OpenList.Count > 0)
+        while (OpenList.Count > 0)                                          //OPEN리스트가 0이 아닐 동안 반복
         {
             _CurTile = OpenList[0];
 
             for (int i = 1; i < OpenList.Count; i++)
             {
+                //OPEN리스트 안에서 남은 거리가 가장 작은 타일 선택
                 if (OpenList[i].totalDis <= _CurTile.totalDis && OpenList[i].remainDis < _CurTile.remainDis)
                 {
                     _CurTile = OpenList[i];
                 }
             }
 
+            //선택한 타일을 OPEN리스트에서 CLOSE리스트로 이동
             OpenList.Remove(_CurTile);
             CloseList.Add(_CurTile);
 
-            if (_CurTile.X == _TargetTile.X && _CurTile.Y == _TargetTile.Y)
+            if (_CurTile.X == _TargetTile.X && _CurTile.Y == _TargetTile.Y)         //목표에 도착하면 CLOSE리스트를 Reverse()라고 리턴
             {
                 Tile curTargetTile = _CurTile;
 
@@ -158,11 +160,13 @@ public class PathFinder : MonoBehaviour
                 return PathList;
             }
 
+            //대각선
             OpenListAdd(_CurTile.X + 1, _CurTile.Y + 1, _CurTile, _TargetTile, true);
-            OpenListAdd(_CurTile.X + 1, _CurTile.Y + 1, _CurTile, _TargetTile, true);
+            OpenListAdd(_CurTile.X - 1, _CurTile.Y + 1, _CurTile, _TargetTile, true);
             OpenListAdd(_CurTile.X - 1, _CurTile.Y - 1, _CurTile, _TargetTile, true);
             OpenListAdd(_CurTile.X + 1, _CurTile.Y - 1, _CurTile, _TargetTile, true);
 
+            //가로 세로
             OpenListAdd(_CurTile.X, _CurTile.Y + 1, _CurTile, _TargetTile, false);
             OpenListAdd(_CurTile.X + 1, _CurTile.Y, _CurTile, _TargetTile, false);
             OpenListAdd(_CurTile.X, _CurTile.Y - 1, _CurTile, _TargetTile, false);
@@ -174,6 +178,7 @@ public class PathFinder : MonoBehaviour
 
     private void OpenListAdd(int _x, int _y, Tile _CurTile, Tile _TargetTile, bool _cross)
     {
+        //CLOSE리스트에 없을때
         if (_x >= 0 && _x < xlen - 1 && _y >= 0 && _y < ylen - 1 && !TileArr[_x, _y].isWall && !CloseList.Contains(TileArr[_x, _y]))
         {
             Tile neighborTile = TileArr[_x, _y];
@@ -183,6 +188,7 @@ public class PathFinder : MonoBehaviour
             if (_cross) { curCost = _CurTile.curDis + 14; }
             else { curCost = _CurTile.curDis + 10; }
 
+            //OPEN리스트에 없고 이웃 타일 보다 이동 비용이 적으면
             if (curCost < neighborTile.curDis || !OpenList.Contains(neighborTile))
             {
                 neighborTile.curDis = curCost;

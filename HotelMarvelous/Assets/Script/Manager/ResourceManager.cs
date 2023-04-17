@@ -47,7 +47,7 @@ public class ResourceManager : MonoSingleton<ResourceManager>
             {
                 string _text = data[(int)DIALOGDATA.TEXT];
 
-                for (int i = 5; i < data.Length; i++)
+                for (int i = 5; i < data.Length; i++)       //쉼표를 대화에 포함
                 {
                     _text += string.Format(", {0}", data[i]);
                 }
